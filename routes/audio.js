@@ -71,7 +71,8 @@ router.get("/:mockID", (req, res) => {
     return res.redirect(302, r2Url);
   }
 
-  const filePath = path.join(process.env.ROOT_PATH, relativePath);
+  const rootDir = process.env.ROOT_PATH || process.cwd();
+  const filePath = path.join(rootDir, relativePath);
 
   if (!fs.existsSync(filePath)) {
     console.error(`[AUDIO ERROR] File missing: ${filePath}`);

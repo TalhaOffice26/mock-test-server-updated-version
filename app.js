@@ -28,7 +28,7 @@ const cors = require("cors");
 
 const app = express();
 app.use(cors());
-const port = env.PORT;
+const port = env.PORT || 5001;
 
 console.log(env.ROOT_PATH);
 const writing_api =
