@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>UKA Mock Test Report Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root { 
+            --uka-navy: #001f3f; 
+            --uka-theme: #22c8cf;
+            --uka-dark: #1daab0;
+        }
+        
+        /* Main Website Background to White */
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #ffffff; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; color: #333; }
+        
+        .admin-panel { 
+            background: #fdfdfd; padding: 30px; border-radius: 15px; width: 750px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid #eee; border-top: 8px solid var(--uka-navy);
+        }
+        .admin-panel h2 { color: var(--uka-navy); text-align: center; margin-bottom: 25px; font-weight: 800; }
+        
+        .grid-input { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        label { font-size: 11px; color: #444; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; display: block; }
+        input, select, textarea { 
+            width: 100%; padding: 12px; border: 2px solid #e1e1e1; border-radius: 8px; box-sizing: border-box; font-size: 14px;
+        }
+        
+        .score-inputs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: #f1faff; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+
+        /* All Buttons set to #22c8cf */
+        .btn-preview, .btn-download { 
+            background: var(--uka-theme); color: white; border: none; padding: 15px; width: 100%; 
+            cursor: pointer; font-weight: bold; border-radius: 8px; text-transform: uppercase; 
+            transition: 0.3s; margin-top: 10px; 
+        }
+        .btn-preview:hover, .btn-download:hover { background: var(--uka-dark); }
+
+        /* A4 Page Measurement */
+        .page {
+            width: 210mm; min-height: 297mm; background: white; padding: 20mm;
+            box-sizing: border-box; position: relative; margin-top: 40px; 
+            display: none; box-shadow: 0 0 20px rgba(0,0,0,0.1); border: 1px solid #ddd;
+        }
+
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 15px; }
+        .logo-main { height: 70px; }
+        .test-type-box { border: 2px solid #000; padding: 10px 15px; font-weight: bold; font-size: 18px; }
+
+        .trf-title { text-align: center; margin: 25px 0 5px; font-size: 24px; font-weight: 900; letter-spacing: 1px; }
+        .sub-title { text-align: center; font-size: 13px; margin-bottom: 25px; font-weight: bold; color: #555; }
+        
+        .candidate-table { width: 100%; border: 1.5px solid #000; border-collapse: collapse; }
+        .candidate-table td { border: 1.5px solid #000; padding: 10px; vertical-align: top; }
+        .val { font-size: 15px; font-weight: bold; margin-top: 3px; text-transform: uppercase; }
+
+        .score-section { margin-top: 30px; width: 100%; border-collapse: collapse; text-align: center; }
+        .score-section th { border: 1.5px solid #000; padding: 10px; background: #f0f4f8; font-size: 11px; }
+        .score-section td { border: 1.5px solid #000; padding: 12px; font-size: 20px; font-weight: bold; }
+        .raw-small { font-size: 10px; display: block; color: #666; font-weight: normal; margin-top: 4px; }
+
+        .disclaimer { margin-top: 40px; font-size: 11px; color: #333; line-height: 1.5; border: 1px solid #ddd; padding: 12px; background: #fafafa; }
+        
+        .footer-logos { padding-top: 20px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; margin-top: auto; }
+        .seal-img { height: 80px; }
+        .cambridge-img { height: 30px; }
+        
+        .feedback-box { margin-top: 10px; border-left: 3px solid var(--uka-theme); padding: 15px; background: #f9f9f9; font-size: 14px; line-height: 1.7; border-radius: 0 4px 4px 0; white-space: pre-wrap; word-wrap: break-word; }
+    </style>
+</head>
+<body>
+
+<div class="admin-panel">
+    <h2>UKA MOCK TEST GENERATOR</h2>
+    
+    <div class="grid-input">
+        <div><label>Candidate Name</label><input type="text" id="inName" placeholder="Enter Full Name"></div>
+        <div><label>Test Type</label>
+            <select id="inType">
+                <option value="ACADEMIC">ACADEMIC</option>
+                <option value="GENERAL TRAINING">GENERAL TRAINING</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="grid-input">
+        <div><label>Test Passcode</label><input type="text" id="inPass" placeholder="e.g. UKA-DX22"></div>
+        <div><label>Date of Test</label><input type="date" id="inDateManual"></div>
+    </div>
+
+    <div class="score-inputs">
+        <div><label>Lis. (Raw 0-40)</label><input type="number" id="inLRaw"></div>
+        <div><label>Read. (Raw 0-40)</label><input type="number" id="inRRaw"></div>
+        <div><label>Writing (Band)</label><input type="number" step="0.5" id="inWBand"></div>
+        <div><label>Speaking (Band)</label><input type="number" step="0.5" id="inSBand"></div>
+    </div>
+
+    <div class="grid-input">
+        <div><label>Writing Task 1 Feedback</label><textarea id="inFeed1" rows="3"></textarea></div>
+        <div><label>Writing Task 2 Feedback</label><textarea id="inFeed2" rows="3"></textarea></div>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+        <label>Teacher's Recommendation</label>
+        <textarea id="inRec" rows="2">Consistent practice on task achievement and grammatical range is advised. Join our mock review sessions for deeper insights.</textarea>
+    </div>
+
+    <button class="btn-preview" onclick="generateProcess()">Generate Preview</button>
+    <button id="btnDown" class="btn-download" style="display:none;" onclick="downloadPDF()">Download Final PDF</button>
+</div>
+
+<div id="page1" class="page">
+    <div class="header">
+        <img src="2_UKA-&-British-council-Logo.png" class="logo-main">
+        <div class="test-type-box" id="outType">ACADEMIC</div>
+    </div>
+    <div class="trf-title">MOCK TEST REPORT FORM</div>
+    <div class="sub-title">UKA TECHNICAL INSTITUTE - ASSESSMENT DIVISION</div>
+
+    <table class="candidate-table">
+        <tr>
+            <td colspan="2"><span class="label">Full Name of Candidate</span><div class="val" id="outName">NAME</div></td>
+            <td rowspan="3" style="width: 120px; text-align: center; vertical-align: middle;">
+                <div style="border: 1px dashed #ccc; height: 140px; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #aaa;">PHOTO AREA</div>
+            </td>
+        </tr>
+        <tr>
+            <td><span class="label">Date of Test (Mock)</span><div class="val" id="outDate">--/--/----</div></td>
+            <td><span class="label">Test Passcode / Center Code</span><div class="val" id="outPass">UKA-XXXX</div></td>
+        </tr>
+        <tr>
+            <td><span class="label">Country of Origin</span><div class="val">BANGLADESH</div></td>
+            <td><span class="label">First Language</span><div class="val">BENGALI</div></td>
+        </tr>
+    </table>
+
+    <table class="score-section">
+        <thead>
+            <tr>
+                <th>Listening</th>
+                <th>Reading</th>
+                <th>Writing</th>
+                <th>Speaking</th>
+                <th style="background:#001f3f; color:white;">Overall Band</th>
+                <th style="background:#eef2f7;">CEFR Level</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><span id="outL">-</span> <span class="raw-small" id="rawL"></span></td>
+                <td><span id="outR">-</span> <span class="raw-small" id="rawR"></span></td>
+                <td id="outW">-</td>
+                <td id="outS">-</td>
+                <td id="outOver" style="background: #f0f0f0;">-</td>
+                <td id="outCEFR">-</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="disclaimer">
+        <b>NOTICE:</b> This report is generated by UKA Technical Institute for mock assessment. Raw scores are converted based on official IELTS grading standards. Overall band is only calculated if all four components are completed.
+    </div>
+
+    <div class="footer-logos" style="position: absolute; bottom: 20mm; width: 170mm;">
+        <img src="technical seal.png" class="seal-img">
+        <img src="Cambridge.png" class="cambridge-img">
+    </div>
+</div>
+
+<div id="page2" class="page">
+    <div class="header">
+        <img src="2_UKA-&-British-council-Logo.png" style="height: 50px;">
+        <div style="font-weight: bold; color: var(--uka-navy);">FEEDBACK & ANALYSIS</div>
+    </div>
+    
+    <div id="feedbackContainer">
+        <h3 style="margin-top: 30px; font-size: 16px; color: var(--uka-navy);">Writing Task 1 Feedback:</h3>
+        <div class="feedback-box" id="outFeed1"></div>
+
+        <h3 style="margin-top: 20px; font-size: 16px; color: var(--uka-navy);">Writing Task 2 Feedback:</h3>
+        <div class="feedback-box" id="outFeed2"></div>
+    </div>
+
+    <div style="margin-top: 40px; padding: 20px; background: #eef2f7; border-left: 5px solid var(--uka-theme);">
+        <h4 style="margin: 0 0 10px 0;">Teacher's Recommendation:</h4>
+        <p style="font-size: 13px;" id="outRec"></p>
+    </div>
+
+    <div class="footer-logos" style="position: absolute; bottom: 20mm; width: 170mm;">
+        <img src="technical seal.png" class="seal-img">
+        <div style="text-align: right; font-weight: bold; font-size: 12px; color: #777;">UKA Assessment Division</div>
+    </div>
+</div>
+
+<script>
+    function calculateBand(raw, module, type) {
+        if (!raw || raw <= 0) return 0;
+        const r = parseInt(raw);
+        if (module === 'LIS') {
+            if (r >= 39) return 9.0; if (r >= 37) return 8.5; if (r >= 35) return 8.0; if (r >= 32) return 7.5;
+            if (r >= 30) return 7.0; if (r >= 26) return 6.5; if (r >= 23) return 6.0; if (r >= 18) return 5.5;
+            if (r >= 16) return 5.0; if (r >= 13) return 4.5; return 4.0;
+        } else { 
+            if (type === 'ACADEMIC') {
+                if (r >= 39) return 9.0; if (r >= 37) return 8.5; if (r >= 35) return 8.0; if (r >= 33) return 7.5;
+                if (r >= 30) return 7.0; if (r >= 27) return 6.5; if (r >= 23) return 6.0; if (r >= 19) return 5.5;
+                if (r >= 15) return 5.0; if (r >= 13) return 4.5; return 4.0;
+            } else { 
+                if (r >= 40) return 9.0; if (r >= 39) return 8.5; if (r >= 37) return 8.0; if (r >= 36) return 7.5;
+                if (r >= 34) return 7.0; if (r >= 32) return 6.5; if (r >= 30) return 6.0; if (r >= 27) return 5.5;
+                if (r >= 23) return 5.0; return 4.5;
+            }
+        }
+    }
+
+    function getCEFR(score) {
+        let s = parseFloat(score);
+        if (s >= 8.5) return "C2"; if (s >= 7.0) return "C1"; if (s >= 5.5) return "B2"; if (s >= 4.0) return "B1"; return "A2";
+    }
+
+    function generateProcess() {
+        const name = document.getElementById('inName').value;
+        const type = document.getElementById('inType').value;
+        if(!name) { alert("Please Enter Candidate Name"); return; }
+
+        const lRaw = document.getElementById('inLRaw').value;
+        const rRaw = document.getElementById('inRRaw').value;
+        const wBand = parseFloat(document.getElementById('inWBand').value) || 0;
+        const sBand = parseFloat(document.getElementById('inSBand').value) || 0;
+
+        const lBand = calculateBand(lRaw, 'LIS', type);
+        const rBand = calculateBand(rRaw, 'REA', type);
+
+        document.getElementById('outName').innerText = name.toUpperCase();
+        document.getElementById('outType').innerText = type;
+        document.getElementById('outPass').innerText = document.getElementById('inPass').value.toUpperCase() || "UKA-MOCK";
+        
+        let manualDate = document.getElementById('inDateManual').value;
+        document.getElementById('outDate').innerText = manualDate ? new Date(manualDate).toLocaleDateString('en-GB') : new Date().toLocaleDateString('en-GB');
+
+        document.getElementById('outL').innerText = lBand > 0 ? lBand.toFixed(1) : "-";
+        document.getElementById('rawL').innerText = lRaw ? `(${lRaw}/40)` : "";
+        document.getElementById('outR').innerText = rBand > 0 ? rBand.toFixed(1) : "-";
+        document.getElementById('rawR').innerText = rRaw ? `(${rRaw}/40)` : "";
+        document.getElementById('outW').innerText = wBand > 0 ? wBand.toFixed(1) : "-";
+        document.getElementById('outS').innerText = sBand > 0 ? sBand.toFixed(1) : "-";
+
+        if (lBand > 0 && rBand > 0 && wBand > 0 && sBand > 0) {
+            let avg = (lBand + rBand + wBand + sBand) / 4;
+            let finalOver = (Math.round(avg * 2) / 2).toFixed(1);
+            document.getElementById('outOver').innerText = finalOver;
+            document.getElementById('outCEFR').innerText = getCEFR(finalOver);
+        } else {
+            document.getElementById('outOver').innerText = "-";
+            document.getElementById('outCEFR').innerText = "-";
+        }
+
+        document.getElementById('outFeed1').innerText = document.getElementById('inFeed1').value || "Feedback not provided.";
+        document.getElementById('outFeed2').innerText = document.getElementById('inFeed2').value || "Feedback not provided.";
+        
+        // Handling Recommendation
+        document.getElementById('outRec').innerText = document.getElementById('inRec').value;
+
+        document.getElementById('page1').style.display = 'block';
+        document.getElementById('page2').style.display = 'block';
+        document.getElementById('btnDown').style.display = 'block';
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    async function downloadPDF() {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        let canvas1 = await html2canvas(document.getElementById('page1'), { scale: 2 });
+        pdf.addImage(canvas1.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, 210, 297);
+        pdf.addPage();
+        let canvas2 = await html2canvas(document.getElementById('page2'), { scale: 2 });
+        pdf.addImage(canvas2.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, 210, 297);
+        pdf.save(`UKA_Report_${document.getElementById('inName').value}.pdf`);
+    }
+</script>
+</body>
+</html>

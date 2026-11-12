@@ -1,0 +1,81 @@
+<!-- Listening Test Popup Snippet -->
+<div id="listeningOverlay" class="listening-overlay" style="display:none;">
+  <div class="listening-popup">
+    <h2>Listening Test</h2>
+    <p>Please be ready with your headphones. The audio will start once you continue.</p>
+    <button class="listening-continue-btn" onclick="closeListeningPopup()">Start Test</button>
+  </div>
+</div>
+
+<style>
+  body.listening-popup-active {
+    overflow: hidden;
+  }
+  .listening-overlay {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .listening-popup {
+    background: rgba(255,255,255,0.95);
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 600px;
+    width: 90%;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  }
+  .listening-popup h2 {
+    margin-top: 0;
+    color: #007bff;
+  }
+  .listening-continue-btn {
+    margin-top: 25px;
+    background: #28a745;
+    color: #fff;
+    border: none;
+    padding: 14px 24px;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .listening-continue-btn:hover {
+    background: #218838;
+  }
+</style>
+
+<script>
+  function openListeningPopup() {
+    document.getElementById("listeningOverlay").style.display = "flex";
+    document.body.classList.add("listening-popup-active");
+  }
+
+  function closeListeningPopup() {
+    const overlay = document.getElementById("listeningOverlay");
+    overlay.style.display = "none";
+    document.body.classList.remove("listening-popup-active");
+
+    // Try fullscreen (fallback if disallowed)
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen().catch(err => console.warn("Fullscreen blocked:", err));
+    }
+
+    // Resume your site logic (example: play audio if present)
+    const audio = document.getElementById("testAudio");
+    if (audio) {
+      audio.play().catch(err => console.warn("Autoplay blocked:", err));
+    }
+  }
+</script>
+
+<!-- Example trigger -->
+<button onclick="openListeningPopup()">Open Listening Popup</button>

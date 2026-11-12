@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='15' fill='%231A365D' /><path d='M30 25 V55 C30 65 35 75 50 75 C65 75 70 65 70 55 V25 H60 V55 C60 62 58 65 50 65 C42 65 40 62 40 55 V25 H30Z' fill='white' /><rect x='25' y='25' width='15' height='5' fill='white' /><rect x='60' y='25' width='15' height='5' fill='white' /></svg>">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Taking Website</title>
+<style>
+.matching-table-container {
+  width: 100%;
+  overflow-x: auto;
+  font-family: Arial, sans-serif;
+  margin-top: 20px;
+}
+
+#matchingTable {
+  border-collapse: collapse;
+  width: 100%;
+  text-align: center;
+}
+
+#matchingTable th,
+#matchingTable td {
+  border: 1px solid #ccc;
+  width: 30px;  /* narrow cell width */
+  height: 30px; /* narrow cell height */
+  text-align: center;
+  vertical-align: middle;
+  padding: 2px;
+}
+
+#matchingTable td:first-child {
+  width: auto;
+  text-align: left;
+  padding: 4px 8px;
+}
+
+#matchingTable thead th {
+  background-color: #f7f7f7;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+#matchingTable input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid #666;
+  appearance: none;
+  cursor: pointer;
+  vertical-align: middle;
+  position: relative;
+  background-color: white;
+}
+
+#matchingTable input[type="radio"]:checked::after {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #009fe3; /* blue fill like your image */
+  position: relative;
+  top: 2px;
+  left: 2px;
+}
+
+#getAnswers {
+  margin-top: 15px;
+  background: #3B1E54;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+</style>
+</head>
+<body>
+
+<div class="matching-table-container">
+  <table id="matchingTable">
+    <thead>
+      <tr>
+        <th></th>
+        <th>A</th>
+        <th>B</th>
+        <th>C</th>
+        <th>D</th>
+        <th>E</th>
+        <th>F</th>
+        <th>G</th>
+        <th>H</th>
+        <th>I</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr data-info="info1">
+        <td>Lorem ipsum</td>
+        <td><input type="radio" name="info1" value="A" data-id="info1-A" /></td>
+        <td><input type="radio" name="info1" value="B" data-id="info1-B" /></td>
+        <td><input type="radio" name="info1" value="C" data-id="info1-C" /></td>
+        <td><input type="radio" name="info1" value="D" data-id="info1-D" /></td>
+        <td><input type="radio" name="info1" value="E" data-id="info1-E" /></td>
+        <td><input type="radio" name="info1" value="F" data-id="info1-F" /></td>
+        <td><input type="radio" name="info1" value="G" data-id="info1-G" /></td>
+        <td><input type="radio" name="info1" value="H" data-id="info1-H" /></td>
+        <td><input type="radio" name="info1" value="I" data-id="info1-I" /></td>
+      </tr>
+      <tr data-info="info2">
+        <td>Lorem ipsum</td>
+        <td><input type="radio" name="info2" value="A" data-id="info2-A" /></td>
+        <td><input type="radio" name="info2" value="B" data-id="info2-B" /></td>
+        <td><input type="radio" name="info2" value="C" data-id="info2-C" /></td>
+        <td><input type="radio" name="info2" value="D" data-id="info2-D" /></td>
+        <td><input type="radio" name="info2" value="E" data-id="info2-E" /></td>
+        <td><input type="radio" name="info2" value="F" data-id="info2-F" /></td>
+        <td><input type="radio" name="info2" value="G" data-id="info2-G" /></td>
+        <td><input type="radio" name="info2" value="H" data-id="info2-H" /></td>
+        <td><input type="radio" name="info2" value="I" data-id="info2-I" /></td>
+      </tr>
+      <!-- Add more rows as needed -->
+    </tbody>
+  </table>
+
+  <button id="getAnswers">Get Answers</button>
+</div>
+
+<script>
+document.getElementById("getAnswers").addEventListener("click", () => {
+  const answers = {};
+  document.querySelectorAll("#matchingTable tbody tr").forEach(row => {
+    const infoId = row.dataset.info;
+    const selected = row.querySelector("input[type='radio']:checked");
+    answers[infoId] = selected ? selected.dataset.id : null;
+  });
+  console.log(answers);
+  alert(JSON.stringify(answers, null, 2));
+});
+</script>
+
+</body>
+</html>

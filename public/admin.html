@@ -1,0 +1,728 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='15' fill='%231A365D' /><path d='M30 25 V55 C30 65 35 75 50 75 C65 75 70 65 70 55 V25 H60 V55 C60 62 58 65 50 65 C42 65 40 62 40 55 V25 H30Z' fill='white' /><rect x='25' y='25' width='15' height='5' fill='white' /><rect x='60' y='25' width='15' height='5' fill='white' /></svg>">
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background-color: #f5f5f5;
+    }
+    h1 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    h2 {
+      color: #333;
+    }
+
+    .panel {
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    form, .user-list {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      flex: 1 1 300px;
+    }
+    #userList{
+      overflow-y: auto;
+      height: 300px;
+    }
+
+    #userList li.hidden{
+      display: none;
+    }
+
+    #searchInput {
+      width: 98%;
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      display: none;
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 4px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    input, textarea {
+      width: 100%;
+      margin: 8px 0;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    textarea {
+      resize: vertical;
+    }
+
+    button {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 0.9rem;
+      width: 100%;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    li {
+      background: #f0f0f0;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .status {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .delete-btn {
+      float: right;
+      background: red;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .delete-btn:hover {
+      background: darkred;
+    }
+
+
+
+    /*notification section*/
+        .notification-box {
+      position: absolute;
+      width: 600px;
+      max-width: 600px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 1rem;
+      margin: 0 auto;
+      top: 700px;
+      margin-bottom: 20px;
+    }
+
+    .notification-header {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 8px;
+    }
+
+    .notification-list {
+      max-height: 300px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .notification {
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #eee;
+      border-left: 4px solid #3498db;
+      border-radius: 6px;
+      background-color: #fafafa;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .notification-list p {
+      margin: 0;
+      font-size: 14px;
+      color: #333;
+      flex-grow: 1;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 4px; /* optional for spacing */
+      margin-bottom: 8px;  /* optional spacing between paragraphs */
+    }
+
+    .notification button {
+      background: none;
+      border: none;
+      font-size: 16px;
+      color: #999;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    .notification button:hover {
+      color: red;
+    }
+
+    .empty-message {
+      text-align: center;
+      color: #777;
+      padding: 20px 10px;
+    }
+
+    /* Scrollbar styling (optional) */
+    .notification-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .notification-list::-webkit-scrollbar-thumb {
+      background-color: #ccc;
+      border-radius: 3px;
+    }
+
+    /*speaking booking box*/
+    /* Scrollable box container */
+    .container {
+      position: absolute;
+      left: 1000px;
+      max-height: 80vh;
+      overflow-y: auto;
+      display: grid;
+      gap: 15px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .card h2 {
+      font-size: 1.1rem;
+      margin: 0 0 5px;
+      color: #222;
+    }
+    .card p {
+      margin: 3px 0;
+      color: #555;
+      font-size: 0.9rem;
+    }
+    .empty-state {
+      text-align: center;
+      color: #777;
+      font-size: 1rem;
+      margin-top: 20px;
+    }
+
+    /* Password Toggle Wrapper */
+    .password-wrapper {
+      position: relative;
+      width: 100%;
+      margin: 8px 0;
+      box-sizing: border-box;
+    }
+    .password-wrapper input {
+      margin: 0 !important;
+      padding-right: 42px !important;
+      box-sizing: border-box;
+    }
+    .password-wrapper .toggle-password-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent !important;
+      border: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      width: 24px !important;
+      height: 24px !important;
+      cursor: pointer;
+      color: #6c757d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: none !important;
+    }
+    .password-wrapper .toggle-password-btn:hover {
+      color: #007bff;
+    }
+  </style>
+</head>
+<body>
+  <h2>Admin Dashboard</h2>
+  <div class="panel">
+    <!-- Form to add users -->
+    <form id="userForm">
+      <label>Admin Password</label>
+      <div class="password-wrapper">
+        <input type="password" id="adminPass" required />
+        <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('adminPass', this)" title="Show password">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        </button>
+      </div>
+
+      <label>Username</label>
+      <input type="text" id="username" required />
+
+      <label>Email</label>
+      <input type="email" id="email" required />
+
+      <label>Phone Number</label>
+      <input type="text" id="phone" required />
+
+      <label>Plan</label>
+      <select id="plan" required>
+        <option value="free">Free</option>
+        <option value="cambridge">Cambridge</option>
+        <option value="cambridge-official">Cambridge-official</option>
+        <option value="basic">Basic</option>
+        <option value="premium">Premium</option>
+      </select>
+
+      <button type="submit">➕ Add User</button>
+      <div class="status" id="status"></div>
+    </form>
+
+    <!-- List of existing users -->
+    <div class="user-list">
+      <label>Admin Password</label>
+      <div class="password-wrapper">
+        <input type="password" id="viewPass" />
+        <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('viewPass', this)" title="Show password">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        </button>
+      </div>
+      <button onclick="loadUsers()">🔄 Load Users</button>
+      <ul id="userList"></ul>
+      <input type="text" id="searchInput" placeholder="Search User...(Name, email or phone)">
+    </div>
+    <!--passcode generator-->
+    <form id="passCodeGenerator">
+      <label>Admin Password</label>
+      <div class="password-wrapper">
+        <input type="password" id="adminPassForPassCode" required />
+        <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('adminPassForPassCode', this)" title="Show password">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        </button>
+      </div>
+
+      <label>Organization name</label>
+      <input type="text" id="usernameForPassCode" required />
+
+      <label>Number of Passcodes</label>
+      <input type="number" id="numberForPassCode" required />
+      <button type="submit">Generate Passcodes</button>
+      <div class="generated-passCodes" id="generated-passCodes"></div>
+    </form>
+    <form id="addAdmin">
+      <label>Admin Password</label>
+      <div class="password-wrapper">
+        <input type="password" id="adminPassForAdmins" required />
+        <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('adminPassForAdmins', this)" title="Show password">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        </button>
+      </div>
+
+      <label>Admin name</label>
+      <input type="text" id="usernameForAdmins" required />
+
+      <label>Set New Admin Password</label>
+      <div class="password-wrapper">
+        <input type="password" id="setPassForAdmins" required />
+        <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('setPassForAdmins', this)" title="Show password">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        </button>
+      </div>
+
+      <label>Set Pass limit</label>
+      <input type="number" id="setPassLimitForAdmins" required />
+
+      <button type="submit">Add new Admin</button>
+      <div class="status" id="statusForAddAdmin"></div>
+    </form>
+
+  </div>
+      <div class="notification-box">
+  <div class="notification-header">Notifications</div>
+  <div id="notificationList" class="notification-list">
+    <!-- Notifications will appear here -->
+     
+  </div>
+</div>
+
+
+  
+  <div class="container" id="bookingsContainer">
+    <h1>🗣 Speaking Bookings (Admin Panel)</h1>
+  </div>
+
+
+  
+ 
+  <script>
+    const EYE_OPEN_SVG = `<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+    const EYE_OFF_SVG = `<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+
+    function togglePasswordVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      if (input.type === "password") {
+        input.type = "text";
+        if (btn) {
+          btn.innerHTML = EYE_OFF_SVG;
+          btn.title = "Hide password";
+        }
+      } else {
+        input.type = "password";
+        if (btn) {
+          btn.innerHTML = EYE_OPEN_SVG;
+          btn.title = "Show password";
+        }
+      }
+    }
+
+    function generateRandomStrings(number) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}|;:,.<>?/';
+  const strings = [];
+
+  for (let i = 0; i < number; i++) {
+    let str = '';
+    for (let j = 0; j < 12; j++) {
+      str += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    strings.push(str);
+  }
+
+  return strings;
+}
+    // Add user handler
+    document.getElementById('userForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const pass = document.getElementById('adminPass').value.trim();
+      const username = document.getElementById('username').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const plan = document.getElementById('plan').value;
+
+      const res = await fetch('/admin/add-user?pass=' + encodeURIComponent(pass), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, email, phone, plan })
+      });
+
+      
+
+      const statusEl = document.getElementById('status');
+      if (res.ok) {
+        statusEl.style.color = 'green';
+        statusEl.textContent = '✅ User added successfully';
+        document.getElementById('userForm').reset();
+        //loadUsers(); // Refresh list
+      } else {
+        const error = await res.text();
+        statusEl.style.color = 'red';
+        statusEl.textContent = '❌ ' + error;
+      }
+    })
+
+    // handle generation of passcodes
+    document.getElementById("passCodeGenerator").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const pass = document.getElementById('adminPassForPassCode').value.trim();
+      const organization = document.getElementById('usernameForPassCode').value.trim();
+      const numberForPassCode = document.getElementById("numberForPassCode").value.trim();
+
+      const passcodes = generateRandomStrings(numberForPassCode);
+
+      passcodes.forEach((passcode)=>{
+        generatePassCodePostReq(organization, pass, passcode);
+      })
+
+      const passStatusEl = document.getElementById("generated-passCodes");
+        const response = await fetch("/admin/show-passcodes?organization=" + encodeURIComponent(organization));
+        const passList = document.createElement("ul");
+        if(!response.ok){
+          const err = await response.text();
+          const li = `<li>error: ${err}</li>`
+          return;
+        }
+
+      const passcodesList = await response.json();
+      
+      passcodesList.forEach((passcode)=>{
+        const li = document.createElement("li");
+        li.innerHTML = `<p>${passcode.pass}</p>`;
+        passList.appendChild(li);
+      })
+      passStatusEl.appendChild(passList);
+    })
+
+
+    async function generatePassCodePostReq(organization, pass, passcode){
+      const res = await fetch('/admin/generate-passcodes?pass=' + encodeURIComponent(pass),{
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({organization, passcode})
+      })
+    }
+
+
+    //handle admin adding
+    document.getElementById("addAdmin").addEventListener("submit", async function(e){
+      e.preventDefault();
+
+      const pass = document.getElementById('adminPassForAdmins').value.trim();
+      const adminName = document.getElementById('usernameForAdmins').value.trim();
+      const setPass = document.getElementById("setPassForAdmins").value.trim();
+      const setPassLimit = document.getElementById("setPassLimitForAdmins").value;
+
+      const res = await fetch('/admin_superAdmin/add-admin?pass=' + encodeURIComponent(pass), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({adminName, setPass, setPassLimit})
+      });
+
+      const statusEl = document.getElementById('statusForAddAdmin');
+      if(res.ok) {
+        statusEl.style.color = 'green';
+        statusEl.textContent = '✅ Admin added successfully';
+
+        document.getElementById('addAdmin').reset();
+      } else{
+        const error = await res.text();
+        statusEl.style.color = 'red';
+        statusEl.textContent = '❌ ' + error;
+      }
+    })
+
+
+    //format time function
+    function formatReadableTime(isoString) {
+    const date = new Date(isoString);
+
+    // Extract components
+    const hours = date.getHours();
+    const minutes = date.getMinutes(); // optional if you want to include minutes
+    const day = date.getDate();
+    const month = date.toLocaleString('default', { month: 'long' }); // e.g., August
+    const year = date.getFullYear();
+
+    // Convert to 12-hour format
+    const hour12 = hours % 12 || 12;
+    const ampm = hours >= 12 ? 'pm' : 'am';
+
+    return `${hour12}${ampm} ${day} ${month}, ${year}`;
+}
+    //format time function
+    //search user function
+    function searchUsers(){
+
+      const searchInput = document.getElementById("searchInput");
+      searchInput.style.display = "block";
+      const userList = document.querySelectorAll("#userList li");
+
+      searchInput.addEventListener("input", ()=>{
+        const filter = searchInput.value.toLowerCase();
+
+        userList.forEach(li =>{
+          const text = li.textContent.toLowerCase();
+          li.classList.toggle("hidden", !text.includes(filter));
+        })
+      })
+    }
+    //search user function
+
+    // Load user list
+    async function loadUsers() {
+      const pass = document.getElementById('viewPass').value.trim();
+      const res = await fetch('/admin/users?pass=' + encodeURIComponent(pass));
+      const list = document.getElementById('userList');
+      list.innerHTML = '';
+
+      if (!res.ok) {
+        const err = await res.text();
+        list.innerHTML = `<li style="color: red;">❌ ${err}</li>`;
+        return;
+      }
+
+      const users = await res.json();
+      users.forEach(user => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <button onclick="updateProfile('${user.email}')"><strong>${user.username}</strong> (${user.email}, ${user.phone}, ${user.plan})</button>
+          <button class="delete-btn" onclick="deleteUser('${user.email}')">Delete</button>
+        `;
+        list.appendChild(li);
+      });
+      searchUsers();
+    }
+
+    // Delete user
+    async function deleteUser(email) {
+      const pass = document.getElementById('viewPass').value.trim();
+      await fetch('/admin/delete?email=' + encodeURIComponent(email) + '&pass=' + encodeURIComponent(pass), {
+        method: 'DELETE'
+      });
+      loadUsers();
+    }
+
+
+    async function updateProfile(email){
+      window.location.href = "/admin/update-profile"
+      const res = await fetch('/api/send-user-for-update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({email: email})
+      })
+    }
+
+    async function loadNotifications(){
+      const resForNotifs = await fetch('/api/notification-information-for-admin');
+      const response = await resForNotifs.json();
+      const notifList = document.getElementById("notificationList");
+      response.forEach((res, idx)=>{
+        if(idx == 0){
+          const p = document.createElement("p");
+          p.innerHTML = `${res.username} Finished Test:${res.mockNumber} from ${res.plan} on ${formatReadableTime(res.time)}`
+          notifList.appendChild(p);
+        }
+        else{
+        //console.log(formatReadableTime(res.time))
+        const p = document.createElement("p");
+        p.innerHTML = `${res.username} Finished Test:${res.mockNumber} from ${res.plan} on ${formatReadableTime(res.time)}`
+
+        notifList.insertBefore(p, notifList.firstChild);
+        }
+      })
+
+      
+    }
+
+    //speaking bookings
+
+
+    async function loadSpeakingBookingDataAndSort(){
+      const response = await fetch("/api/speaking-booking-data");
+      if(!response.ok){
+        alert("Failed to fetch speaking booking data");
+      } else{
+      const data = await response.json();
+      const sortedBookings = data.flatMap(user=>
+        user.speaking_dates
+        .filter(booking=> booking.completed !== true)
+        .map(booking=>({
+          username: user.username,
+          plan: user.plan,
+          email: user.email,
+          bookingsLeft: user.bookingsLeft,
+          testId: user.testId,
+          ...booking
+        }))
+      );
+      
+
+      const currentYear = new Date().getFullYear();
+      sortedBookings.sort((a, b) =>{
+          const dateA = new Date(`${currentYear}-${a.date} ${a.time}`);
+          const dateB = new Date(`${currentYear}-${b.date} ${b.time}`);
+          return dateA - dateB;  
+      });
+
+      
+      return sortedBookings;
+    }
+    }
+
+    const speakingContainer = document.getElementById("bookingsContainer");
+
+    async function renderBookings(){
+      speakingContainer.innerHTML = "<h1>Speaking Bookings (Admin Panel)</h1>";
+      const speakingBookings = await loadSpeakingBookingDataAndSort();
+
+      //for no bookings
+      if(speakingBookings.length === 0){
+        const emptyMessage = document.createElement("div");
+        emptyMessage.className = "empty-state";
+        emptyMessage.textContent = "No pending speaking bookings available.";
+        speakingContainer.appendChild(emptyMessage);
+        return;
+      }
+
+      speakingBookings.forEach(booking => {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        card.innerHTML = `
+          <h2>${booking.username} (${booking.plan})</h2>
+          <p>Email: ${booking.email}</p>
+          <p><strong>Date:</strong> ${booking.date} — ${booking.time}</p>
+          <p><strong>Test ID:</strong> ${booking.testId}</p>
+          <input type="number" step="0.1" placeholder="Enter score" id="score-${booking.testId}" />
+          <textarea placeholder="Enter examiner's note" id="note-${booking.testId}"></textarea>
+          <button onclick="submitResult('${booking.username}', '${booking.email}', '${booking.plan}', '${booking.testId}')">Submit Result</button>
+        `;
+
+        speakingContainer.appendChild(card);
+      });
+    }
+
+    async function submitResult(username, email, plan, testId) {
+      const score = document.getElementById(`score-${testId}`).value;
+      const note = document.getElementById(`note-${testId}`).value;
+
+      const payload = {
+        username,
+        email,
+        plan,
+        testId,
+        score,
+        examiners_note: note,
+        completed: true
+      };
+
+      try {
+        const res = await fetch("/admin/speaking-booking", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        location.reload();
+      } catch (err) {
+        alert("❌ " + err.message);
+      }
+
+      
+    }
+    renderBookings();
+    loadNotifications();
+  </script>
+</body>
+</html>

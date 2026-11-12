@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='15' fill='%231A365D' /><path d='M30 25 V55 C30 65 35 75 50 75 C65 75 70 65 70 55 V25 H60 V55 C60 62 58 65 50 65 C42 65 40 62 40 55 V25 H30Z' fill='white' /><rect x='25' y='25' width='15' height='5' fill='white' /><rect x='60' y='25' width='15' height='5' fill='white' /></svg>">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IELTS Test Completed</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      height: 100vh;
+      background: linear-gradient(to right, #e0eafc, #cfdef3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .message-box {
+      background-color: white;
+      padding: 40px 30px;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      animation: fadeIn 0.6s ease;
+    }
+
+    .message-box h1 {
+      font-size: 28px;
+      color: #2c3e50;
+      margin-bottom: 16px;
+    }
+
+    .message-box p {
+      font-size: 18px;
+      color: #555;
+      margin-bottom: 24px;
+    }
+
+    .ok-btn {
+      padding: 12px 32px;
+      background-color: #2ecc71;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .ok-btn:hover {
+      background-color: #27ae60;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="message-box">
+    <h1>IELTS Test Completed</h1>
+    <p>Thank you very much for your participation.</p>
+    <button class="ok-btn" onclick="window.location.href='/'">OK</button>
+  </div>
+
+</body>
+</html>

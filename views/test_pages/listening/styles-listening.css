@@ -1,0 +1,1273 @@
+/* Minimal, standard styles for two buttons */
+:root{
+  --btn-radius: 6px;
+  --btn-padding: 0.5rem 0.9rem;
+  --font-size: 0.95rem;
+  --primary: #0b74ff;      /* ok button */
+  --primary-text: #ffffff;
+  --muted: #f3f4f6;        /* stay background (subtle) */
+  --muted-border: #d1d5db; /* stay border */
+  --muted-text: #111827;
+  --shadow: 0 1px 2px rgba(16,24,40,0.05);
+  --focus-ring: 3px;
+}
+
+/* Base reset for consistency */
+.submit-ok-button,
+.submit-stay-button{
+  appearance: none;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5ch;
+  padding: var(--btn-padding);
+  font-size: var(--font-size);
+  line-height: 1;
+  border-radius: var(--btn-radius);
+  cursor: pointer;
+  user-select: none;
+  box-shadow: var(--shadow);
+  transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Primary filled button (OK) */
+.submit-ok-button{
+  background: linear-gradient(180deg, var(--primary), color-mix(in srgb, var(--primary) 80%, black 5%));
+  color: var(--primary-text);
+  font-weight: 600;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+/* Subtle/outline button (Stay) */
+.submit-stay-button{
+  background: var(--muted);
+  color: var(--muted-text);
+  border: 1px solid var(--muted-border);
+  font-weight: 500;
+}
+
+/* Hover / active */
+.submit-ok-button:hover,
+.submit-stay-button:hover{
+  transform: translateY(-1px);
+}
+
+.submit-ok-button:active,
+.submit-stay-button:active{
+  transform: translateY(0);
+  opacity: 0.95;
+}
+
+/* Disabled state */
+.submit-ok-button:disabled,
+.submit-stay-button:disabled{
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Keyboard focus (visible) */
+.submit-ok-button:focus-visible,
+.submit-stay-button:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 var(--focus-ring) color-mix(in srgb, var(--primary) 18%, white 82%), var(--shadow);
+  border-color: color-mix(in srgb, var(--primary) 40%, transparent 60%);
+}
+
+/* Small / compact variant you can reuse */
+.submit-ok-button.small,
+.submit-stay-button.small{
+  padding: 0.28rem 0.5rem;
+  font-size: 0.82rem;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .submit-ok-button,
+  .submit-stay-button{
+    transition: none;
+  }
+}
+
+
+
+/* finalised */
+  body {
+      margin: 0;
+      padding-top: 70px; /* Space for the fixed navbar */
+      padding-bottom: 90px;
+    }
+
+  .test-content{
+    font-family: "Helvetica Neue Regular", "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;;
+  }
+
+  /* Modal overlay */
+#fullscreen-warning-modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.7);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Modal box */
+#fullscreen-warning-modal > div {
+  background: #fff;
+  padding: 2em 2.5em;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  text-align: center;
+}
+
+/* Buttons */
+#fullscreen-ok-btn, #fullscreen-stay-btn {
+  font-size: 1.1em;
+  padding: 0.7em 2em;
+  margin: 1em 0.5em 0 0.5em;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+#fullscreen-ok-btn {
+  background: #e53935;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(229,57,53,0.12);
+}
+
+#fullscreen-ok-btn:hover {
+  background: #b71c1c;
+  box-shadow: 0 4px 16px rgba(229,57,53,0.18);
+}
+
+#fullscreen-stay-btn {
+  background: #43a047;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(67,160,71,0.12);
+}
+
+#fullscreen-stay-btn:hover {
+  background: #1b5e20;
+  box-shadow: 0 4px 16px rgba(67,160,71,0.18);
+}
+
+/* Modal text */
+#fullscreen-warning-modal p {
+  font-size: 1.15em;
+  margin-bottom: 1.5em;
+}
+
+
+
+    /* top nav */
+    .navbar-custom {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background-color: #4BC1C5; /* light red */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 1rem;
+      z-index: 1000;
+      font-size: 14px;
+    }
+    .navbar-left {
+      font-weight: bold;
+    }
+    .navbar-center {
+      color: #333;
+    }
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .navbar-right i, .navbar-right button {
+      font-size: 16px;
+    }
+    .item {
+     padding: 10px 20px;
+     margin: 5px;
+     border-radius: 8px;
+}   
+    .navbar-grid{
+      display: grid;
+      
+    }
+
+    .audio-playing{
+      position: relative;
+      left: 150px;
+    }
+
+    .timer-blunt{
+      opacity: 1;
+      position: absolute;
+      top: 29px;
+      left: 16px;
+    }
+
+    .timer-specific{
+      opacity: 0;
+      position: absolute;
+      top: 29px;
+      left: 16px;
+    }
+
+    .navbar-grid:hover .timer-blunt{
+      opacity: 0;
+    }
+
+    .navbar-grid:hover .timer-specific{
+      opacity: 1;
+    }
+
+
+
+
+
+    /* top nav */ 
+
+
+    .bottom-navbar {
+    position: fixed;
+    display: flex;
+  width: 100%;
+  background: #f8f9fa;
+  padding: 10px;
+  gap: 5px;
+  box-sizing: border-box;
+  position: fixed;
+  bottom: 0;
+}
+
+.nav-button {
+    background-color: #f5f7f5;
+    color: rgb(0, 0, 0);
+    font-size: 18px;
+    padding: 15px 30px;
+    border: none;
+    
+    cursor: pointer;
+    width: 30%;
+    transition: background-color 0.3s ease;
+
+  flex: 1; /* Distributes width equally among Part 1, 2, 3, 4 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0; /* Critical for flex items to shrink below content size */
+  padding: 5px;
+  border: 1px solid #ddd;
+    
+}
+
+.nav-button:hover {
+    background-color: #b7c7b7;
+}
+
+/*popup for listening start*/
+body.listening-popup-active {
+    overflow: hidden;
+  }
+  .listening-overlay {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .listening-popup {
+    background: rgba(255,255,255,0.95); 
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 400px;
+    max-height: 150px;
+    width: 100%;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    animation: fadeIn 0.6s ease;
+  }
+
+  .listening-popup p{
+    margin-bottom: 10px;
+  }
+  .listening-continue-btn {
+    background: #1170dd;
+    color: #fff;
+    border: none;
+    padding: 14px 24px;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .listening-continue-btn:hover {
+    background: #218838;
+  }
+/*popup for listening start*/
+
+/* popup settings */
+.popup-settings{
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 250px;
+  height: 15%;
+  background-color: #f9f9f9;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  transition: transform 0.3s ease-in-out;
+  transform: translateX(100%);
+  z-index: 1000;
+}
+
+#popup-settings.menu-visible{
+  transform: translateX(0);
+}
+
+/* popup settings */
+
+
+
+/* popup note */
+.popup-note{
+  position: fixed;
+  top:0;
+  right:0;
+  width: 500px;
+  height: 100%;
+  background-color: #f9f9f9;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  transition: transform 0.3s ease-in-out;
+  transform: translateX(100%);
+  z-index: 10000;
+}
+
+#popup-note.menu-visible{
+  transform: translateX(0);
+}
+
+.close-settings{
+  position:fixed;
+  right: 0;
+  top: 0;
+}
+/* popup note */
+
+
+.btn-flat {
+  background: transparent;
+  border: none;
+  
+}
+
+
+
+ /*questions */   
+
+   h2, h3 {
+      text-align: left;
+      margin-bottom: 10px;
+    }
+
+    
+
+
+    /* mcq */
+    .mcq-container-one-choice {
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      
+    }
+
+    .mcq-container-one-choice label {
+      display: block;
+      margin: -5px 0;
+      
+    }
+
+      .mcq {
+      
+      padding: 1rem;
+      border-radius: 5px;
+    }
+    /*----*/
+    /*group */
+
+    /*short answer */
+    .short-answer-container {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .short-answer-item {
+      
+      
+      padding: 12px 16px;
+      border-radius: 4px;
+    }
+
+    .short-answer-item label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    /*------*/
+
+
+    /* all the blanks */
+    input[type="text"] {
+      padding: 4px 6px;
+      font-size: 14px;
+      width: 173px;
+      height: 23px;
+      border: 1px solid;
+      border-radius: 3px;
+    }
+
+    ::placeholder{
+      text-align: center;
+    }
+
+
+    /* previous-next */
+    .nav-buttons {
+    position: fixed;
+    bottom: 10%;
+    right: 20px;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 0px;
+    z-index: 1000;
+        
+    }
+
+    .nav-buttons button {
+    margin-left: 2px;
+    margin-top: 10px;
+    font-size: 40px;
+    cursor: pointer;
+    z-index: 1001;
+    text-align: center;
+      
+    }
+
+    .bton {
+    width: 60px;
+    /* height: 60px; */
+    font-size: 20px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5%;
+    font-weight: bolder;
+}
+.bton-grey {
+  background-color: #999;
+}
+
+.bton.prev {
+  background-color: #000; /* grey */
+}
+
+.bton.next {
+  background-color: #000; /* black */
+}
+    /*-----*/
+/* finalised */
+
+
+/* note table */
+.note-table{
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.note-table td{
+  padding: 0.5rem;
+  vertical-align: top;
+}
+.note-table td:first-child {
+  width: 30%;
+  font-weight: bold;
+}
+
+.inline-blank {
+  display: inline-block;
+  width: 100%;
+  padding: 3px 5px;
+  font-size: 14px;
+}
+
+
+
+
+
+
+
+/* matching 
+.matching-container {
+  display: flex;
+  gap: 40px;
+}
+
+.features, .reasons{
+  flex: 1;
+}
+
+.feature-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  gap: 10px;
+}
+
+.drop-input {
+  border: 1px solid #ccc;
+  padding: 10px;
+  min-width: 200px;
+  background-color: #f9f9f9;
+}
+
+.reason{
+  background: #e1f5fe;
+  padding: 6px 10px;
+  border: 1px solid #2196f3;
+  border-radius: 4px;
+  cursor: grab;
+  margin-bottom: 10px;
+
+}
+
+.reasons.dragging{
+  opacity: 0.5;
+}
+
+/*-----*/
+.dropzone.dragover{
+  transform: scale(0.9);
+}
+.matching-container {
+  margin-right: 40px;
+}
+
+.all-boxes {
+  display: flex;
+  justify-content: space-between;
+  margin-right: 200px;
+  gap: 40px;
+  
+}
+
+.matching-features {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.qa-pair {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.question-feature {
+  width: 200px;
+  font-weight: bold;
+}
+
+.box {
+  border: 2px dashed #d7b0b0;
+  border-radius: 15px;
+  padding: 10px;
+  min-height: 30px;
+  width: 400px;
+  height: 70;
+  background-color: #ffffff;
+  cursor: pointer;
+  user-select: none;
+  transition: 0.2s;
+  text-align: center;
+}
+
+.box[draggable="false"] {
+  cursor: default;
+  border: 1px dashed #999;
+  width: 200px
+}
+
+.dragover {
+  border: 2px dashed #007BFF;
+  background-color: #e7f3ff;
+}
+
+.matching-options {
+  display: flex;
+  flex-direction: column;
+  margin-right: 800px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.mcq-container-two-choice {
+  font-family: Arial, sans-serif;
+  max-width: 500px;
+  margin: 20px;
+  
+}
+
+.question-box {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+  margin-bottom: 40px;
+  width: 1000px;
+}
+
+.number-boxes {
+  display: flex;
+  gap: 5px;
+  margin-right: 10px;
+}
+
+.num-box {
+  width: 30px;
+  height: 30px;
+  border: 1px solid black;
+  text-align: center;
+  line-height: 30px;
+  font-weight: bold;
+  
+}
+
+.question-text {
+  flex: 1;
+  
+}
+
+.options {
+  margin-top: 10px;
+}
+
+.options label {
+  display: block;
+  margin: 8px 0;
+}
+
+
+
+
+
+
+
+.reason {
+  background-color: #e0e0e0;
+  padding: 10px 15px;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  cursor: grab;
+  user-select: none;
+  width: fit-content;
+  min-width: 120px;
+  text-align: center;
+  
+}
+
+.flowchart-container {
+  padding: 20px;
+  max-width: 900px; /* slightly wider to fit both sides comfortably */
+  margin: auto;
+  font-family: sans-serif;
+  display: flex;                /* make it side by side */
+  align-items: flex-start;      /* align top edges */
+  justify-content: space-between;
+  gap: 20px;                    /* spacing between columns */
+}
+
+.flowchart-options {
+  flex: 1;
+  max-width: 300px;             /* keep options compact on left */
+  margin-bottom: 0;             /* remove bottom gap since now side-by-side */
+}
+
+.flowchart {
+  flex: 2;
+  align-items: center;
+  margin-left: 50px;
+}
+
+
+
+.question {
+  font-weight: bold;
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+.arrow {
+  font-size: 24px;
+  margin: 5px 0;
+  color: #555;
+}
+
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    margin: 20px 0;
+  }
+
+  th, td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+  }
+
+  th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+  }
+
+
+
+
+/* sentence completion container */
+
+.sentence-completion-container {
+  border: #333;
+  padding-left: 20px;
+}
+
+
+
+
+
+
+
+/* part checkboxes */
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  
+}
+
+.checkbox-container label {
+  display: flex;
+  align-items: center;
+  
+}
+
+.part-margin{
+  margin-left: 50px;
+}
+.part{
+  border-radius: 4px;
+  padding: 10px 15px; 
+  margin-bottom: 20px;
+}
+
+.part-header {
+  border: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px 15px;
+  background-color: #f9f9f9;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.part-header h2 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 400;
+  color: #333;
+}
+
+.part-header-p {
+  margin: 5px 0 0;
+  font-size: 18px;
+  color: #666;
+}
+
+
+
+.group-header {
+  margin-bottom: 30px;
+  margin-top: 40px;
+  
+}
+
+.group-header h3 {
+  margin: 0;
+  padding: 5px;
+  font-size: 16px;
+  font-weight: 900;
+  color: #333;
+}
+
+.instructions h3 {
+  margin: 5px 0 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+}
+
+/*
+for popup modal in index html
+
+html;
+<div class="modal">
+  <p>Press OK to start the Listening test</p>
+  <button class="ok-button">OK</button>
+</div>
+
+html;
+
+.modal {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px 30px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: fit-content;
+  margin: 40px auto;
+  font-family: Arial, sans-serif;
+}
+
+.modal p {
+  font-size: 14px;
+  color: #000;
+  margin-bottom: 15px;
+}
+
+.ok-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 6px 16px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+*/
+
+
+.note-completion-title {
+  text-align: center;
+  font-size: medium;
+}
+
+.note-completion-subheading{
+  font-weight: bold;
+}
+
+
+
+
+/*highlight button */
+
+#highlight-btn {
+      display: none;
+      position: absolute;
+      z-index: 1000;
+    }
+
+    .highlighted {
+      background-color: yellow;
+    }
+
+
+
+.invalid-drop{
+  background-color: #f8d7da !important;
+  transition: background-color 0.3s ease;
+}
+
+
+
+.matching-list{
+  position: relative;
+  bottom: 40px;
+  
+}
+
+.matching-info-question {
+  display: flex;
+}
+
+.matching-info-question select{
+  margin-top: 3px;
+  margin-left: 7px;
+  width: 90px;
+  height: 25px;
+}
+
+
+
+/*map labelling */
+.matching-labels {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 50px;
+  
+}
+
+.matching-labels .qa-pair {
+  flex-direction: column;
+}
+
+.diagram-box{
+  border: 2px dashed #d7b0b0;
+  border-radius: 15px;
+  padding: 10px;
+  min-height: 30px;
+  width: 50px;
+  height: 50px;
+  background-color: #ffffff;
+  cursor: pointer;
+  user-select: none;
+  transition: 0.2s;
+  text-align: center;
+}
+
+.diagram-box[draggable="false"] {
+  cursor: default;
+  border: 2px dashed #d7b0b0;
+  width: 50px;
+  height: 50px;
+}
+
+.matching-options-for-diagram{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 50px;
+  margin-left: 100px;
+}
+
+.diagram-label-container {
+  display: flex;  
+}
+
+
+/*map labelling */
+
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+
+
+.part-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+
+.attemptedCounts{
+  opacity: 0.5;
+  font-size: 16px;
+  margin-left: 20px
+}
+
+
+.part-label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+
+
+
+
+
+  .question-btn {margin: 2px; padding: 2px 5px; font-size: 12px;}
+  .question-btn.attempted {background-color: #28a745; color: white;}
+  .question-button-container {display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+  gap: 2px;
+  margin-top: 5px;}
+  .nav-button.active .question-button-container {display: flex; flex-wrap: wrap;}
+
+
+.nav-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start; /* label then nav */
+  gap: 12px;
+  padding: 10px 14px;
+  min-width: 160px;
+}
+
+/* Container for question buttons inside a part */
+.question-button-container {
+  display: flex;
+  flex-wrap: wrap;        /* wrap if needed */
+  gap: 4px;               /* small gap between buttons */
+  justify-content: flex-start;
+  align-items: center;
+  padding: 4px 0;
+}
+
+/* Individual question buttons */
+.qnav-btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 28px;            /* compact width */
+  height: 28px;           /* compact height */
+  font-size: 12px;        /* small text */
+  padding: 0;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #f5f5f5;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+
+  flex: 1; /* Forces buttons to share available width equally */
+  min-width: 0; /* Allows buttons to shrink smaller than their text */
+  padding: 4px 0;
+  font-size: clamp(10px, 2vw, 14px); /* Fluid typography: shrinks on mobile */
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden; /* Prevents text from breaking layout */
+  text-overflow: clip;
+}
+
+/* hover */
+.qnav-btn:hover {
+  background-color: #e0e0e0;
+}
+
+/* current / active question */
+.qnav-btn.current {
+  background-color: #0b74ff;
+  color: #fff;
+  border-color: #0b74ff;
+}
+
+/* attempted / answered question */
+.qnav-btn.attempted {
+  background-color: #28a745;
+  color: #fff;
+  border-color: #28a745;
+}
+
+.qnav-btn.current {
+  outline: 2px solid rgba(11,116,255,0.25);
+}
+
+/* hovered/pressed states */
+.qnav-btn:hover { transform: translateY(-1px); }
+.qnav-btn:active { transform: translateY(0); }
+
+
+
+/* keep container visually aligned on small screens */
+@media (max-width: 680px) {
+  .question-button-container { max-width: 48%; }
+  .qnav-btn { min-width: 28px; height: 28px; font-size: 12px; }
+}
+
+
+
+.highlight-wrapper {
+  background-color: yellow;
+  display: inline;
+  cursor: pointer;
+}
+
+/* small popup button */
+.unhighlight-popup {
+  position: absolute;
+  background: #333;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  z-index: 1000;
+  white-space: nowrap;
+  display: none; /* hidden until needed */
+}
+
+.unhighlight-popup:hover {
+  background: #555;
+}
+
+/* Mobile Breakpoint */
+@media (max-width: 768px) {
+    .part-margin {
+        margin-left: 10px; /* Reduce the huge left margin */
+    }
+
+    .audio-playing {
+        position: static; /* Move audio status back into flow */
+        display: block;
+        margin-top: 5px;
+    }
+    
+    .navbar-grid {
+        display: block; /* Stack items vertically if needed */
+    }
+
+    .timer-blunt, .timer-specific {
+        position: static; /* Let timer find its own space */
+    }
+
+    .popup-note {
+        width: 100%; /* Notes take full screen on mobile */
+    }
+    
+    .nav-buttons {
+        bottom: 80px; /* Move arrows up so they don't block the footer */
+    }
+}
+
+
+
+
+/* Keep your existing styles as they are, then add this: */
+/* Target laptops (1366px), tablets, and phones */
+@media screen and (max-width: 1400px) {
+    .nav-buttons {
+        /* Raise the buttons higher so they don't sit on top of the navbar */
+        bottom: 15%; 
+        right: 15px;
+    }
+
+    .nav-buttons button {
+        /* Slightly scale down the 40px font to prevent layout crowding */
+        font-size: 32px;
+        margin-top: 5px;
+    }
+}
+
+/* Specific adjustment for short laptop screens (like 1366x768) */
+@media screen and (max-height: 800px) {
+    .nav-buttons {
+        bottom: 18%; /* Pushes arrows further up when vertical space is tight */
+    }
+}
+
+
+.image-div img{
+  width: 85%;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    

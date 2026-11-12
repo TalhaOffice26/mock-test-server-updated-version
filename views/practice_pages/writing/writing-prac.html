@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='15' fill='%231A365D' /><path d='M30 25 V55 C30 65 35 75 50 75 C65 75 70 65 70 55 V25 H60 V55 C60 62 58 65 50 65 C42 65 40 62 40 55 V25 H30Z' fill='white' /><rect x='25' y='25' width='15' height='5' fill='white' /><rect x='60' y='25' width='15' height='5' fill='white' /></svg>">
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width", initial-scale="1.0" />
+        <title>Ielts Writing Test</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+        <link rel="stylesheet" href="styles-writing-prac.css">
+    <style>
+
+    </style>
+    </head>
+    <body>
+            <!-- top navbar -->
+  <div class="navbar-custom">
+    <div class="navbar-grid">
+
+    </div>
+    <div class="navbar-right">
+      <button id="finishBtn" name="submit-button" form="quiz-form" class="btn btn-outline-dark btn-sm">Finish test</button>
+      <button class="bi bi-wifi btn-flat"></button>
+      <button class="bi bi-gear btn-flat" onclick="settingsMenu()"></button>
+      <button class="bi bi-journal-text btn-flat" onclick="openNotes()"></button>
+    </div>
+  </div>
+
+  <!--popup menu for changin font-size-->
+  <div class="popup-settings menu-hidden" id="popup-settings">
+    <div class="popup-content">
+      <h3>Settings</h3>
+      <button class="close-settings" onclick="closeSettings()">X</button>
+      <form class="settings-form">
+        <label for="font-size-selector">Select Font-size:</label>
+        <select id="font-size-selector">
+          <option value="14px">small</option>
+          <option value="18px" selected>medium</option>
+          <option value="24px">large</option>
+        </select>
+      </form>
+    </div>
+  </div>
+<!--popup menu for changin font-size-->
+
+  <!--fullscreen checker-->
+<div id="fullscreen-warning-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); z-index:9999; justify-content:center; align-items:center;">
+  <div style="background:#fff; padding:2em; border-radius:8px; text-align:center;">
+    <p>Warning: You have exited fullscreen. Please stay in fullscreen during the test.</p>
+    <p><strong>Pressing OK will END THE TEST.</strong></p>
+    <button class="submit-ok-button" id="fullscreen-ok-btn">OK</button>
+    <button class="submit-stay-button" id="fullscreen-stay-btn">Stay</button>
+  </div>
+</div>
+
+  <!--Submit before Confirmation-->
+<div id="submit-warning-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); z-index:9999; justify-content:center; align-items:center;">
+  <div style="background:#fff; padding:2em; border-radius:8px; text-align:center;">
+    <p>You have attempted to FINISH the Test</p>
+    <p><strong>Pressing OK will END THE TEST.</strong></p>
+    <button class="submit-ok-button" id="submit-ok-btn">OK</button>
+    <button class= "submit-stay-button" id="submit-stay-btn">Stay</button>
+  </div>
+</div>
+
+ <!--popup menu for taking notes-->
+   <div class="popup-note menu-hidden" id="popup-note">
+    <h3>Notes</h3>
+    <button class="close-settings" onclick="closeSettings()">X</button>
+    <textarea spellcheck="false" id="notesArea" rows="100" cols="55" placeholder="Write your notes here....."></textarea>  
+   </div>
+
+  <!--popup menu for taking notes-->
+
+
+  <!--popup to start writing-->
+<div id="listeningOverlay" class="listening-overlay" style="display:none;">
+  <div class="listening-popup">
+    <p><strong>Press OK to start the WRITING TEST</strong></p>
+    <button class="listening-continue-btn" onclick="closeListeningPopup()">OK</button>
+  </div>
+</div>
+  <!--popup to start writing-->
+   <!--this whole section will be dynamically handledddddddddddddd-->
+  <form id="quiz-form">
+  <div class="test-content" id="test-content">
+
+
+  <div class="part-1 part" id="part-1" style="display:block">
+    <div id="part-header-1" class="part-header">
+      <h2>Part 1</h2>
+       <p class="part-header-p">You should spend about 20 minutes on this task. Write at least <strong>150 WORDS.</strong></p>
+</div>
+ <div class="container">
+    <div id="info-panel-1" class="info-panel">
+    </div>
+
+    <div id="write-panel-1" class="write-panel">
+      <div class="word-count" id="wordCount-1">Word Count: 0</div>
+      <textarea spellcheck="false" class="write-input" id="writer-1" placeholder="Start writing here..."></textarea>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+ <!-- previous-next -->
+
+</form>
+
+
+  <!--bottom nav-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+       <script src="scripts-writing-prac.js">
+        
+       </script> 
+    </body>
+</html>

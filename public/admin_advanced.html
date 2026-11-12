@@ -1,0 +1,2886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UKA Advanced Executive Admin | Candidate & Assessment Hub</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23001f3f'/><path d='M30 25 V55 C30 65 35 75 50 75 C65 75 70 65 70 55 V25 H60 V55 C60 62 58 65 50 65 C42 65 40 62 40 55 V25 H30Z' fill='%2306b6d4'/><rect x='25' y='25' width='15' height='5' fill='white'/><rect x='60' y='25' width='15' height='5' fill='white'/></svg>">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --bg-glass: rgba(255, 255, 255, 0.92);
+      --bg-card: rgba(255, 255, 255, 0.96);
+      --border-glass: rgba(226, 232, 240, 0.85);
+
+      --uka-navy: #001f3f;
+      --uka-cyan: #06b6d4;
+      --uka-cyan-dark: #0891b2;
+      --uka-cyan-light: #ecfeff;
+      --uka-amber: #d97706;
+      --uka-amber-bg: #fffbeb;
+      --uka-emerald: #059669;
+      --uka-emerald-bg: #ecfdf5;
+      --uka-rose: #e11d48;
+      --uka-rose-bg: #fff1f2;
+
+      --text-heading: #0f172a;
+      --text-body: #334155;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+
+      --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-code: 'JetBrains Mono', monospace;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 2px 8px rgba(0, 31, 63, 0.04);
+      --shadow-card: 0 8px 30px rgba(0, 31, 63, 0.06), 0 1px 3px rgba(0, 0, 0, 0.03);
+      --shadow-glow: 0 0 25px rgba(6, 182, 212, 0.18);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-main);
+      background: #f1f5f9;
+      color: var(--text-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      background-image:
+        radial-gradient(circle at 10% 10%, rgba(6, 182, 212, 0.06) 0%, transparent 40%),
+        radial-gradient(circle at 90% 90%, rgba(59, 130, 246, 0.05) 0%, transparent 45%),
+        linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      background-attachment: fixed;
+    }
+
+    /* Top Glass Navbar */
+    header.glass-navbar {
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: rgba(255, 255, 255, 0.92);
+      border-bottom: 1px solid var(--border-glass);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 0.85rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(0, 31, 63, 0.04);
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .brand-logo {
+      height: 40px;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      background: #fff;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid #e2e8f0;
+    }
+    .brand-title-group h1 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--uka-navy);
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-title-group h1 span {
+      color: var(--uka-cyan);
+    }
+    .brand-sub {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--uka-emerald);
+      box-shadow: 0 0 6px var(--uka-emerald);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.3); } }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .glass-btn {
+      background: #fff;
+      border: 1px solid var(--border-glass);
+      color: var(--text-heading);
+      padding: 0.55rem 1.15rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+    }
+    .glass-btn:hover {
+      border-color: var(--uka-cyan);
+      box-shadow: var(--shadow-glow);
+      transform: translateY(-1px);
+    }
+    .glass-btn.primary {
+      background: linear-gradient(135deg, var(--uka-navy), #003366);
+      color: #fff;
+      border: none;
+      box-shadow: 0 4px 15px rgba(0, 31, 63, 0.15);
+    }
+    .glass-btn.primary:hover {
+      background: linear-gradient(135deg, #002855, var(--uka-navy));
+      box-shadow: 0 6px 20px rgba(0, 31, 63, 0.25);
+    }
+
+    /* Main Container */
+    main.executive-main {
+      max-width: 1440px;
+      width: 100%;
+      margin: 2rem auto;
+      padding: 0 2rem 4rem;
+      flex: 1;
+    }
+
+    /* Stat Cards Grid */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .glass-card-stat {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-md);
+      padding: 1.4rem 1.6rem;
+      box-shadow: var(--shadow-card);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.25s;
+    }
+    .glass-card-stat:hover {
+      transform: translateY(-3px);
+      border-color: var(--uka-cyan);
+      box-shadow: var(--shadow-glow), var(--shadow-card);
+    }
+    .glass-card-stat::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; width: 4px; height: 100%;
+      background: var(--uka-cyan);
+    }
+    .glass-card-stat.c-navy::before { background: var(--uka-navy); }
+    .glass-card-stat.c-emerald::before { background: var(--uka-emerald); }
+    .glass-card-stat.c-amber::before { background: var(--uka-amber); }
+
+    .stat-label {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .stat-val {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text-heading);
+      font-family: var(--font-code);
+      line-height: 1;
+    }
+    .stat-sub {
+      font-size: 0.78rem;
+      color: var(--text-light);
+      margin-top: 8px;
+    }
+
+    /* Section Tabs */
+    .glass-tabs-bar {
+      display: flex;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(12px);
+      padding: 6px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-glass);
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
+      overflow-x: auto;
+    }
+    .glass-tab {
+      flex: 1;
+      min-width: 200px;
+      padding: 0.85rem 1.4rem;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .glass-tab:hover {
+      color: var(--uka-navy);
+      background: rgba(255, 255, 255, 0.6);
+    }
+    .glass-tab.active {
+      background: #fff;
+      color: var(--uka-navy);
+      box-shadow: 0 4px 12px rgba(0, 31, 63, 0.08);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+    }
+    .tab-counter {
+      background: var(--uka-cyan-light);
+      color: var(--uka-cyan-dark);
+      font-family: var(--font-code);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+    }
+
+    /* Glass Panels */
+    .glass-panel {
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 2rem;
+      position: relative;
+    }
+    .panel-headline {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-glass);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .panel-headline h2 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--uka-navy);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .panel-headline p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Form Fields */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+    .input-box {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .input-box label {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+    }
+    .input-box input, .input-box select, .input-box textarea {
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: var(--radius-sm);
+      color: var(--text-heading);
+      font-family: inherit;
+      font-size: 0.95rem;
+      padding: 0.8rem 1rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .input-box input:focus, .input-box select:focus, .input-box textarea:focus {
+      border-color: var(--uka-cyan);
+      box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.15);
+    }
+
+    /* Passcode Selector */
+    .plan-selector-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 4px;
+    }
+    .plan-pill {
+      background: #fff;
+      border: 1.5px solid #cbd5e1;
+      padding: 14px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+    .plan-pill:hover { border-color: var(--uka-cyan); }
+    .plan-pill.selected-premium {
+      border-color: var(--uka-amber);
+      background: var(--uka-amber-bg);
+      box-shadow: 0 4px 15px rgba(217, 119, 6, 0.12);
+    }
+    .plan-pill.selected-free {
+      border-color: var(--uka-cyan);
+      background: var(--uka-cyan-light);
+      box-shadow: 0 4px 15px rgba(6, 182, 212, 0.12);
+    }
+    .plan-pill-title {
+      font-weight: 800;
+      font-size: 0.92rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .plan-pill.selected-premium .plan-pill-title { color: var(--uka-amber); }
+    .plan-pill.selected-free .plan-pill-title { color: var(--uka-cyan-dark); }
+    .plan-pill-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Buttons */
+    .btn-exec {
+      padding: 0.8rem 1.8rem;
+      font-size: 0.95rem;
+      font-weight: 800;
+      border-radius: var(--radius-sm);
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn-exec-primary {
+      background: linear-gradient(135deg, var(--uka-navy), #003366);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(0, 31, 63, 0.15);
+    }
+    .btn-exec-primary:hover {
+      background: linear-gradient(135deg, #002855, var(--uka-navy));
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 31, 63, 0.25);
+    }
+    .btn-exec-whatsapp {
+      background: #25D366;
+      color: white;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
+    }
+    .btn-exec-whatsapp:hover {
+      background: #20ba5a;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(37, 211, 102, 0.35);
+    }
+    .btn-exec-outline {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      color: var(--text-body);
+    }
+    .btn-exec-outline:hover {
+      border-color: var(--uka-navy);
+      background: #f8fafc;
+    }
+    .btn-xs {
+      padding: 0.45rem 0.85rem;
+      font-size: 0.78rem;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    /* Tables */
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-glass);
+      background: #fff;
+      box-shadow: var(--shadow-sm);
+    }
+    table.glass-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+    table.glass-table th {
+      background: #f8fafc;
+      padding: 0.95rem 1.25rem;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      border-bottom: 1.5px solid var(--border-glass);
+      white-space: nowrap;
+    }
+    table.glass-table td {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid #f1f5f9;
+      vertical-align: middle;
+    }
+    table.glass-table tr:hover td {
+      background: #f8fafc;
+    }
+
+    /* Badges */
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      font-size: 0.72rem;
+      font-weight: 700;
+      font-family: var(--font-code);
+    }
+    .badge-prm { background: var(--uka-amber-bg); color: var(--uka-amber); border: 1px solid #fde68a; }
+    .badge-fr { background: var(--uka-cyan-light); color: var(--uka-cyan-dark); border: 1px solid #a5f3fc; }
+    .badge-used { background: #ffe4e6; color: var(--uka-rose); border: 1px solid #fecdd3; }
+    .badge-ready { background: var(--uka-emerald-bg); color: var(--uka-emerald); border: 1px solid #a7f3d0; }
+    .badge-band {
+      background: var(--uka-navy);
+      color: #fff;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      font-family: var(--font-code);
+      font-size: 0.95rem;
+    }
+
+    /* Modal / Drawer */
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: none;
+      justify-content: center;
+      align-items: flex-start;
+      z-index: 1000;
+      padding: 2.5rem 1.5rem;
+      overflow-y: auto;
+    }
+    .modal-backdrop.active { display: flex; }
+    .modal-sheet {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 980px;
+      margin: auto 0;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 60px rgba(0, 31, 63, 0.2);
+      border: 1px solid var(--border-glass);
+      animation: modalSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes modalSlide {
+      from { transform: translateY(20px) scale(0.98); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    .modal-head {
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border-glass);
+      padding: 1.25rem 1.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top-left-radius: var(--radius-lg);
+      border-top-right-radius: var(--radius-lg);
+    }
+    .modal-head h3 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--uka-navy);
+    }
+    .modal-close {
+      background: transparent;
+      border: none;
+      font-size: 1.6rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      line-height: 1;
+    }
+    .modal-close:hover { color: var(--uka-navy); }
+    .modal-body {
+      padding: 1.75rem;
+    }
+
+    /* Passcode Chips */
+    .chips-shelf {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .chip-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s;
+    }
+    .chip-item:hover {
+      border-color: var(--uka-cyan);
+      box-shadow: var(--shadow-sm);
+    }
+    .chip-code {
+      font-family: var(--font-code);
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--text-heading);
+    }
+
+    /* Detailed Mistakes & Writing Viewer Box */
+    .detail-breakdown-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      margin-top: 1rem;
+    }
+    .detail-breakdown-card h4 {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--uka-navy);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mistake-box-row {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+    }
+    .mistake-qnum {
+      font-weight: 800;
+      color: var(--uka-rose);
+      margin-right: 8px;
+    }
+    .ans-wrong {
+      color: var(--uka-rose);
+      font-weight: 700;
+      text-decoration: line-through;
+    }
+    .ans-correct {
+      color: var(--uka-emerald);
+      font-weight: 700;
+      margin-left: 8px;
+    }
+    .writing-preview-box {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      padding: 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      box-sizing: border-box;
+      max-width: 100%;
+      margin-top: 6px;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+
+    /* TRF Preview Area Modal */
+    .trf-preview-container {
+      background: #ffffff;
+      border: 2px solid #001f3f;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 20px;
+    }
+
+    /* Toast */
+    .toast-popup {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: #ffffff;
+      border: 1.5px solid var(--uka-cyan);
+      box-shadow: 0 10px 30px rgba(0, 31, 63, 0.15);
+      color: var(--text-heading);
+      padding: 14px 22px;
+      border-radius: var(--radius-md);
+      font-size: 0.92rem;
+      font-weight: 700;
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      gap: 10px;
+    }
+    .toast-popup.active {
+      display: flex;
+      animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes toastIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    /* Off-Screen TRF Template */
+    .pdf-render-canvas {
+      position: absolute;
+      left: -9999px;
+      top: -9999px;
+      background: white;
+    }
+    .page-a4 {
+      width: 210mm;
+      min-height: 297mm;
+      background: white;
+      padding: 20mm;
+      box-sizing: border-box;
+      position: relative;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Glass Navbar -->
+  <header class="glass-navbar">
+    <div class="brand-wrap">
+      <img src="2_UKABritish-council-Logo.png" alt="UKA Logo" class="brand-logo" onerror="this.style.display='none'">
+      <div class="brand-title-group">
+        <h1>UKA <span>EXECUTIVE ADMIN</span></h1>
+        <div class="brand-sub"><span class="status-dot"></span> Next-Gen Candidate & Passcode Hub</div>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <a href="/admin_orgs" class="glass-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Classic Admin Panel
+      </a>
+      <a href="/mocks.html" class="glass-btn" target="_blank">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Mocks Portal
+      </a>
+      <a href="/authority_login" class="glass-btn primary">Logout</a>
+    </div>
+  </header>
+
+  <main class="executive-main">
+    <!-- Top Metrics Overview -->
+    <section class="metric-grid">
+      <div class="glass-card-stat c-navy">
+        <div class="stat-label">Assigned Users</div>
+        <div class="stat-val" id="statAssigned">0</div>
+        <div class="stat-sub">Active candidate credentials</div>
+      </div>
+      <div class="glass-card-stat">
+        <div class="stat-label">Unused Passcodes</div>
+        <div class="stat-val" id="statUnused">0</div>
+        <div class="stat-sub">Ready in pool for exams</div>
+      </div>
+      <div class="glass-card-stat c-emerald">
+        <div class="stat-label">Completed Tests</div>
+        <div class="stat-val" id="statCompleted">0</div>
+        <div class="stat-sub">Tests submitted & graded</div>
+      </div>
+      <div class="glass-card-stat c-amber">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div>
+            <div class="stat-label">Admin Limit</div>
+            <div class="stat-val" id="statLimit">0</div>
+            <div class="stat-sub">Passcode generation balance</div>
+          </div>
+          <button class="btn-xs btn-exec-primary" onclick="openTopUpModal()" style="font-size:0.75rem; padding:4px 9px; margin-top:2px;" title="Top-up Passcode Quota without accessing MongoDB">
+            + Top-Up
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <nav class="glass-tabs-bar">
+      <button class="glass-tab active" onclick="switchView('assign')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+        Quick Assign Candidate & Passcodes
+      </button>
+      <button class="glass-tab" onclick="switchView('directory')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Candidate Directory & Passcode Balances
+        <span class="tab-counter" id="candTabCount">0</span>
+      </button>
+      <button class="glass-tab" onclick="switchView('results')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Recent Exam Results & Assessment Hub
+        <span class="tab-counter" id="resTabCount">0</span>
+      </button>
+    </nav>
+
+    <!-- SECTION 1: Quick Assign Candidate -->
+    <div id="view-assign" class="view-pane">
+      <div class="glass-panel">
+        <div class="panel-headline">
+          <div>
+            <h2>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--uka-cyan)" stroke-width="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+              Fast Candidate ID & Passcode Assignment
+            </h2>
+            <p>1-Click instant generation: Name + Phone creates Candidate ID and assigns one-time passcodes directly into the system.</p>
+          </div>
+        </div>
+
+        <form id="quickAssignForm" onsubmit="handleQuickAssign(event)">
+          <div class="form-grid">
+            <div class="input-box">
+              <label>Candidate Full Name *</label>
+              <input type="text" id="assignName" placeholder="e.g. Tanvir Ahmed" required>
+            </div>
+            <div class="input-box">
+              <label>WhatsApp / Mobile Number * (Unique)</label>
+              <input type="tel" id="assignPhone" placeholder="e.g. 01712345678" required>
+            </div>
+            <div class="input-box">
+              <label>Number of Tests / Passcodes to Assign</label>
+              <input type="number" id="assignCount" min="1" max="25" value="5" required>
+            </div>
+
+            <!-- Passcode Level Selector -->
+            <div class="input-box">
+              <label>Select Mock Test Level</label>
+              <input type="hidden" id="assignLevel" value="Premium">
+              <div class="plan-selector-grid">
+                <div class="plan-pill selected-premium" id="pillPremium" onclick="selectPlan('Premium')">
+                  <div class="plan-pill-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    PREMIUM TEST
+                  </div>
+                  <div class="plan-pill-desc">For Cambridge / Premium Mock Tests (1 test per code)</div>
+                </div>
+
+                <div class="plan-pill" id="pillFree" onclick="selectPlan('Free')">
+                  <div class="plan-pill-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    FREE TEST
+                  </div>
+                  <div class="plan-pill-desc">For Free / Placement Mock Tests (1 test per code)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 1.5rem; display:flex; justify-content:flex-end;">
+            <button type="submit" class="btn-exec btn-exec-primary" id="btnAssignSubmit">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+              Generate Candidate ID & Assign Passcodes Now
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- SECTION 2: Candidate Directory -->
+    <div id="view-directory" class="view-pane" style="display:none;">
+      <div class="glass-panel">
+        <div class="panel-headline">
+          <div>
+            <h2>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--uka-navy)" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              Enrolled Candidate Directory
+            </h2>
+            <p>Live status of candidates, passcode balances, test completion, and 1-click 2-in-1 copy or WhatsApp credentials share.</p>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <input type="text" id="searchCandInput" placeholder="Search by Candidate ID, name or phone..." style="width:280px; padding:0.6rem 0.9rem; background:#fff; border:1px solid #cbd5e1; border-radius:var(--radius-sm); outline:none;" oninput="debounceSearch()">
+            <button class="glass-btn btn-xs" onclick="loadCandidates()">Refresh</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="glass-table">
+            <thead>
+              <tr>
+                <th>Candidate ID</th>
+                <th>Candidate Name</th>
+                <th>WhatsApp Phone</th>
+                <th>Plan Level</th>
+                <th>Passcodes (Left / Used)</th>
+                <th>Completed Mocks</th>
+                <th>Action & WhatsApp</th>
+              </tr>
+            </thead>
+            <tbody id="candidateTableBody">
+              <tr><td colspan="7" style="text-align:center; padding:2rem; color:var(--text-muted);">Loading candidates...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Candidate Pagination Bar -->
+        <div id="candPaginationBar" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-top:1.2rem; padding-top:14px; border-top:1px solid #e2e8f0;">
+          <div id="candPageInfo" style="font-size:0.85rem; color:var(--text-muted); font-weight:600;">Showing 1-10 of 0 candidates</div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <button class="glass-btn btn-xs" id="btnPrevCand" onclick="changeCandPage(-1)">◀ Previous</button>
+            <span id="candPageBadge" class="badge-pill badge-ready" style="padding:4px 10px; font-weight:700;">Page 1 of 1</span>
+            <button class="glass-btn btn-xs" id="btnNextCand" onclick="changeCandPage(1)">Next ▶</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: Recent Results -->
+    <div id="view-results" class="view-pane" style="display:none;">
+      <div class="glass-panel">
+        <div class="panel-headline">
+          <div>
+            <h2>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--uka-emerald)" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              Recent Exam Results & Assessment Hub
+            </h2>
+            <p>Automated L/R raw score grading, manual speaking entry, overall band calculation, interactive TRF preview and detailed mistakes/writing view.</p>
+          </div>
+          <button class="glass-btn btn-xs" onclick="loadRecentResults(1)">Refresh Results</button>
+        </div>
+
+        <div class="table-wrap">
+          <table class="glass-table">
+            <thead>
+              <tr>
+                <th>Candidate ID</th>
+                <th>Mock ID</th>
+                <th>Passcode Used</th>
+                <th>L / R (Raw)</th>
+                <th>Writing Band</th>
+                <th>Speaking Band</th>
+                <th>Overall Band</th>
+                <th>Assessment Options</th>
+              </tr>
+            </thead>
+            <tbody id="resultTableBody">
+              <tr><td colspan="8" style="text-align:center; padding:2rem; color:var(--text-muted);">Loading recent results...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Results Pagination Bar -->
+        <div id="resPaginationBar" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-top:1.2rem; padding-top:14px; border-top:1px solid #e2e8f0;">
+          <div id="resPageInfo" style="font-size:0.85rem; color:var(--text-muted); font-weight:600;">Showing 1-10 of 0 results</div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <button class="glass-btn btn-xs" id="btnPrevRes" onclick="changeResPage(-1)">◀ Previous</button>
+            <span id="resPageBadge" class="badge-pill badge-prm" style="padding:4px 10px; font-weight:700;">Page 1 of 1</span>
+            <button class="glass-btn btn-xs" id="btnNextRes" onclick="changeResPage(1)">Next ▶</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Candidate Details Modal -->
+  <div class="modal-backdrop" id="candidateModal">
+    <div class="modal-sheet">
+      <div class="modal-head">
+        <div>
+          <h3 id="modalCandTitle">Candidate Portfolio</h3>
+          <p id="modalCandMeta" style="font-size:0.8rem; color:var(--text-muted);"></p>
+        </div>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; padding-bottom:1rem; border-bottom:1px solid var(--border-glass);">
+          <div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <h2 id="modalCandName" style="font-size:1.4rem; color:var(--uka-navy); font-weight:800;">-</h2>
+              <button class="btn-xs btn-exec-outline" style="padding:2px 8px; font-size:0.75rem;" onclick="editCandidatePrompt()" title="Edit Name & Phone">Edit</button>
+            </div>
+            <div id="modalCandPhone" style="font-family:var(--font-code); color:var(--uka-cyan-dark); font-size:0.9rem; margin-top:2px;"></div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn-exec btn-exec-whatsapp btn-xs" id="modalWhatsAppShareBtn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+              Send Passcodes via WhatsApp
+            </button>
+            <button class="btn-xs btn-exec-outline" style="color:var(--uka-rose); border-color:#fecdd3;" onclick="confirmDeleteCandidate()" title="Delete entire candidate profile">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              Delete Candidate
+            </button>
+          </div>
+        </div>
+
+        <!-- Assign Extra Passcodes -->
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:1rem; border-radius:var(--radius-sm); margin:1.2rem 0;">
+          <h4 style="font-size:0.85rem; font-weight:700; color:var(--uka-navy); margin-bottom:8px;">Assign Additional Passcodes</h4>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <input type="number" id="extraPassCount" value="3" min="1" max="25" style="width:100px; padding:0.6rem; border:1px solid #cbd5e1; border-radius:var(--radius-sm);">
+            <select id="extraPassLevel" style="width:180px; padding:0.6rem; border:1px solid #cbd5e1; border-radius:var(--radius-sm);">
+              <option value="Premium">Premium Test</option>
+              <option value="Free">Free Test</option>
+            </select>
+            <button class="btn-exec btn-exec-primary btn-xs" onclick="handleAssignMore()">+ Add Passcodes</button>
+          </div>
+        </div>
+
+        <!-- Passcodes List -->
+        <h4 style="font-size:0.9rem; font-weight:800; color:var(--uka-navy); margin-top:1.5rem;">Assigned One-Time Passcodes</h4>
+        <div class="chips-shelf" id="modalPasscodeList"></div>
+
+        <!-- Exam History -->
+        <h4 style="font-size:0.9rem; font-weight:800; color:var(--uka-navy); margin-top:1.8rem; margin-bottom:8px;">Completed Mock Tests</h4>
+        <div class="table-wrap">
+          <table class="glass-table">
+            <thead>
+              <tr>
+                <th>Mock ID</th>
+                <th>Exam Date</th>
+                <th>Listening</th>
+                <th>Reading</th>
+                <th>Writing</th>
+                <th>Speaking</th>
+                <th>Overall</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="modalResultsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRF Preview & Share Modal -->
+  <div class="modal-backdrop" id="trfModal">
+    <div class="modal-sheet" style="max-width:850px;">
+      <div class="modal-head">
+        <h3 id="trfModalTitle">Official Test Report Form (TRF) Preview</h3>
+        <button class="modal-close" onclick="closeTrfModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="trfPreviewContainer" class="trf-preview-container">
+          <!-- Live Preview rendered here -->
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; padding-top:10px; border-top:1px solid var(--border-glass);">
+          <div style="font-size:0.85rem; color:var(--text-muted);">Print-Ready 2-Page Official Assessment Report</div>
+          <div style="display:flex; gap:10px;">
+            <button class="btn-exec btn-exec-whatsapp btn-xs" id="trfShareWhatsAppBtn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+              Share Result on WhatsApp
+            </button>
+            <button class="btn-exec btn-exec-primary btn-xs" id="trfDownloadPdfBtn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download Official PDF
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detailed Exam Answers & Writing Breakdown Modal -->
+  <div class="modal-backdrop" id="answersModal">
+    <div class="modal-sheet" style="max-width:920px;">
+      <div class="modal-head">
+        <h3 id="ansModalTitle">Detailed Exam Answers & Writing Script Analysis</h3>
+        <button class="modal-close" onclick="closeAnswersModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:1rem; padding-bottom:10px; border-bottom:1px solid var(--border-glass);">
+          <div>
+            <h4 id="ansCandName" style="color:var(--uka-navy); font-weight:800; font-size:1.15rem;">-</h4>
+            <p id="ansMeta" style="font-size:0.85rem; color:var(--text-muted);"></p>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn-exec btn-exec-primary btn-xs" id="btnRunAiAnsModal" onclick="triggerAiEvaluationFromAnsModal()">
+              ⚡ Run AI Evaluation
+            </button>
+            <button class="btn-exec btn-exec-outline btn-xs" id="btnDownloadAnsScript" onclick="downloadAnswerScriptPDF()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download Script PDF
+            </button>
+            <button class="btn-exec btn-exec-whatsapp btn-xs" id="ansShareWhatsAppBtn">
+              Share Script on WhatsApp
+            </button>
+          </div>
+        </div>
+
+        <!-- Listening Mistakes -->
+        <div class="detail-breakdown-card">
+          <h4>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--uka-rose)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            Listening Module Mistakes & Answer Comparison
+          </h4>
+          <div id="listeningMistakesList"></div>
+        </div>
+
+        <!-- Reading Mistakes -->
+        <div class="detail-breakdown-card">
+          <h4>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--uka-amber)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Reading Module Mistakes & Answer Comparison
+          </h4>
+          <div id="readingMistakesList"></div>
+        </div>
+
+        <!-- Writing Task 1 & 2 Scripts -->
+        <div class="detail-breakdown-card">
+          <h4>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--uka-cyan)" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Writing Task 1 Candidate Response
+          </h4>
+          <div class="writing-preview-box" id="writingTask1Text">No script submitted.</div>
+
+          <h4 style="margin-top:1.2rem;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--uka-cyan)" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Writing Task 2 Candidate Response
+          </h4>
+          <div class="writing-preview-box" id="writingTask2Text">No script submitted.</div>
+        </div>
+
+        <!-- AI Evaluation Result Box inside Answers Modal -->
+        <div id="aiEvaluationAnsBox" style="display:none;" class="detail-breakdown-card">
+          <h4>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--uka-cyan)" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Gemini AI Evaluation & Authentic IELTS Breakdown
+          </h4>
+          <div id="aiEvaluationAnsContent"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Score Entry Modal -->
+  <div class="modal-backdrop" id="scoreModal">
+    <div class="modal-sheet" style="max-width:550px;">
+      <div class="modal-head">
+        <h3>Examiner Score Entry</h3>
+        <button class="modal-close" onclick="closeScoreModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="scoreDocId">
+
+        <!-- AI Writing Evaluation Banner -->
+        <div style="background:linear-gradient(135deg, #ecfeff 0%, #f0fdf4 100%); border:1.5px solid #a5f3fc; border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:1.2rem; display:flex; justify-content:space-between; align-items:center; gap:10px;">
+          <div>
+            <div style="font-weight:800; color:var(--uka-navy); font-size:0.88rem; display:flex; align-items:center; gap:6px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--uka-cyan-dark)" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              AI Writing Evaluation (Gemini)
+            </div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Auto-grade Task 1 & 2 by realistic British Council / IDP IELTS exam standards.</div>
+          </div>
+          <button type="button" class="btn-exec btn-exec-primary btn-xs" id="btnRunAiScoreModal" onclick="triggerAiEvaluation()">
+            ⚡ Auto Grade
+          </button>
+        </div>
+        <div class="input-box" style="margin-bottom:1rem;">
+          <label>Speaking Band Score (0.0 - 9.0)</label>
+          <input type="number" step="0.5" min="0" max="9" id="spkScoreInput" placeholder="e.g. 6.5">
+        </div>
+        <div class="input-box" style="margin-bottom:1rem;">
+          <label>Writing Band Score (0.0 - 9.0)</label>
+          <input type="number" step="0.5" min="0" max="9" id="wriScoreInput" placeholder="e.g. 6.5">
+        </div>
+        <div class="input-box" style="margin-bottom:1.2rem;">
+          <label>Writing Task 1 Feedback</label>
+          <textarea id="task1FeedInput" rows="2" placeholder="Task 1 feedback..."></textarea>
+        </div>
+        <div class="input-box" style="margin-bottom:1.2rem;">
+          <label>Writing Task 2 Feedback</label>
+          <textarea id="task2FeedInput" rows="2" placeholder="Task 2 feedback..."></textarea>
+        </div>
+        <div class="input-box" style="margin-bottom:1.5rem;">
+          <label>Teacher's Recommendation</label>
+          <textarea id="recInput" rows="2" placeholder="Teacher recommendation..."></textarea>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+          <button class="btn-exec btn-exec-outline btn-xs" onclick="closeScoreModal()">Cancel</button>
+          <button class="btn-exec btn-exec-primary btn-xs" onclick="saveScores()">Save & Compute Band</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top-Up Passcode Quota Modal -->
+  <div class="modal-backdrop" id="topupModal">
+    <div class="modal-sheet" style="max-width:440px;">
+      <div class="modal-head">
+        <h3>Top-Up Passcode Quota (Admin Limit)</h3>
+        <button class="modal-close" onclick="closeTopUpModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">
+          Increase authorized passcode quota directly without accessing MongoDB. Password verification required.
+        </p>
+
+        <div style="background:#fffbeb; border:1px solid #fef3c7; padding:10px 14px; border-radius:var(--radius-sm); margin-bottom:1.2rem; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:0.85rem; font-weight:700; color:#92400e;">Current Passcode Limit:</span>
+          <strong id="topupCurrentLimit" style="font-size:1.2rem; color:#b45309; font-family:var(--font-code);">0</strong>
+        </div>
+
+        <form id="topupForm" onsubmit="handleTopUpQuota(event)">
+          <div class="input-box" style="margin-bottom:1rem;">
+            <label>Amount to Add (+ Passcodes)</label>
+            <input type="number" id="topupAmountInput" min="1" max="1000" value="100" required placeholder="e.g. 50, 100, 200">
+          </div>
+
+          <div class="input-box" style="margin-bottom:1.4rem;">
+            <label>Admin Security Password</label>
+            <div style="position:relative; width:100%;">
+              <input type="password" id="topupPasswordInput" required placeholder="Enter admin password" style="width:100%; padding-right:42px; box-sizing:border-box;">
+              <button type="button" onclick="togglePasswordVisibility('topupPasswordInput', this)" title="Show password" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; padding:0; cursor:pointer; color:var(--text-muted); display:flex; align-items:center; justify-content:center;">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </button>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:flex-end; gap:10px;">
+            <button type="button" class="btn-exec btn-exec-outline btn-xs" onclick="closeTopUpModal()">Cancel</button>
+            <button type="submit" class="btn-exec btn-exec-primary btn-xs" id="btnSubmitTopUp">
+              ⚡ Increase Passcode Limit
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Off-Screen UKA Official 2-Page TRF Template for PDF Rendering -->
+  <div class="pdf-render-canvas" id="pdfExportArea">
+    <!-- Page 1: TRF Form -->
+    <div id="pdfPage1" class="page-a4">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #000; padding-bottom:15px;">
+        <img src="2_UKABritish-council-Logo.png" style="height:65px;" onerror="this.style.display='none'">
+        <div style="border:2px solid #000; padding:8px 14px; font-weight:bold; font-size:16px;" id="pdfOutType">ACADEMIC</div>
+      </div>
+      <div style="text-align:center; margin:22px 0 5px; font-size:22px; font-weight:900; letter-spacing:1px; color:#001f3f;">MOCK TEST REPORT FORM</div>
+      <div style="text-align:center; font-size:12px; margin-bottom:20px; font-weight:bold; color:#555;">UKA TECHNICAL INSTITUTE - ASSESSMENT DIVISION</div>
+
+      <table style="width:100%; border:1.5px solid #000; border-collapse:collapse; margin-bottom:25px;">
+        <tr>
+          <td colspan="2" style="border:1.5px solid #000; padding:10px;"><span style="font-size:10px; font-weight:bold; color:#666; text-transform:uppercase;">Full Name of Candidate</span><div style="font-size:16px; font-weight:bold; text-transform:uppercase;" id="pdfOutName">NAME</div></td>
+          <td rowspan="3" style="border:1.5px solid #000; width:110px; text-align:center; vertical-align:middle; padding:8px;">
+            <div style="border:1px dashed #ccc; height:120px; display:flex; align-items:center; justify-content:center; font-size:9px; color:#aaa;">PHOTO AREA</div>
+          </td>
+        </tr>
+        <tr>
+          <td style="border:1.5px solid #000; padding:10px;"><span style="font-size:10px; font-weight:bold; color:#666; text-transform:uppercase;">Date of Test (Mock)</span><div style="font-size:14px; font-weight:bold;" id="pdfOutDate">--/--/----</div></td>
+          <td style="border:1.5px solid #000; padding:10px;"><span style="font-size:10px; font-weight:bold; color:#666; text-transform:uppercase;">Test Passcode / Token</span><div style="font-size:14px; font-weight:bold;" id="pdfOutPass">UKA-XXXX</div></td>
+        </tr>
+        <tr>
+          <td style="border:1.5px solid #000; padding:10px;"><span style="font-size:10px; font-weight:bold; color:#666; text-transform:uppercase;">Country of Origin</span><div style="font-size:14px; font-weight:bold;">BANGLADESH</div></td>
+          <td style="border:1.5px solid #000; padding:10px;"><span style="font-size:10px; font-weight:bold; color:#666; text-transform:uppercase;">First Language</span><div style="font-size:14px; font-weight:bold;">BENGALI</div></td>
+        </tr>
+      </table>
+
+      <table style="width:100%; border-collapse:collapse; text-align:center; border:1.5px solid #000;">
+        <thead>
+          <tr style="background:#f0f4f8;">
+            <th style="border:1.5px solid #000; padding:10px; font-size:11px;">Listening</th>
+            <th style="border:1.5px solid #000; padding:10px; font-size:11px;">Reading</th>
+            <th style="border:1.5px solid #000; padding:10px; font-size:11px;">Writing</th>
+            <th style="border:1.5px solid #000; padding:10px; font-size:11px;">Speaking</th>
+            <th style="border:1.5px solid #000; padding:10px; font-size:11px; background:#001f3f; color:white;">Overall Band</th>
+            <th style="border:1.5px solid #000; padding:10px; font-size:11px; background:#eef2f7;">CEFR Level</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="border:1.5px solid #000; padding:14px; font-size:22px; font-weight:bold;"><span id="pdfOutL">-</span> <span style="font-size:10px; display:block; color:#666; font-weight:normal;" id="pdfRawL"></span></td>
+            <td style="border:1.5px solid #000; padding:14px; font-size:22px; font-weight:bold;"><span id="pdfOutR">-</span> <span style="font-size:10px; display:block; color:#666; font-weight:normal;" id="pdfRawR"></span></td>
+            <td style="border:1.5px solid #000; padding:14px; font-size:22px; font-weight:bold;" id="pdfOutW">-</td>
+            <td style="border:1.5px solid #000; padding:14px; font-size:22px; font-weight:bold;" id="pdfOutS">-</td>
+            <td style="border:1.5px solid #000; padding:14px; font-size:24px; font-weight:bold; background:#f0f0f0;" id="pdfOutOver">-</td>
+            <td style="border:1.5px solid #000; padding:14px; font-size:20px; font-weight:bold;" id="pdfOutCEFR">-</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top:35px; font-size:11px; color:#333; line-height:1.6; border:1px solid #ddd; padding:12px; background:#fafafa;">
+        <b>NOTICE:</b> This report is generated by UKA Technical Institute for mock assessment. Raw scores are converted based on official IELTS grading standards. Overall band is only computed once all four modules are finalized.
+      </div>
+
+      <div style="position:absolute; bottom:20mm; width:170mm; display:flex; justify-content:space-between; align-items:center; border-top:1px solid #eee; padding-top:15px;">
+        <span style="font-size:12px; font-weight:bold; color:#001f3f;">UKA Technical Assessment Division</span>
+        <span style="font-size:12px; color:#666;">Official IELTS Mock TRF</span>
+      </div>
+    </div>
+
+    <!-- Page 2: Feedback Form -->
+    <div id="pdfPage2" class="page-a4">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #000; padding-bottom:15px;">
+        <img src="2_UKABritish-council-Logo.png" style="height:50px;" onerror="this.style.display='none'">
+        <div style="font-weight:bold; color:#001f3f; font-size:16px;">FEEDBACK & DETAILED ANALYSIS</div>
+      </div>
+
+      <div style="margin-top:25px;">
+        <h3 style="font-size:15px; color:#001f3f; margin-bottom:6px;">Writing Task 1 Feedback:</h3>
+        <div style="border-left:4px solid #06b6d4; padding:12px; background:#f9f9f9; font-size:13px; line-height:1.6; border-radius:0 6px 6px 0; white-space:pre-wrap;" id="pdfOutFeed1">-</div>
+
+        <h3 style="font-size:15px; color:#001f3f; margin-top:20px; margin-bottom:6px;">Writing Task 2 Feedback:</h3>
+        <div style="border-left:4px solid #06b6d4; padding:12px; background:#f9f9f9; font-size:13px; line-height:1.6; border-radius:0 6px 6px 0; white-space:pre-wrap;" id="pdfOutFeed2">-</div>
+      </div>
+
+      <div style="margin-top:30px; padding:16px; background:#eef2f7; border-left:5px solid #06b6d4; border-radius:0 6px 6px 0;">
+        <h4 style="margin:0 0 8px 0; font-size:14px; color:#001f3f;">Teacher's Recommendation:</h4>
+        <p style="font-size:13px; line-height:1.5; margin:0;" id="pdfOutRec">-</p>
+      </div>
+
+      <div style="position:absolute; bottom:20mm; width:170mm; display:flex; justify-content:space-between; align-items:center; border-top:1px solid #eee; padding-top:15px;">
+        <span style="font-size:12px; font-weight:bold; color:#001f3f;">UKA Assessment Division</span>
+        <span style="font-size:12px; color:#888;">Confidential Student Evaluation</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Off-Screen UKA Official Multi-Page A4 Answer Script Template for PDF Rendering -->
+  <div class="pdf-render-canvas" id="ansScriptExportArea" style="position:absolute; left:-9999px; top:-9999px; background:#ffffff;">
+    <div id="ansScriptExportDoc" style="width:210mm; background:#ffffff; padding:18mm 20mm; box-sizing:border-box; font-family:'Segoe UI', Tahoma, Arial, sans-serif; color:#1e293b;">
+      <!-- Populated dynamically via populateAnsScriptTemplate() -->
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast-popup" id="toastBox"></div>
+
+  <script>
+    let activeCandObj = null;
+    let currentTrfData = null;
+    let currentAnsRecord = null;
+    let searchDebounceTimer = null;
+
+    // Pagination State
+    let currentCandPage = 1;
+    let totalCandPages = 1;
+    let currentCandQuery = "";
+
+    let currentResPage = 1;
+    let totalResPages = 1;
+
+    function showToast(msg, duration = 3000) {
+      const toast = document.getElementById('toastBox');
+      toast.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--uka-cyan)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> ${msg}`;
+      toast.classList.add('active');
+      setTimeout(() => toast.classList.remove('active'), duration);
+    }
+
+    function switchView(viewId) {
+      document.querySelectorAll('.view-pane').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.glass-tab').forEach(el => el.classList.remove('active'));
+
+      const activeView = document.getElementById(`view-${viewId}`);
+      if (activeView) activeView.style.display = 'block';
+
+      const tabs = document.querySelectorAll('.glass-tab');
+      if (viewId === 'assign') tabs[0].classList.add('active');
+      if (viewId === 'directory') tabs[1].classList.add('active');
+      if (viewId === 'results') tabs[2].classList.add('active');
+
+      if (viewId === 'directory') loadCandidates(currentCandPage, currentCandQuery);
+      if (viewId === 'results') loadRecentResults(currentResPage);
+    }
+
+    function selectPlan(plan) {
+      document.getElementById('assignLevel').value = plan;
+      if (plan === 'Premium') {
+        document.getElementById('pillPremium').className = 'plan-pill selected-premium';
+        document.getElementById('pillFree').className = 'plan-pill';
+      } else {
+        document.getElementById('pillPremium').className = 'plan-pill';
+        document.getElementById('pillFree').className = 'plan-pill selected-free';
+      }
+    }
+
+    async function loadStats() {
+      try {
+        const res = await fetch('/admin_advanced/stats');
+        if (res.ok) {
+          const s = await res.json();
+          document.getElementById('statAssigned').innerText = s.totalAssignedUsers || 0;
+          document.getElementById('statUnused').innerText = s.activePasscodes || 0;
+          document.getElementById('statCompleted').innerText = s.completedTests || 0;
+          document.getElementById('statLimit').innerText = s.adminLimit || 0;
+          document.getElementById('resTabCount').innerText = s.completedTests || 0;
+        }
+      } catch (e) {
+        console.error("Stats load error:", e);
+      }
+    }
+
+    async function handleQuickAssign(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnAssignSubmit');
+      btn.disabled = true;
+      btn.innerText = "Assigning...";
+
+      const payload = {
+        name: document.getElementById('assignName').value.trim(),
+        phone: document.getElementById('assignPhone').value.trim(),
+        count: document.getElementById('assignCount').value,
+        level: document.getElementById('assignLevel').value
+      };
+
+      try {
+        const res = await fetch('/admin_advanced/quick_assign_candidate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          alert(data.error || "Failed to assign candidate");
+        } else {
+          showToast(`Success! Candidate ID: ${data.candidateID} created with ${payload.count} ${payload.level} passcodes!`);
+          document.getElementById('quickAssignForm').reset();
+          selectPlan('Premium');
+          loadStats();
+          currentCandPage = 1;
+          switchView('directory');
+        }
+      } catch (err) {
+        alert("Server error: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg> Generate Candidate ID & Assign Passcodes Now`;
+      }
+    }
+
+    // Load Candidates with fast 10-item pagination (Zero-flicker background sync)
+    async function loadCandidates(page = 1, query = "", isBackground = false) {
+      currentCandPage = page;
+      currentCandQuery = query;
+      const tbody = document.getElementById('candidateTableBody');
+      if (!isBackground && (!tbody.children.length || tbody.innerText.includes('No candidate') || tbody.innerText.includes('Loading'))) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:1.5rem; color:var(--text-muted);">Loading candidates...</td></tr>';
+      }
+
+      try {
+        const url = `/admin_advanced/candidates_list?page=${page}&limit=10${query ? `&q=${encodeURIComponent(query)}` : ''}`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        const candidates = data.candidates || (Array.isArray(data) ? data : []);
+        const total = data.total !== undefined ? data.total : candidates.length;
+        totalCandPages = data.totalPages || Math.ceil(total / 10) || 1;
+
+        document.getElementById('candTabCount').innerText = total;
+
+        // Update Pagination Controls
+        const startItem = total === 0 ? 0 : (page - 1) * 10 + 1;
+        const endItem = Math.min(page * 10, total);
+        document.getElementById('candPageInfo').innerText = `Showing ${startItem}-${endItem} of ${total} candidates`;
+        document.getElementById('candPageBadge').innerText = `Page ${page} of ${totalCandPages}`;
+        document.getElementById('btnPrevCand').disabled = page <= 1;
+        document.getElementById('btnNextCand').disabled = page >= totalCandPages;
+
+        if (candidates.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:2rem; color:var(--text-muted);">No candidates enrolled yet.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = candidates.map(c => `
+          <tr id="cand-row-${c.candidateID}">
+            <td><strong style="font-family:var(--font-code); color:var(--uka-navy);">${c.candidateID}</strong></td>
+            <td><strong>${escapeHtml(c.name)}</strong></td>
+            <td>
+              <a href="https://wa.me/88${cleanPhone(c.phone)}" target="_blank" style="color:var(--uka-emerald); font-family:var(--font-code); text-decoration:none; font-weight:700;">
+                ${escapeHtml(c.phone || 'N/A')}
+              </a>
+            </td>
+            <td><span class="badge-pill ${c.level === 'Premium' ? 'badge-prm' : 'badge-fr'}">${c.level}</span></td>
+            <td>
+              <span class="badge-pill badge-ready">${c.unusedCount} Ready</span>
+              <span class="badge-pill badge-used">${c.usedCount} Used</span>
+            </td>
+            <td><strong style="font-family:var(--font-code);">${c.results.length}</strong></td>
+            <td>
+              <div style="display:flex; gap:6px;">
+                <button class="btn-xs btn-exec-outline" onclick='openCandModal(${JSON.stringify(c).replace(/'/g, "&apos;")})'>View Details</button>
+                <button class="btn-xs btn-exec-whatsapp" onclick='shareWhatsAppCredentials(${JSON.stringify(c).replace(/'/g, "&apos;")})'>WhatsApp</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="7" style="color:var(--uka-rose); text-align:center;">Failed to load: ${err.message}</td></tr>`;
+      }
+    }
+
+    function changeCandPage(delta) {
+      const targetPage = currentCandPage + delta;
+      if (targetPage >= 1 && targetPage <= totalCandPages) {
+        loadCandidates(targetPage, currentCandQuery);
+      }
+    }
+
+    function debounceSearch() {
+      clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = setTimeout(() => {
+        const q = document.getElementById('searchCandInput').value.trim();
+        loadCandidates(1, q);
+      }, 300);
+    }
+
+    function openCandModal(cand) {
+      activeCandObj = cand;
+      document.getElementById('modalCandTitle').innerText = `Candidate: ${cand.candidateID}`;
+      document.getElementById('modalCandName').innerText = cand.name;
+      document.getElementById('modalCandPhone').innerText = `WhatsApp: ${cand.phone || 'Not provided'} • Total Assigned: ${cand.totalAssigned}`;
+      document.getElementById('modalCandMeta').innerText = `Level: ${cand.level} • Organization: ${cand.organization}`;
+
+      document.getElementById('modalWhatsAppShareBtn').onclick = () => shareWhatsAppCredentials(cand);
+
+      // Render Passcodes with 2-in-1 Smart Copy & Delete
+      const shelf = document.getElementById('modalPasscodeList');
+      if (!cand.passcodes || cand.passcodes.length === 0) {
+        shelf.innerHTML = '<p style="color:var(--text-muted); font-size:0.85rem;">No passcodes found.</p>';
+      } else {
+        shelf.innerHTML = cand.passcodes.map(p => `
+          <div class="chip-item">
+            <div>
+              <span class="chip-code">${p.passcode}</span>
+              <div style="font-size:0.7rem; margin-top:2px;">
+                <span class="badge-pill ${p.level === 'Premium' ? 'badge-prm' : 'badge-fr'}" style="padding:1px 6px;">${p.level}</span>
+                <span class="badge-pill ${p.status === 'USED' ? 'badge-used' : 'badge-ready'}" style="padding:1px 6px;">${p.status}</span>
+              </div>
+            </div>
+            <div style="display:flex; gap:4px; align-items:center;">
+              <button class="btn-xs btn-exec-outline" title="Copy ID + Passcode together (Auto-fills on paste)" onclick="copyIdAndPasscode('${cand.candidateID}', '${p.passcode}')">2-in-1 Copy</button>
+              <button class="btn-xs btn-exec-outline" style="color:var(--uka-rose); border-color:#fecdd3; padding:4px 7px;" title="Delete this passcode" onclick="confirmDeletePasscode('${p.passcode}', '${cand.candidateID}')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Render Results with TRF Preview and Mistakes Analysis options
+      const resBody = document.getElementById('modalResultsBody');
+      if (!cand.results || cand.results.length === 0) {
+        resBody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:1rem;">No mock tests submitted yet.</td></tr>';
+      } else {
+        resBody.innerHTML = cand.results.map(r => `
+          <tr id="modal-res-row-${r.userDocId}">
+            <td><strong>${r.mockID}</strong></td>
+            <td>${new Date(r.time).toLocaleDateString()}</td>
+            <td>${r.listeningBand ? r.listeningBand.toFixed(1) : '-'}</td>
+            <td>${r.readingBand ? r.readingBand.toFixed(1) : '-'}</td>
+            <td id="modal-wri-${r.userDocId}"><strong>${r.writingBand ? r.writingBand.toFixed(1) : '-'}</strong></td>
+            <td id="modal-spk-${r.userDocId}">
+              ${r.speakingBand !== null && r.speakingBand !== undefined
+                ? `<strong style="color:var(--uka-cyan-dark); cursor:pointer;" title="Click to edit score" onclick='openScoreModal("${r.userDocId}", ${JSON.stringify(r).replace(/'/g, "&apos;")})'>${r.speakingBand.toFixed(1)} ✎</strong>`
+                : `<button class="btn-xs btn-exec-outline" onclick='openScoreModal("${r.userDocId}", ${JSON.stringify(r).replace(/'/g, "&apos;")})'>+ Score</button>`
+              }
+            </td>
+            <td id="modal-over-${r.userDocId}"><span class="badge-band">${r.overallBand ? r.overallBand.toFixed(1) : '-'}</span></td>
+            <td>
+              <div style="display:flex; gap:4px;">
+                <button class="btn-xs btn-exec-primary" onclick='showTrfPreviewModal(${JSON.stringify(r).replace(/'/g, "&apos;")}, "${cand.name}", "${cand.phone}")'>Show TRF</button>
+                <button class="btn-xs btn-exec-outline" onclick='showAnswersMistakesModal(${JSON.stringify(r).replace(/'/g, "&apos;")}, "${cand.name}", "${cand.phone}")'>Mistakes / Writing</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      document.getElementById('candidateModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('candidateModal').classList.remove('active');
+    }
+
+    // Delete Single Passcode with Confirmation Popup
+    async function confirmDeletePasscode(passcode, candidateID) {
+      const ok = confirm(`Are you sure you want to delete this passcode: ${passcode}?\n\nThis cannot be undone.`);
+      if (!ok) return;
+
+      try {
+        const res = await fetch('/admin_advanced/delete_passcode', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ passcode, candidateID })
+        });
+        const data = await res.json();
+        if (!res.ok) return alert(data.error || "Failed to delete passcode");
+
+        showToast("Passcode deleted successfully!");
+        closeModal();
+        loadStats();
+        loadCandidates(currentCandPage, currentCandQuery);
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+    }
+
+    // Delete Entire Candidate ID
+    async function confirmDeleteCandidate() {
+      if (!activeCandObj) return;
+      const ok = confirm(`⚠️ Are you sure you want to permanently delete Candidate ID: ${activeCandObj.candidateID}?\n\nThis will remove all unused passcodes and candidate records for this ID.`);
+      if (!ok) return;
+
+      try {
+        const res = await fetch('/admin_advanced/delete_candidate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ candidateID: activeCandObj.candidateID })
+        });
+        const data = await res.json();
+        if (!res.ok) return alert(data.error || "Failed to delete candidate");
+
+        showToast(`Candidate ${activeCandObj.candidateID} deleted successfully!`);
+        closeModal();
+        loadStats();
+        loadCandidates(1, "");
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+    }
+
+    // Edit Candidate Phone & Name
+    async function editCandidatePrompt() {
+      if (!activeCandObj) return;
+      const newName = prompt("Enter Candidate Name:", activeCandObj.name);
+      if (newName === null) return;
+      const newPhone = prompt("Enter WhatsApp / Mobile Number:", activeCandObj.phone);
+      if (newPhone === null) return;
+
+      if (!newPhone.trim()) {
+        return alert("Phone number cannot be empty.");
+      }
+
+      try {
+        const res = await fetch('/admin_advanced/update_candidate_info', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            candidateID: activeCandObj.candidateID,
+            newName: newName.trim(),
+            newPhone: newPhone.trim()
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) return alert(data.error || "Failed to update candidate info");
+
+        showToast("Candidate information updated successfully!");
+        activeCandObj.name = newName.trim();
+        activeCandObj.phone = newPhone.trim();
+        document.getElementById('modalCandName').innerText = newName.trim();
+        document.getElementById('modalCandPhone').innerText = `WhatsApp: ${newPhone.trim()} • Total Assigned: ${activeCandObj.totalAssigned}`;
+        loadCandidates(currentCandPage, currentCandQuery);
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+    }
+
+    // 2-in-1 Smart Copy: Copies "CandidateID Passcode"
+    function copyIdAndPasscode(candidateID, passcode) {
+      const combo = `${candidateID} ${passcode}`;
+      navigator.clipboard.writeText(combo).then(() => {
+        showToast(`Copied ID & Passcode together! Paste once in exam portal.`);
+      });
+    }
+
+    async function handleAssignMore() {
+      if (!activeCandObj) return;
+      const count = document.getElementById('extraPassCount').value;
+      const level = document.getElementById('extraPassLevel').value;
+
+      try {
+        const res = await fetch('/admin_advanced/quick_assign_candidate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: activeCandObj.name,
+            phone: activeCandObj.phone,
+            count: count,
+            level: level
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) return alert(data.error || "Failed to add passcodes");
+
+        showToast(`${count} ${level} passcode(s) successfully added!`);
+        closeModal();
+        loadStats();
+        loadCandidates(currentCandPage, currentCandQuery);
+      } catch (e) {
+        alert("Error: " + e.message);
+      }
+    }
+
+    function shareWhatsAppCredentials(cand) {
+      if (!cand) return;
+      const readyPass = (cand.passcodes || [])
+        .filter(p => p.status !== 'USED')
+        .map(p => `• Passcode: *${p.passcode}* (${p.level} Test)\n  _Quick Entry:_ ${cand.candidateID} ${p.passcode}`)
+        .join('\n\n');
+
+      const msg = `Hello *${cand.name}*,\n\nWelcome to *UKA Technical IELTS Mock Assessment*!\nHere are your login credentials for the exam portal:\n\n👤 *Candidate ID:* ${cand.candidateID}\n🔑 *One-Time Test Passcodes:*\n${readyPass || 'All passcodes have been used. Contact admin for additional passes.'}\n\n👉 *Take Your Mock Test Here:* ${window.location.origin}/mocks.html\n\n💡 *Tip:* You can copy your ID & Passcode together and paste it once directly into the Candidate ID box!\n\nBest wishes,\n*UKA Technical Institute*`;
+
+      const url = `https://wa.me/88${cleanPhone(cand.phone)}?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+    }
+
+    // Load Recent Results with fast 10-item pagination & newest test taker first (Zero-flicker background sync)
+    async function loadRecentResults(page = 1, isBackground = false) {
+      currentResPage = page;
+      const tbody = document.getElementById('resultTableBody');
+      if (!isBackground && (!tbody.children.length || tbody.innerText.includes('No exam') || tbody.innerText.includes('Loading'))) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:1.5rem; color:var(--text-muted);">Loading recent results...</td></tr>';
+      }
+
+      try {
+        const res = await fetch(`/admin_advanced/recent_results?page=${page}&limit=10`);
+        const data = await res.json();
+
+        const results = data.results || (Array.isArray(data) ? data : []);
+        const total = data.total !== undefined ? data.total : results.length;
+        totalResPages = data.totalPages || Math.ceil(total / 10) || 1;
+
+        document.getElementById('resTabCount').innerText = total;
+
+        // Update Pagination Controls
+        const startItem = total === 0 ? 0 : (page - 1) * 10 + 1;
+        const endItem = Math.min(page * 10, total);
+        document.getElementById('resPageInfo').innerText = `Showing ${startItem}-${endItem} of ${total} results`;
+        document.getElementById('resPageBadge').innerText = `Page ${page} of ${totalResPages}`;
+        document.getElementById('btnPrevRes').disabled = page <= 1;
+        document.getElementById('btnNextRes').disabled = page >= totalResPages;
+
+        if (results.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:2rem; color:var(--text-muted);">No exam results logged yet.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = results.map(r => `
+          <tr id="res-row-${r.userDocId}">
+            <td>
+              <strong style="color:var(--uka-navy);">${escapeHtml(r.candidateID)}</strong>
+              <div style="font-size:0.75rem; color:var(--text-muted);">${escapeHtml(r.name)} • ${escapeHtml(r.phone || '')}</div>
+            </td>
+            <td><strong>${r.mockID}</strong></td>
+            <td><code style="font-family:var(--font-code); color:var(--uka-navy); font-weight:700;">${r.passcode}</code></td>
+            <td>L: ${r.listeningRaw}/40 | R: ${r.readingRaw}/40</td>
+            <td id="res-wri-${r.userDocId}"><strong>${r.writingBand ? r.writingBand.toFixed(1) : '-'}</strong></td>
+            <td id="res-spk-${r.userDocId}">
+              ${r.speakingBand !== null && r.speakingBand !== undefined
+                ? `<strong style="color:var(--uka-emerald); cursor:pointer;" title="Click to edit score" onclick='openScoreModal("${r.userDocId}", ${JSON.stringify(r).replace(/'/g, "&apos;")})'>${r.speakingBand.toFixed(1)} ✎</strong>`
+                : `<button class="btn-xs btn-exec-outline" onclick='openScoreModal("${r.userDocId}", ${JSON.stringify(r).replace(/'/g, "&apos;")})'>+ Score</button>`
+              }
+            </td>
+            <td id="res-over-${r.userDocId}"><span class="badge-band">${r.overallBand ? r.overallBand.toFixed(1) : '-'}</span></td>
+            <td>
+              <div style="display:flex; gap:6px;">
+                <button class="btn-xs btn-exec-primary" onclick='showTrfPreviewModal(${JSON.stringify(r).replace(/'/g, "&apos;")}, "${r.name}", "${r.phone}")'>Show TRF</button>
+                <button class="btn-xs btn-exec-outline" onclick='showAnswersMistakesModal(${JSON.stringify(r).replace(/'/g, "&apos;")}, "${r.name}", "${r.phone}")'>Mistakes / Writing</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="8" style="color:var(--uka-rose); text-align:center;">Failed to load results: ${err.message}</td></tr>`;
+      }
+    }
+
+    function changeResPage(delta) {
+      const targetPage = currentResPage + delta;
+      if (targetPage >= 1 && targetPage <= totalResPages) {
+        loadRecentResults(targetPage);
+      }
+    }
+
+    // 1. Show TRF Preview in Modal (Full 2-Page Official British Council & UKA TRF)
+    function showTrfPreviewModal(r, name, phone) {
+      currentTrfData = { r, name, phone };
+
+      document.getElementById('trfModalTitle').innerText = `Official Test Report Form (TRF) - ${name} (${r.mockID})`;
+
+      const lBand = r.listeningBand ? parseFloat(r.listeningBand).toFixed(1) : '-';
+      const rBand = r.readingBand ? parseFloat(r.readingBand).toFixed(1) : '-';
+      const wBand = r.writingBand ? parseFloat(r.writingBand).toFixed(1) : '-';
+      const sBand = r.speakingBand !== null && r.speakingBand !== undefined ? parseFloat(r.speakingBand).toFixed(1) : '-';
+      const over = r.overallBand ? parseFloat(r.overallBand).toFixed(1) : '-';
+      const cefr = r.cefrLevel || '-';
+
+      document.getElementById('trfPreviewContainer').innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:25px;">
+          <!-- PAGE 1: OFFICIAL TEST REPORT FORM -->
+          <div style="background:#ffffff; border:2px solid #001f3f; padding:24px; border-radius:8px; box-shadow:0 4px 20px rgba(0,31,63,0.06);">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #001f3f; padding-bottom:12px;">
+              <img src="/2_UKA-&-British-council-Logo.png" style="height:55px;" onerror="this.src='/2_UKABritish-council-Logo.png'">
+              <div style="border:2px solid #001f3f; padding:6px 14px; font-weight:800; font-size:15px; color:#001f3f;">ACADEMIC</div>
+            </div>
+
+            <div style="text-align:center; margin:16px 0 4px; font-size:22px; font-weight:900; color:#001f3f; letter-spacing:0.5px;">MOCK TEST REPORT FORM</div>
+            <div style="text-align:center; font-size:11px; margin-bottom:16px; font-weight:700; color:#64748b;">UKA TECHNICAL INSTITUTE - ASSESSMENT DIVISION</div>
+
+            <table style="width:100%; border:1.5px solid #001f3f; border-collapse:collapse; margin-bottom:18px; font-size:13px;">
+              <tr>
+                <td colspan="2" style="border:1.5px solid #001f3f; padding:10px;">
+                  <span style="font-size:10px; font-weight:bold; color:#64748b; text-transform:uppercase;">Full Name of Candidate</span>
+                  <div style="font-size:16px; font-weight:bold; text-transform:uppercase; color:#001f3f;">${escapeHtml(name)}</div>
+                </td>
+                <td rowspan="3" style="border:1.5px solid #001f3f; width:120px; text-align:center; vertical-align:middle; padding:8px;">
+                  <div style="border:1px dashed #cbd5e1; height:120px; display:flex; align-items:center; justify-content:center; font-size:10px; color:#94a3b8; font-weight:600;">PHOTO AREA</div>
+                </td>
+              </tr>
+              <tr>
+                <td style="border:1.5px solid #001f3f; padding:10px;">
+                  <span style="font-size:10px; font-weight:bold; color:#64748b; text-transform:uppercase;">Date of Test (Mock)</span>
+                  <div style="font-size:14px; font-weight:bold;">${new Date(r.time).toLocaleDateString('en-GB')}</div>
+                </td>
+                <td style="border:1.5px solid #001f3f; padding:10px;">
+                  <span style="font-size:10px; font-weight:bold; color:#64748b; text-transform:uppercase;">Test Passcode / Token</span>
+                  <div style="font-size:14px; font-weight:bold; font-family:var(--font-code); color:#001f3f;">${escapeHtml(r.passcode)}</div>
+                </td>
+              </tr>
+              <tr>
+                <td style="border:1.5px solid #001f3f; padding:10px;">
+                  <span style="font-size:10px; font-weight:bold; color:#64748b; text-transform:uppercase;">Country of Origin</span>
+                  <div style="font-size:14px; font-weight:bold;">BANGLADESH</div>
+                </td>
+                <td style="border:1.5px solid #001f3f; padding:10px;">
+                  <span style="font-size:10px; font-weight:bold; color:#64748b; text-transform:uppercase;">First Language</span>
+                  <div style="font-size:14px; font-weight:bold;">BENGALI</div>
+                </td>
+              </tr>
+            </table>
+
+            <table style="width:100%; border-collapse:collapse; text-align:center; border:1.5px solid #001f3f; margin-bottom:18px;">
+              <thead>
+                <tr style="background:#f1f5f9; font-size:12px; font-weight:800; color:#001f3f;">
+                  <th style="border:1.5px solid #001f3f; padding:10px;">Listening</th>
+                  <th style="border:1.5px solid #001f3f; padding:10px;">Reading</th>
+                  <th style="border:1.5px solid #001f3f; padding:10px;">Writing</th>
+                  <th style="border:1.5px solid #001f3f; padding:10px;">Speaking</th>
+                  <th style="border:1.5px solid #001f3f; padding:10px; background:#001f3f; color:#fff;">Overall Band</th>
+                  <th style="border:1.5px solid #001f3f; padding:10px; background:#ecfeff; color:#0891b2;">CEFR Level</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="border:1.5px solid #001f3f; padding:14px; font-size:20px; font-weight:bold;">${lBand} <span style="font-size:11px; font-weight:normal; display:block; color:#64748b;">(${r.listeningRaw || 0}/40)</span></td>
+                  <td style="border:1.5px solid #001f3f; padding:14px; font-size:20px; font-weight:bold;">${rBand} <span style="font-size:11px; font-weight:normal; display:block; color:#64748b;">(${r.readingRaw || 0}/40)</span></td>
+                  <td style="border:1.5px solid #001f3f; padding:14px; font-size:20px; font-weight:bold;">${wBand}</td>
+                  <td style="border:1.5px solid #001f3f; padding:14px; font-size:20px; font-weight:bold;">${sBand}</td>
+                  <td style="border:1.5px solid #001f3f; padding:14px; font-size:24px; font-weight:900; background:#f8fafc; color:#001f3f;">${over}</td>
+                  <td style="border:1.5px solid #001f3f; padding:14px; font-size:20px; font-weight:bold; color:#0891b2;">${cefr}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div style="background:#fafafa; border:1px solid #e2e8f0; padding:12px; font-size:12px; line-height:1.5; color:#475569; margin-bottom:16px;">
+              <strong>NOTICE:</strong> This report is verified and issued by UKA Technical Assessment Division for IELTS mock assessment. Raw scores are converted based on official British Council / IDP IELTS grading standards.
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #e2e8f0; padding-top:12px; font-size:12px;">
+              <span style="font-weight:bold; color:#001f3f;">UKA Technical Assessment Division</span>
+              <span style="color:#64748b;">Official IELTS Mock TRF • Page 1 of 2</span>
+            </div>
+          </div>
+
+          <!-- PAGE 2: FEEDBACK & DETAILED ANALYSIS -->
+          <div style="background:#ffffff; border:2px solid #001f3f; padding:24px; border-radius:8px; box-shadow:0 4px 20px rgba(0,31,63,0.06);">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #001f3f; padding-bottom:12px;">
+              <img src="/2_UKA-&-British-council-Logo.png" style="height:45px;" onerror="this.src='/2_UKABritish-council-Logo.png'">
+              <div style="font-weight:bold; color:#001f3f; font-size:16px;">FEEDBACK & DETAILED ANALYSIS</div>
+            </div>
+
+            <div style="margin-top:20px;">
+              <h4 style="font-size:14px; font-weight:800; color:#001f3f; margin-bottom:6px;">Writing Task 1 Feedback:</h4>
+              <div style="border-left:4px solid var(--uka-cyan); padding:12px; background:#f8fafc; font-size:13px; line-height:1.6; border-radius:0 6px 6px 0; white-space:pre-wrap;">${escapeHtml(r.task1Feedback) || 'Writing Task 1 feedback provided during assessment review.'}</div>
+
+              <h4 style="font-size:14px; font-weight:800; color:#001f3f; margin-top:18px; margin-bottom:6px;">Writing Task 2 Feedback:</h4>
+              <div style="border-left:4px solid var(--uka-cyan); padding:12px; background:#f8fafc; font-size:13px; line-height:1.6; border-radius:0 6px 6px 0; white-space:pre-wrap;">${escapeHtml(r.task2Feedback) || 'Writing Task 2 feedback provided during assessment review.'}</div>
+            </div>
+
+            <div style="margin-top:22px; padding:14px; background:#ecfeff; border-left:5px solid var(--uka-cyan); border-radius:0 6px 6px 0;">
+              <h4 style="margin:0 0 6px 0; font-size:14px; color:#001f3f;">Teacher's Recommendation:</h4>
+              <p style="font-size:13px; line-height:1.5; margin:0; color:#334155;">${escapeHtml(r.teacherRecommendation) || 'Consistent practice on task achievement, lexical resource, and grammatical accuracy is advised.'}</p>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #e2e8f0; padding-top:12px; margin-top:22px; font-size:12px;">
+              <span style="font-weight:bold; color:#001f3f;">UKA Assessment Division</span>
+              <span style="color:#64748b;">Confidential Student Evaluation • Page 2 of 2</span>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Buttons
+      document.getElementById('trfShareWhatsAppBtn').onclick = () => shareTrfWhatsApp(name, phone, r, lBand, rBand, wBand, sBand, over, cefr);
+      document.getElementById('trfDownloadPdfBtn').onclick = () => downloadResultPDF(name, r.mockID, r.passcode, lBand, r.listeningRaw, rBand, r.readingRaw, wBand, sBand, over, cefr, r.task1Feedback, r.task2Feedback, r.teacherRecommendation);
+
+      document.getElementById('trfModal').classList.add('active');
+    }
+
+    function closeTrfModal() {
+      document.getElementById('trfModal').classList.remove('active');
+    }
+
+    // 2. Show Answers / Mistakes & Writing Breakdown Modal
+    function showAnswersMistakesModal(r, name, phone) {
+      currentAnsRecord = r;
+      document.getElementById('ansModalTitle').innerText = `Answer Script & Evaluation - ${name}`;
+      document.getElementById('ansCandName').innerText = `${name} (${r.candidateID || ''})`;
+      document.getElementById('ansMeta').innerText = `Mock: ${r.mockID} • Passcode: ${r.passcode} • Date: ${new Date(r.time).toLocaleDateString()}`;
+
+      // Render Listening Mistakes
+      const lBox = document.getElementById('listeningMistakesList');
+      const lMistakes = r.listeningMistakes || {};
+      const lKeys = Object.keys(lMistakes);
+
+      if (lKeys.length === 0) {
+        lBox.innerHTML = '<p style="color:var(--uka-emerald); font-size:0.88rem; font-weight:700;">Perfect score / No mistakes recorded!</p>';
+      } else {
+        lBox.innerHTML = lKeys.map(q => {
+          const m = lMistakes[q];
+          const userAns = Array.isArray(m['Your answer']) ? m['Your answer'].join(', ') : (m['Your answer'] || 'None');
+          const correctAns = Array.isArray(m['Correct answer']) ? m['Correct answer'].join(' / ') : (m['Correct answer'] || '');
+          return `
+            <div class="mistake-box-row">
+              <span class="mistake-qnum">Q.${q}</span>
+              <span>Candidate wrote: <span class="ans-wrong">${escapeHtml(userAns || 'Blank')}</span></span>
+              <span>Correct Answer: <span class="ans-correct">${escapeHtml(correctAns)}</span></span>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Render Reading Mistakes
+      const rBox = document.getElementById('readingMistakesList');
+      const rMistakes = r.readingMistakes || {};
+      const rKeys = Object.keys(rMistakes);
+
+      if (rKeys.length === 0) {
+        rBox.innerHTML = '<p style="color:var(--uka-emerald); font-size:0.88rem; font-weight:700;">Perfect score / No mistakes recorded!</p>';
+      } else {
+        rBox.innerHTML = rKeys.map(q => {
+          const m = rMistakes[q];
+          const userAns = Array.isArray(m['Your answer']) ? m['Your answer'].join(', ') : (m['Your answer'] || 'None');
+          const correctAns = Array.isArray(m['Correct answer']) ? m['Correct answer'].join(' / ') : (m['Correct answer'] || '');
+          return `
+            <div class="mistake-box-row">
+              <span class="mistake-qnum">Q.${q}</span>
+              <span>Candidate wrote: <span class="ans-wrong">${escapeHtml(userAns || 'Blank')}</span></span>
+              <span>Correct Answer: <span class="ans-correct">${escapeHtml(correctAns)}</span></span>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Render Writing Scripts
+      const wInputs = r.writingInputs || {};
+      document.getElementById('writingTask1Text').innerText = wInputs['part-1'] || 'No script entered for Task 1.';
+      document.getElementById('writingTask2Text').innerText = wInputs['part-2'] || 'No script entered for Task 2.';
+
+      // Render existing AI Evaluation if already present
+      const aiBox = document.getElementById('aiEvaluationAnsBox');
+      const aiContent = document.getElementById('aiEvaluationAnsContent');
+      if (r.task1Feedback || r.task2Feedback) {
+        aiBox.style.display = 'block';
+        aiContent.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid #e2e8f0;">
+            <div style="font-size:1.1rem; font-weight:800; color:var(--uka-navy);">
+              Assigned Writing Band: <span style="color:var(--uka-cyan-dark); font-size:1.3rem;">${r.writingBand || 'Pending'}</span>
+            </div>
+            <span class="badge-pill badge-prm" style="padding:4px 10px;">Authentic Evaluation</span>
+          </div>
+
+          <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:var(--radius-sm); padding:12px; margin-bottom:10px;">
+            <strong style="color:var(--uka-navy);">Task 1 Feedback:</strong>
+            <p style="font-size:0.85rem; line-height:1.5; color:var(--text-body); margin:6px 0 0;">${escapeHtml(r.task1Feedback || 'None')}</p>
+          </div>
+
+          <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:var(--radius-sm); padding:12px; margin-bottom:10px;">
+            <strong style="color:var(--uka-navy);">Task 2 Feedback:</strong>
+            <p style="font-size:0.85rem; line-height:1.5; color:var(--text-body); margin:6px 0 0;">${escapeHtml(r.task2Feedback || 'None')}</p>
+          </div>
+
+          <div style="background:#ecfeff; border-left:4px solid var(--uka-cyan); border-radius:0 var(--radius-sm) var(--radius-sm) 0; padding:10px 14px; font-size:0.85rem;">
+            <strong style="color:var(--uka-navy);">Strategic Recommendation:</strong>
+            <p style="margin:4px 0 0; color:var(--text-body);">${escapeHtml(r.teacherRecommendation || 'Consistent practice advised.')}</p>
+          </div>
+        `;
+      } else {
+        aiBox.style.display = 'none';
+      }
+
+      // Share Answer Script on WhatsApp
+      document.getElementById('ansShareWhatsAppBtn').onclick = () => {
+        shareAnswersWhatsApp(name, phone, r);
+      };
+
+      document.getElementById('answersModal').classList.add('active');
+    }
+
+    function closeAnswersModal() {
+      document.getElementById('answersModal').classList.remove('active');
+    }
+
+    // 1-Click AI Writing Evaluation from Score Modal (Instant reactivity, auto-saves & updates UI with NO page reload)
+    async function triggerAiEvaluation() {
+      const userDocId = document.getElementById('scoreDocId').value;
+      if (!userDocId) return alert("User ID missing");
+
+      const btn = document.getElementById('btnRunAiScoreModal');
+      const origText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `⏳ AI Evaluating...`;
+
+      try {
+        const res = await fetch('/admin_advanced/ai_evaluate_writing', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userDocId })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          return alert(data.error || "AI Evaluation failed");
+        }
+
+        const ai = data.aiResult;
+        document.getElementById('wriScoreInput').value = data.writingBand;
+        document.getElementById('task1FeedInput').value = ai.task1.detailed_feedback;
+        document.getElementById('task2FeedInput').value = ai.task2.detailed_feedback;
+        document.getElementById('recInput').value = ai.teacherRecommendation;
+
+        // Auto-save silently so scores are immediately persisted and overall band is re-calculated in one step!
+        await saveScores(true);
+
+        // Update DOM elements in recent results table and candidate modal table right now!
+        const wriCell = document.getElementById(`res-wri-${userDocId}`);
+        if (wriCell) wriCell.innerHTML = `<strong>${data.writingBand.toFixed(1)}</strong>`;
+        const overCell = document.getElementById(`res-over-${userDocId}`);
+        if (overCell) overCell.innerHTML = `<span class="badge-band">${data.overallBand ? data.overallBand.toFixed(1) : '-'}</span>`;
+
+        const modWri = document.getElementById(`modal-wri-${userDocId}`);
+        if (modWri) modWri.innerHTML = `<strong>${data.writingBand.toFixed(1)}</strong>`;
+        const modOver = document.getElementById(`modal-over-${userDocId}`);
+        if (modOver) modOver.innerHTML = `<span class="badge-band">${data.overallBand ? data.overallBand.toFixed(1) : '-'}</span>`;
+
+        showToast(`⚡ AI Evaluation complete & score applied! Writing: ${data.writingBand} | Overall: ${data.overallBand || 'Pending Speaking'}`, 4000);
+
+        // Silent background sync with zero flicker
+        loadRecentResults(currentResPage, true);
+        loadCandidates(currentCandPage, currentCandQuery, true);
+      } catch (err) {
+        alert("AI Evaluation Error: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = origText;
+      }
+    }
+
+    // 1-Click AI Writing Evaluation from Answers Modal
+    async function triggerAiEvaluationFromAnsModal() {
+      if (!currentAnsRecord || !currentAnsRecord.userDocId) return alert("Candidate record not loaded.");
+
+      const btn = document.getElementById('btnRunAiAnsModal');
+      const origText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `⏳ Evaluating with Gemini AI...`;
+
+      try {
+        const res = await fetch('/admin_advanced/ai_evaluate_writing', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userDocId: currentAnsRecord.userDocId })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          return alert(data.error || "AI Evaluation failed");
+        }
+
+        const ai = data.aiResult;
+        currentAnsRecord.writingBand = data.writingBand;
+        currentAnsRecord.overallBand = data.overallBand;
+        currentAnsRecord.task1Feedback = ai.task1.detailed_feedback;
+        currentAnsRecord.task2Feedback = ai.task2.detailed_feedback;
+        currentAnsRecord.teacherRecommendation = ai.teacherRecommendation;
+
+        // Render AI box inside answersModal
+        const aiBox = document.getElementById('aiEvaluationAnsBox');
+        const aiContent = document.getElementById('aiEvaluationAnsContent');
+        aiBox.style.display = 'block';
+        aiContent.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid #e2e8f0;">
+            <div style="font-size:1.1rem; font-weight:800; color:var(--uka-navy);">
+              Calculated Writing Band: <span style="color:var(--uka-cyan-dark); font-size:1.3rem;">${data.writingBand}</span>
+            </div>
+            <span class="badge-pill badge-prm" style="padding:4px 10px;">Authentic IELTS Marking</span>
+          </div>
+
+          <!-- Task 1 Breakdown -->
+          <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:var(--radius-sm); padding:12px; margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <strong style="color:var(--uka-navy);">Task 1 Band: ${ai.task1.band}</strong>
+              <span style="font-size:0.75rem; color:var(--text-muted);">Weight: 33.3%</span>
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; font-size:0.78rem; margin-bottom:8px;">
+              <span class="badge-pill badge-ready">TA: ${ai.task1.criteria ? ai.task1.criteria.task_achievement : '-'}</span>
+              <span class="badge-pill badge-ready">CC: ${ai.task1.criteria ? ai.task1.criteria.coherence_cohesion : '-'}</span>
+              <span class="badge-pill badge-ready">LR: ${ai.task1.criteria ? ai.task1.criteria.lexical_resource : '-'}</span>
+              <span class="badge-pill badge-ready">GRA: ${ai.task1.criteria ? ai.task1.criteria.grammatical_range_accuracy : '-'}</span>
+            </div>
+            <p style="font-size:0.85rem; line-height:1.5; color:var(--text-body); margin:0;">${escapeHtml(ai.task1.detailed_feedback)}</p>
+          </div>
+
+          <!-- Task 2 Breakdown -->
+          <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:var(--radius-sm); padding:12px; margin-bottom:10px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <strong style="color:var(--uka-navy);">Task 2 Band: ${ai.task2.band}</strong>
+              <span style="font-size:0.75rem; color:var(--text-muted);">Weight: 66.6%</span>
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; font-size:0.78rem; margin-bottom:8px;">
+              <span class="badge-pill badge-ready">TR: ${ai.task2.criteria ? ai.task2.criteria.task_response : '-'}</span>
+              <span class="badge-pill badge-ready">CC: ${ai.task2.criteria ? ai.task2.criteria.coherence_cohesion : '-'}</span>
+              <span class="badge-pill badge-ready">LR: ${ai.task2.criteria ? ai.task2.criteria.lexical_resource : '-'}</span>
+              <span class="badge-pill badge-ready">GRA: ${ai.task2.criteria ? ai.task2.criteria.grammatical_range_accuracy : '-'}</span>
+            </div>
+            <p style="font-size:0.85rem; line-height:1.5; color:var(--text-body); margin:0;">${escapeHtml(ai.task2.detailed_feedback)}</p>
+          </div>
+
+          <!-- Teacher Recommendation -->
+          <div style="background:#ecfeff; border-left:4px solid var(--uka-cyan); border-radius:0 var(--radius-sm) var(--radius-sm) 0; padding:10px 14px; font-size:0.85rem;">
+            <strong style="color:var(--uka-navy);">Strategic Recommendation:</strong>
+            <p style="margin:4px 0 0; color:var(--text-body);">${escapeHtml(ai.teacherRecommendation)}</p>
+          </div>
+        `;
+
+        // Update DOM cells immediately in both tables
+        const docId = currentAnsRecord.userDocId;
+        const wriCell = document.getElementById(`res-wri-${docId}`);
+        if (wriCell) wriCell.innerHTML = `<strong>${data.writingBand.toFixed(1)}</strong>`;
+        const overCell = document.getElementById(`res-over-${docId}`);
+        if (overCell) overCell.innerHTML = `<span class="badge-band">${data.overallBand ? data.overallBand.toFixed(1) : '-'}</span>`;
+
+        const modWri = document.getElementById(`modal-wri-${docId}`);
+        if (modWri) modWri.innerHTML = `<strong>${data.writingBand.toFixed(1)}</strong>`;
+        const modOver = document.getElementById(`modal-over-${docId}`);
+        if (modOver) modOver.innerHTML = `<span class="badge-band">${data.overallBand ? data.overallBand.toFixed(1) : '-'}</span>`;
+
+        if (activeCandObj && activeCandObj.results) {
+          const item = activeCandObj.results.find(x => String(x.userDocId) === String(docId));
+          if (item) {
+            item.writingBand = data.writingBand;
+            item.overallBand = data.overallBand;
+            item.cefrLevel = data.cefrLevel;
+            item.task1Feedback = ai.task1.detailed_feedback;
+            item.task2Feedback = ai.task2.detailed_feedback;
+            item.teacherRecommendation = ai.teacherRecommendation;
+          }
+        }
+
+        showToast(`⚡ AI Writing Evaluation completed! Writing Band: ${data.writingBand}`, 4000);
+        loadRecentResults(currentResPage, true);
+        loadCandidates(currentCandPage, currentCandQuery, true);
+      } catch (err) {
+        alert("AI Evaluation Error: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = origText;
+      }
+    }
+
+    // Share TRF on WhatsApp (Direct PDF share via Web Share API or Clipboard Copy + WhatsApp - NO auto-download to admin PC!)
+    async function shareTrfWhatsApp(name, phone, r, l, rBand, w, s, over, cefr) {
+      const publicUrl = `${window.location.origin}/admin_advanced/trf_public/${r.userDocId}`;
+      const msg = `🎓 *UKA Technical IELTS Mock Assessment Result*\n\n👤 *Candidate:* ${name}\n📝 *Mock Exam:* ${r.mockID}\n🔑 *Passcode:* ${r.passcode}\n📅 *Date:* ${new Date(r.time).toLocaleDateString('en-GB')}\n\n📊 *Official IELTS Band Scores:*\n• 🎧 *Listening Band:* ${l} (${r.listeningRaw || 0}/40)\n• 📖 *Reading Band:* ${rBand} (${r.readingRaw || 0}/40)\n• ✍️ *Writing Band:* ${w}\n• 🗣️ *Speaking Band:* ${s}\n━━━━━━━━━━━━━━━━━━━━\n🏆 *OVERALL BAND SCORE: ${over}* (CEFR: ${cefr})\n\n📄 *Official 2-Page Verified TRF PDF Link:*\n${publicUrl}\n\nBest regards,\n*UKA Technical Institute Assessment Division*`;
+
+      showToast("Preparing Official TRF document...", 2000);
+
+      try {
+        const page1 = document.getElementById('pdfPage1');
+        const page2 = document.getElementById('pdfPage2');
+
+        document.getElementById('pdfOutName').innerText = (name || 'CANDIDATE').toUpperCase();
+        document.getElementById('pdfOutType').innerText = 'ACADEMIC';
+        document.getElementById('pdfOutPass').innerText = r.passcode || 'UKA-MOCK';
+        document.getElementById('pdfOutDate').innerText = new Date(r.time).toLocaleDateString('en-GB');
+        document.getElementById('pdfOutL').innerText = l > 0 ? parseFloat(l).toFixed(1) : '-';
+        document.getElementById('pdfRawL').innerText = r.listeningRaw ? `(${r.listeningRaw}/40)` : '';
+        document.getElementById('pdfOutR').innerText = rBand > 0 ? parseFloat(rBand).toFixed(1) : '-';
+        document.getElementById('pdfRawR').innerText = r.readingRaw ? `(${r.readingRaw}/40)` : '';
+        document.getElementById('pdfOutW').innerText = w > 0 ? parseFloat(w).toFixed(1) : '-';
+        document.getElementById('pdfOutS').innerText = s !== '-' ? parseFloat(s).toFixed(1) : '-';
+        document.getElementById('pdfOutOver').innerText = over || '-';
+        document.getElementById('pdfOutCEFR').innerText = cefr || '-';
+        document.getElementById('pdfOutFeed1').innerText = r.task1Feedback || 'Writing Task 1 feedback provided during examination review.';
+        document.getElementById('pdfOutFeed2').innerText = r.task2Feedback || 'Writing Task 2 feedback provided during examination review.';
+        document.getElementById('pdfOutRec').innerText = r.teacherRecommendation || 'Consistent practice on task achievement, lexical resource, and grammatical accuracy is advised.';
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const canvas1 = await html2canvas(page1, { scale: 2 });
+        pdf.addImage(canvas1.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, 210, 297);
+        pdf.addPage();
+        const canvas2 = await html2canvas(page2, { scale: 2 });
+        pdf.addImage(canvas2.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, 210, 297);
+
+        const pdfBlob = pdf.output('blob');
+        const pdfFile = new File([pdfBlob], `UKA_TRF_${name.replace(/\s+/g, '_')}_${r.mockID}.pdf`, { type: 'application/pdf' });
+
+        // If Web Share API supports file sharing directly (mobile or supported desktop)
+        if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+          await navigator.share({
+            title: `IELTS TRF - ${name}`,
+            text: msg,
+            files: [pdfFile]
+          });
+          return;
+        }
+
+        // On Desktop / WhatsApp Web: Copy visual TRF document image to clipboard for instant Ctrl+V pasting in WhatsApp!
+        if (canvas1.toBlob && navigator.clipboard && navigator.clipboard.write) {
+          canvas1.toBlob(async (imgBlob) => {
+            try {
+              await navigator.clipboard.write([new ClipboardItem({ 'image/png': imgBlob })]);
+              showToast("📋 TRF Document copied to clipboard! Just press Ctrl+V in WhatsApp to send image!", 4500);
+            } catch (clipErr) {
+              console.warn("Clipboard write failed", clipErr);
+            }
+            const waUrl = `https://wa.me/88${cleanPhone(phone)}?text=${encodeURIComponent(msg)}`;
+            window.open(waUrl, '_blank');
+          });
+          return;
+        }
+      } catch (err) {
+        console.warn("Direct file/image share preparation fallback:", err);
+      }
+
+      // Fallback: Open WhatsApp with full breakdown & permanent public PDF link
+      const url = `https://wa.me/88${cleanPhone(phone)}?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+    }
+
+    // Multi-Page A4 PDF Generation Engine with Natural Granular Snapping (No giant gaps!)
+    async function generateMultiPageA4Pdf(sourceElement) {
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF('p', 'mm', 'a4');
+
+      const scale = 2;
+      const canvas = await html2canvas(sourceElement, {
+        scale: scale,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff'
+      });
+
+      const a4WidthMm = 210;
+      const a4HeightMm = 297;
+      const marginSideMm = 12;
+      const marginTopMm = 12;
+      const marginBottomMm = 20;
+
+      const contentWidthMm = a4WidthMm - (marginSideMm * 2); // 186mm
+      const contentHeightMm = a4HeightMm - marginTopMm - marginBottomMm; // 265mm
+
+      const pxPerMm = canvas.width / contentWidthMm;
+      const maxPageCanvasHeight = Math.floor(contentHeightMm * pxPerMm);
+
+      // 1. Gather all natural cut points (between table rows, before headings, and card boundaries)
+      const containerRect = sourceElement.getBoundingClientRect();
+      const breakElements = sourceElement.querySelectorAll('tr, h3, h4, .break-unit');
+      const cutPoints = [];
+      breakElements.forEach(el => {
+        const r = el.getBoundingClientRect();
+        const top = Math.floor((r.top - containerRect.top) * scale);
+        const bottom = Math.ceil((r.bottom - containerRect.top) * scale);
+        if (top > 10) cutPoints.push(top);
+        if (bottom > 10) cutPoints.push(bottom);
+      });
+      const uniqueCutPoints = Array.from(new Set(cutPoints)).sort((a, b) => a - b);
+
+      // 2. Continuous smart slicing (Maximum allowed backtrack is 55 CSS px, ZERO giant gaps!)
+      const slices = [];
+      let currentY = 0;
+      const totalH = canvas.height;
+      const maxBacktrack = Math.floor(55 * scale);
+
+      while (currentY < totalH) {
+        const remainingH = totalH - currentY;
+        if (remainingH <= maxPageCanvasHeight) {
+          slices.push({ y: currentY, h: remainingH });
+          break;
+        }
+
+        let targetEndY = currentY + maxPageCanvasHeight;
+        let snapY = targetEndY;
+
+        // Find the best clean break point near targetEndY within maxBacktrack
+        for (let j = uniqueCutPoints.length - 1; j >= 0; j--) {
+          const cp = uniqueCutPoints[j];
+          if (cp <= targetEndY && cp >= (targetEndY - maxBacktrack)) {
+            if (cp > currentY + (maxPageCanvasHeight * 0.5)) {
+              snapY = cp;
+              break;
+            }
+          }
+        }
+
+        const sliceH = snapY - currentY;
+        slices.push({ y: currentY, h: sliceH });
+        currentY = snapY;
+      }
+
+      const totalPages = slices.length || 1;
+
+      // 3. Render slices into A4 PDF pages with margins & footer
+      for (let i = 0; i < totalPages; i++) {
+        const s = slices[i];
+
+        const sliceCanvas = document.createElement('canvas');
+        sliceCanvas.width = canvas.width;
+        sliceCanvas.height = s.h;
+
+        const sCtx = sliceCanvas.getContext('2d');
+        sCtx.fillStyle = '#ffffff';
+        sCtx.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
+        sCtx.drawImage(
+          canvas,
+          0, s.y, canvas.width, s.h,
+          0, 0, sliceCanvas.width, s.h
+        );
+
+        const sliceImgData = sliceCanvas.toDataURL('image/jpeg', 0.95);
+        const sliceHeightMm = s.h / pxPerMm;
+
+        if (i > 0) {
+          pdf.addPage();
+        }
+
+        pdf.addImage(sliceImgData, 'JPEG', marginSideMm, marginTopMm, contentWidthMm, sliceHeightMm);
+
+        // Footer in reserved bottom margin
+        pdf.setDrawColor(203, 213, 225);
+        pdf.setLineWidth(0.4);
+        pdf.line(marginSideMm, 285, a4WidthMm - marginSideMm, 285);
+
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(8);
+        pdf.setTextColor(100, 116, 139);
+        pdf.text('UKA Technical Assessment Division • Candidate Answer Script & Evaluation', marginSideMm, 290);
+
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(8);
+        pdf.text(`Page ${i + 1} of ${totalPages}`, a4WidthMm - marginSideMm, 290, { align: 'right' });
+      }
+
+      return pdf;
+    }
+
+    // Helper to count words
+    function countWordsText(str) {
+      if (!str) return 0;
+      return str.trim().split(/\s+/).filter(Boolean).length;
+    }
+
+    // Populate the dedicated A4 Answer Script Template
+    function populateAnsScriptTemplate(r, name) {
+      const container = document.getElementById('ansScriptExportDoc');
+      if (!container) return;
+
+      const dateStr = r.time ? new Date(r.time).toLocaleDateString('en-GB') : new Date().toLocaleDateString('en-GB');
+      const lBand = r.listeningBand ? parseFloat(r.listeningBand).toFixed(1) : '-';
+      const rBand = r.readingBand ? parseFloat(r.readingBand).toFixed(1) : '-';
+      const wBand = r.writingBand ? parseFloat(r.writingBand).toFixed(1) : '-';
+      const sBand = (r.speakingBand !== null && r.speakingBand !== undefined && r.speakingBand !== '-') ? parseFloat(r.speakingBand).toFixed(1) : 'Pending';
+
+      // Compute overall & CEFR
+      const lNum = parseFloat(lBand) || 0;
+      const rNum = parseFloat(rBand) || 0;
+      const wNum = parseFloat(wBand) || 0;
+      const sNum = parseFloat(sBand) || 0;
+      let overall = '-';
+      let cefr = '-';
+      if (lNum > 0 && rNum > 0 && wNum > 0 && sNum > 0) {
+        const avg = (lNum + rNum + wNum + sNum) / 4;
+        const dec = avg - Math.floor(avg);
+        if (dec < 0.25) overall = (Math.floor(avg)).toFixed(1);
+        else if (dec < 0.75) overall = (Math.floor(avg) + 0.5).toFixed(1);
+        else overall = (Math.ceil(avg)).toFixed(1);
+
+        const ovVal = parseFloat(overall);
+        if (ovVal >= 8.5) cefr = 'C2';
+        else if (ovVal >= 7.0) cefr = 'C1';
+        else if (ovVal >= 5.5) cefr = 'B2';
+        else if (ovVal >= 4.0) cefr = 'B1';
+        else cefr = 'A2';
+      }
+
+      const lMistakes = r.listeningMistakes || {};
+      const rMistakes = r.readingMistakes || {};
+      const lKeys = Object.keys(lMistakes);
+      const rKeys = Object.keys(rMistakes);
+
+      const wInputs = r.writingInputs || {};
+      const w1Text = wInputs['part-1'] || '';
+      const w2Text = wInputs['part-2'] || '';
+      const w1Count = countWordsText(w1Text);
+      const w2Count = countWordsText(w2Text);
+
+      const feed1 = r.task1Feedback || 'Examiner feedback pending.';
+      const feed2 = r.task2Feedback || 'Examiner feedback pending.';
+      const rec = r.teacherRecommendation || 'Consistent practice on task achievement, lexical resource, and grammatical accuracy is advised.';
+
+      container.innerHTML = `
+        <!-- Document Header -->
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2.5px solid #001f3f; padding-bottom:14px; margin-bottom:18px;">
+          <img src="2_UKABritish-council-Logo.png" style="height:52px;" onerror="this.src='/2_UKA-&-British-council-Logo.png'">
+          <div style="text-align:right;">
+            <div style="border:2px solid #001f3f; background:#f8fafc; color:#001f3f; font-weight:900; font-size:13px; padding:6px 14px; border-radius:4px; display:inline-block; letter-spacing:0.5px;">
+              OFFICIAL EVALUATION SCRIPT
+            </div>
+            <div style="font-size:11px; color:#64748b; margin-top:4px; font-weight:700;">IELTS SIMULATION EXAM</div>
+          </div>
+        </div>
+
+        <div style="text-align:center; margin-bottom:16px;">
+          <h1 style="font-size:20px; font-weight:900; color:#001f3f; letter-spacing:0.8px; margin:0 0 4px 0;">CANDIDATE ANSWER SCRIPT & DIAGNOSTIC EVALUATION</h1>
+          <div style="font-size:12px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:0.5px;">Full Module Analysis: Listening, Reading & AI Evaluated Writing</div>
+        </div>
+
+        <!-- Candidate Metadata Grid -->
+        <div class="break-unit" style="margin-bottom:14px;">
+          <table style="width:100%; border:1.5px solid #cbd5e1; border-collapse:collapse; font-size:12px;">
+            <tr>
+              <td style="border:1px solid #cbd5e1; padding:7px 10px; background:#f8fafc; width:20%; font-weight:700; color:#475569;">Candidate Name:</td>
+              <td style="border:1px solid #cbd5e1; padding:7px 10px; font-weight:800; color:#001f3f; text-transform:uppercase;">${escapeHtml(name)}</td>
+              <td style="border:1px solid #cbd5e1; padding:7px 10px; background:#f8fafc; width:20%; font-weight:700; color:#475569;">Candidate ID:</td>
+              <td style="border:1px solid #cbd5e1; padding:7px 10px; font-weight:700; color:#001f3f;">${escapeHtml(r.candidateID || '')}</td>
+            </tr>
+            <tr>
+              <td style="border:1px solid #cbd5e1; padding:7px 10px; background:#f8fafc; font-weight:700; color:#475569;">Mock Exam ID:</td>
+              <td style="border:1px solid #cbd5e1; padding:7px 10px; font-weight:800; color:#001f3f;">${escapeHtml(r.mockID || '')}</td>
+              <td style="border:1px solid #cbd5e1; padding:7px 10px; background:#f8fafc; font-weight:700; color:#475569;">Passcode / Token:</td>
+              <td style="border:1px solid #cbd5e1; padding:7px 10px; font-weight:700; font-family:'JetBrains Mono',monospace; color:#0284c7;">${escapeHtml(r.passcode || '')}</td>
+            </tr>
+            <tr>
+              <td style="border:1px solid #cbd5e1; padding:7px 10px; background:#f8fafc; font-weight:700; color:#475569;">Exam Date:</td>
+              <td style="border:1px solid #cbd5e1; padding:7px 10px; font-weight:700;">${dateStr}</td>
+              <td style="border:1px solid #cbd5e1; padding:7px 10px; background:#f8fafc; font-weight:700; color:#475569;">Testing Center:</td>
+              <td style="border:1px solid #cbd5e1; padding:7px 10px; font-weight:700; color:#047857;">UKA Technical Institute</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- 1. Listening Module Performance & Mistakes -->
+        <div style="margin-top:14px; margin-bottom:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #001f3f; padding-bottom:5px; margin-bottom:8px;">
+            <h3 style="color:#001f3f; font-size:13.5px; margin:0; font-weight:800; display:flex; align-items:center; gap:6px;">
+              <span>🎧</span> Listening Module Performance & Diagnostic Mistakes
+            </h3>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span style="font-size:11px; font-weight:800; color:#001f3f; background:#f1f5f9; padding:2px 8px; border-radius:12px; border:1px solid #cbd5e1;">Score: ${r.listeningRaw || 0}/40</span>
+              <span style="font-size:11px; font-weight:700; color:${lKeys.length === 0 ? '#059669' : '#e11d48'}; background:${lKeys.length === 0 ? '#ecfdf5' : '#fff1f2'}; padding:2px 8px; border-radius:12px; border:1px solid ${lKeys.length === 0 ? '#a7f3d0' : '#fecdd3'};">
+                ${lKeys.length === 0 ? '✓ Full Marks' : lKeys.length + ' Incorrect Answer(s)'}
+              </span>
+            </div>
+          </div>
+          ${lKeys.length === 0 ? `
+            <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:6px; padding:10px; text-align:center; color:#065f46; font-size:12px; font-weight:700;">
+              ✓ Perfect Score! All 40 Listening questions answered correctly.
+            </div>
+          ` : `
+            <table style="width:100%; border-collapse:collapse; font-size:11.5px; border:1px solid #cbd5e1; margin-bottom:8px;">
+              <thead>
+                <tr style="background:#f1f5f9; color:#334155; text-align:left; border-bottom:1.5px solid #cbd5e1;">
+                  <th style="padding:6px 10px; width:55px; font-weight:800;">Q#</th>
+                  <th style="padding:6px 10px; font-weight:800;">Candidate Recorded Answer</th>
+                  <th style="padding:6px 10px; font-weight:800;">Official Correct Answer</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${lKeys.map((q, idx) => {
+                  const m = lMistakes[q];
+                  const rawAns = Array.isArray(m['Your answer']) ? m['Your answer'].join(', ') : (m['Your answer'] || '');
+                  const isBlank = !rawAns || rawAns.trim().toLowerCase() === 'blank';
+                  const cAns = Array.isArray(m['Correct answer']) ? m['Correct answer'].join(' / ') : (m['Correct answer'] || '');
+                  const bg = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
+                  return `
+                    <tr style="background:${bg}; border-bottom:1px solid #e2e8f0;">
+                      <td style="padding:5px 10px; font-weight:800; color:#001f3f;">Q.${escapeHtml(q)}</td>
+                      <td style="padding:5px 10px;">
+                        ${isBlank 
+                          ? `<span style="color:#94a3b8; font-style:italic;">(No answer submitted)</span>` 
+                          : `<span style="color:#dc2626; font-weight:600; text-decoration:line-through;">❌ ${escapeHtml(rawAns)}</span>`}
+                      </td>
+                      <td style="padding:5px 10px; color:#059669; font-weight:700;">✓ ${escapeHtml(cAns)}</td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          `}
+        </div>
+
+        <!-- 2. Reading Module Performance & Mistakes (Flows immediately after Listening) -->
+        <div style="margin-top:14px; margin-bottom:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #001f3f; padding-bottom:5px; margin-bottom:8px;">
+            <h3 style="color:#001f3f; font-size:13.5px; margin:0; font-weight:800; display:flex; align-items:center; gap:6px;">
+              <span>📖</span> Reading Module Performance & Diagnostic Mistakes
+            </h3>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span style="font-size:11px; font-weight:800; color:#001f3f; background:#f1f5f9; padding:2px 8px; border-radius:12px; border:1px solid #cbd5e1;">Score: ${r.readingRaw || 0}/40</span>
+              <span style="font-size:11px; font-weight:700; color:${rKeys.length === 0 ? '#059669' : '#d97706'}; background:${rKeys.length === 0 ? '#ecfdf5' : '#fffbeb'}; padding:2px 8px; border-radius:12px; border:1px solid ${rKeys.length === 0 ? '#a7f3d0' : '#fde68a'};">
+                ${rKeys.length === 0 ? '✓ Full Marks' : rKeys.length + ' Incorrect Answer(s)'}
+              </span>
+            </div>
+          </div>
+          ${rKeys.length === 0 ? `
+            <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:6px; padding:10px; text-align:center; color:#065f46; font-size:12px; font-weight:700;">
+              ✓ Perfect Score! All 40 Reading questions answered correctly.
+            </div>
+          ` : `
+            <table style="width:100%; border-collapse:collapse; font-size:11.5px; border:1px solid #cbd5e1; margin-bottom:8px;">
+              <thead>
+                <tr style="background:#f1f5f9; color:#334155; text-align:left; border-bottom:1.5px solid #cbd5e1;">
+                  <th style="padding:6px 10px; width:55px; font-weight:800;">Q#</th>
+                  <th style="padding:6px 10px; font-weight:800;">Candidate Recorded Answer</th>
+                  <th style="padding:6px 10px; font-weight:800;">Official Correct Answer</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rKeys.map((q, idx) => {
+                  const m = rMistakes[q];
+                  const rawAns = Array.isArray(m['Your answer']) ? m['Your answer'].join(', ') : (m['Your answer'] || '');
+                  const isBlank = !rawAns || rawAns.trim().toLowerCase() === 'blank';
+                  const cAns = Array.isArray(m['Correct answer']) ? m['Correct answer'].join(' / ') : (m['Correct answer'] || '');
+                  const bg = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
+                  return `
+                    <tr style="background:${bg}; border-bottom:1px solid #e2e8f0;">
+                      <td style="padding:5px 10px; font-weight:800; color:#001f3f;">Q.${escapeHtml(q)}</td>
+                      <td style="padding:5px 10px;">
+                        ${isBlank 
+                          ? `<span style="color:#94a3b8; font-style:italic;">(No answer submitted)</span>` 
+                          : `<span style="color:#dc2626; font-weight:600; text-decoration:line-through;">❌ ${escapeHtml(rawAns)}</span>`}
+                      </td>
+                      <td style="padding:5px 10px; color:#059669; font-weight:700;">✓ ${escapeHtml(cAns)}</td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          `}
+        </div>
+
+        <!-- 3. Writing Task 1 Response & AI Evaluation (Flows immediately after Reading) -->
+        <div class="break-unit" style="margin-top:16px; margin-bottom:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #001f3f; padding-bottom:5px; margin-bottom:8px;">
+            <h3 style="color:#001f3f; font-size:13.5px; margin:0; font-weight:800; display:flex; align-items:center; gap:6px;">
+              <span>✍️</span> Writing Task 1: Candidate Response
+            </h3>
+            <span style="font-size:10.5px; font-weight:700; background:#f1f5f9; color:#475569; padding:2px 8px; border-radius:12px; border:1px solid #cbd5e1;">
+              Word Count: ${w1Count} words (Req: 150+)
+            </span>
+          </div>
+          <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:6px; padding:10px 12px; font-size:11.5px; line-height:1.6; color:#1e293b; font-family:Georgia, serif; white-space:pre-wrap;">${escapeHtml(w1Text || 'No script submitted for Task 1.')}</div>
+          
+          <div style="background:#f0fdfa; border-left:3.5px solid #0d9488; border-radius:0 6px 6px 0; padding:10px 12px; margin-top:6px;">
+            <div style="font-size:11px; font-weight:800; color:#0f766e; margin-bottom:3px; text-transform:uppercase; letter-spacing:0.3px;">Task 1 Examiner / AI Feedback & Assessment:</div>
+            <div style="font-size:11.5px; line-height:1.5; color:#134e4a; white-space:pre-wrap;">${escapeHtml(feed1)}</div>
+          </div>
+        </div>
+
+        <!-- 4. Writing Task 2 Response & AI Evaluation (Flows immediately after Task 1) -->
+        <div class="break-unit" style="margin-top:16px; margin-bottom:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #001f3f; padding-bottom:5px; margin-bottom:8px;">
+            <h3 style="color:#001f3f; font-size:13.5px; margin:0; font-weight:800; display:flex; align-items:center; gap:6px;">
+              <span>✍️</span> Writing Task 2: Candidate Response
+            </h3>
+            <span style="font-size:10.5px; font-weight:700; background:#f1f5f9; color:#475569; padding:2px 8px; border-radius:12px; border:1px solid #cbd5e1;">
+              Word Count: ${w2Count} words (Req: 250+)
+            </span>
+          </div>
+          <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:6px; padding:10px 12px; font-size:11.5px; line-height:1.6; color:#1e293b; font-family:Georgia, serif; white-space:pre-wrap;">${escapeHtml(w2Text || 'No script submitted for Task 2.')}</div>
+          
+          <div style="background:#f0fdfa; border-left:3.5px solid #0d9488; border-radius:0 6px 6px 0; padding:10px 12px; margin-top:6px;">
+            <div style="font-size:11px; font-weight:800; color:#0f766e; margin-bottom:3px; text-transform:uppercase; letter-spacing:0.3px;">Task 2 Examiner / AI Feedback & Assessment:</div>
+            <div style="font-size:11.5px; line-height:1.5; color:#134e4a; white-space:pre-wrap;">${escapeHtml(feed2)}</div>
+          </div>
+        </div>
+
+        <!-- 5. Strategic Recommendation -->
+        <div class="break-unit" style="margin-top:14px; margin-bottom:14px; padding:10px 14px; background:#eff6ff; border-left:4px solid #2563eb; border-radius:0 6px 6px 0;">
+          <h4 style="margin:0 0 4px 0; font-size:12px; color:#1e40af; font-weight:800;">Strategic Band Improvement Recommendation:</h4>
+          <p style="font-size:11.5px; margin:0; line-height:1.5; color:#1e3a8a;">${escapeHtml(rec)}</p>
+        </div>
+
+        <!-- 6. Official Verification & Sign-off -->
+        <div class="break-unit" style="margin-top:16px; padding-top:10px; border-top:1.5px solid #cbd5e1; display:flex; justify-content:space-between; align-items:center; font-size:10.5px; color:#64748b;">
+          <div>
+            <strong style="color:#001f3f;">UKA Technical Assessment Division</strong><br>
+            Authorized IELTS Examination Simulation Center
+          </div>
+          <div style="text-align:right;">
+            <span style="border:1.5px solid #047857; color:#047857; font-weight:800; padding:3px 8px; border-radius:4px; text-transform:uppercase; font-size:9.5px;">
+              ✓ Official Certified Diagnostic Report
+            </span>
+          </div>
+        </div>
+      `;
+    }
+
+    // Share Answer Script on WhatsApp (Direct multi-page A4 PDF share via Web Share API or Clipboard Copy + WhatsApp - NO auto-download to admin PC!)
+    async function shareAnswersWhatsApp(name, phone, r) {
+      const publicUrl = `${window.location.origin}/admin_advanced/answers_public/${r.userDocId}`;
+      const lBand = r.listeningBand ? parseFloat(r.listeningBand).toFixed(1) : '-';
+      const rBand = r.readingBand ? parseFloat(r.readingBand).toFixed(1) : '-';
+      const wBand = r.writingBand ? parseFloat(r.writingBand).toFixed(1) : '-';
+      const sBand = (r.speakingBand !== null && r.speakingBand !== undefined) ? parseFloat(r.speakingBand).toFixed(1) : 'Pending';
+
+      const msg = `📝 *UKA Technical IELTS Mock Exam Answer Script & Evaluation*\n\n👤 *Candidate:* ${name}\n📝 *Mock Test:* ${r.mockID}\n🔑 *Passcode:* ${r.passcode}\n\n📊 *Module Overview:*\n• 🎧 Listening: ${r.listeningRaw || 0}/40 (Band ${lBand})\n• 📖 Reading: ${r.readingRaw || 0}/40 (Band ${rBand})\n• ✍️ Writing Band: ${wBand}\n• 🗣️ Speaking Band: ${sBand}\n\n📑 *View & Download Full Multi-Page A4 Answer Script PDF:*\n${publicUrl}\n\nBest regards,\n*UKA Technical Assessment Division*`;
+
+      showToast("Preparing Official Multi-Page Answer Script document...", 2500);
+
+      try {
+        populateAnsScriptTemplate(r, name);
+        const element = document.getElementById('ansScriptExportDoc');
+        const pdf = await generateMultiPageA4Pdf(element);
+
+        const pdfBlob = pdf.output('blob');
+        const pdfFile = new File([pdfBlob], `UKA_Answer_Script_${name.replace(/\s+/g, '_')}_${r.mockID}.pdf`, { type: 'application/pdf' });
+
+        if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+          await navigator.share({
+            title: `Answer Script & Evaluation - ${name}`,
+            text: msg,
+            files: [pdfFile]
+          });
+          return;
+        }
+
+        // On Desktop: Render visual document to clipboard so user can press Ctrl+V in WhatsApp
+        const canvas = await html2canvas(element, { scale: 1.5, useCORS: true, backgroundColor: '#ffffff' });
+        if (canvas.toBlob && navigator.clipboard && navigator.clipboard.write) {
+          canvas.toBlob(async (imgBlob) => {
+            try {
+              await navigator.clipboard.write([new ClipboardItem({ 'image/png': imgBlob })]);
+              showToast("📋 Official Document copied to clipboard! Just press Ctrl+V in WhatsApp to send image!", 4500);
+            } catch (clipErr) {
+              console.warn("Clipboard write failed", clipErr);
+            }
+            const waUrl = `https://wa.me/88${cleanPhone(phone)}?text=${encodeURIComponent(msg)}`;
+            window.open(waUrl, '_blank');
+          });
+          return;
+        }
+      } catch (err) {
+        console.warn("Answer script share fallback:", err);
+      }
+
+      const url = `https://wa.me/88${cleanPhone(phone)}?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+    }
+
+    // Download Answer Script PDF (Explicitly triggered when admin clicks "Download Script PDF")
+    async function downloadAnswerScriptPDF() {
+      if (!currentAnsRecord) return;
+      const r = currentAnsRecord;
+      const name = r.name || (activeCandObj && activeCandObj.name) || 'Candidate';
+      showToast("Generating Complete Multi-Page A4 Answer Script PDF...", 3000);
+
+      try {
+        populateAnsScriptTemplate(r, name);
+        const element = document.getElementById('ansScriptExportDoc');
+        const pdf = await generateMultiPageA4Pdf(element);
+
+        pdf.save(`UKA_Answer_Script_${name.replace(/\s+/g, '_')}_${r.mockID}.pdf`);
+        showToast("✓ Multi-Page A4 Answer Script PDF Downloaded Successfully!");
+      } catch (err) {
+        console.error("PDF generation error:", err);
+        alert("Error generating PDF: " + err.message);
+      }
+    }
+
+    function openScoreModal(docId, r = null) {
+      document.getElementById('scoreDocId').value = docId;
+      document.getElementById('spkScoreInput').value = (r && r.speakingBand !== null && r.speakingBand !== undefined) ? r.speakingBand : '';
+      document.getElementById('wriScoreInput').value = (r && r.writingBand) ? r.writingBand : '';
+      document.getElementById('task1FeedInput').value = (r && r.task1Feedback) ? r.task1Feedback : '';
+      document.getElementById('task2FeedInput').value = (r && r.task2Feedback) ? r.task2Feedback : '';
+      document.getElementById('recInput').value = (r && r.teacherRecommendation) ? r.teacherRecommendation : '';
+      document.getElementById('scoreModal').classList.add('active');
+    }
+
+    function closeScoreModal() {
+      document.getElementById('scoreModal').classList.remove('active');
+    }
+
+    // Password Visibility Toggle
+    const EYE_OPEN_SVG = `<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+    const EYE_OFF_SVG = `<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+
+    function togglePasswordVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      if (input.type === "password") {
+        input.type = "text";
+        if (btn) {
+          btn.innerHTML = EYE_OFF_SVG;
+          btn.title = "Hide password";
+        }
+      } else {
+        input.type = "password";
+        if (btn) {
+          btn.innerHTML = EYE_OPEN_SVG;
+          btn.title = "Show password";
+        }
+      }
+    }
+
+    // Top-Up Quota Handlers
+    function openTopUpModal() {
+      const currentVal = document.getElementById('statLimit').innerText || '0';
+      document.getElementById('topupCurrentLimit').innerText = currentVal;
+      document.getElementById('topupAmountInput').value = '100';
+      document.getElementById('topupPasswordInput').value = '';
+      document.getElementById('topupModal').classList.add('active');
+    }
+
+    function closeTopUpModal() {
+      document.getElementById('topupModal').classList.remove('active');
+    }
+
+    async function handleTopUpQuota(e) {
+      e.preventDefault();
+      const amount = parseInt(document.getElementById('topupAmountInput').value, 10);
+      const password = document.getElementById('topupPasswordInput').value;
+
+      if (!amount || amount <= 0) return alert("Please enter a valid positive amount.");
+      if (!password) return alert("Admin password required.");
+
+      const btn = document.getElementById('btnSubmitTopUp');
+      const origText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = 'Verifying & Updating...';
+
+      try {
+        const res = await fetch('/admin_advanced/topup_limit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount, password })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          alert(data.error || "Top-up failed");
+          return;
+        }
+
+        document.getElementById('statLimit').innerText = data.newLimit;
+        showToast(`✓ Passcode Limit increased by +${amount}! Total Quota: ${data.newLimit}`, 4000);
+        closeTopUpModal();
+      } catch (err) {
+        alert("Error: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = origText;
+      }
+    }
+
+    async function saveScores(silent = false) {
+      const userDocId = document.getElementById('scoreDocId').value;
+      const speakingBand = document.getElementById('spkScoreInput').value;
+      const writingBand = document.getElementById('wriScoreInput').value;
+      const task1Feedback = document.getElementById('task1FeedInput').value;
+      const task2Feedback = document.getElementById('task2FeedInput').value;
+      const teacherRecommendation = document.getElementById('recInput').value;
+
+      try {
+        const res = await fetch('/admin_advanced/update_scores', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userDocId, speakingBand, writingBand, task1Feedback, task2Feedback, teacherRecommendation })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          if (!silent) alert(data.error || "Update failed");
+          return;
+        }
+
+        // 1. Live Instant DOM Update for Recent Results Table
+        const spkVal = (data.speakingBand !== null && data.speakingBand !== undefined) ? Number(data.speakingBand).toFixed(1) : '-';
+        const wriVal = (data.writingBand !== null && data.writingBand !== undefined && Number(data.writingBand) > 0) ? Number(data.writingBand).toFixed(1) : '-';
+        const overVal = data.overallBand ? Number(data.overallBand).toFixed(1) : '-';
+
+        const resSpk = document.getElementById(`res-spk-${userDocId}`);
+        if (resSpk) {
+          resSpk.innerHTML = spkVal !== '-'
+            ? `<strong style="color:var(--uka-emerald); cursor:pointer;" title="Click to edit score" onclick='openScoreModal("${userDocId}", ${JSON.stringify(data).replace(/'/g, "&apos;")})'>${spkVal} ✎</strong>`
+            : `<button class="btn-xs btn-exec-outline" onclick='openScoreModal("${userDocId}", ${JSON.stringify(data).replace(/'/g, "&apos;")})'>+ Score</button>`;
+        }
+        const resWri = document.getElementById(`res-wri-${userDocId}`);
+        if (resWri) {
+          resWri.innerHTML = `<strong>${wriVal}</strong>`;
+        }
+        const resOver = document.getElementById(`res-over-${userDocId}`);
+        if (resOver) {
+          resOver.innerHTML = `<span class="badge-band">${overVal}</span>`;
+        }
+
+        // 2. Live Instant DOM Update for Candidate Modal Table
+        const modSpk = document.getElementById(`modal-spk-${userDocId}`);
+        if (modSpk) {
+          modSpk.innerHTML = spkVal !== '-'
+            ? `<strong style="color:var(--uka-cyan-dark); cursor:pointer;" title="Click to edit score" onclick='openScoreModal("${userDocId}", ${JSON.stringify(data).replace(/'/g, "&apos;")})'>${spkVal} ✎</strong>`
+            : `<button class="btn-xs btn-exec-outline" onclick='openScoreModal("${userDocId}", ${JSON.stringify(data).replace(/'/g, "&apos;")})'>+ Score</button>`;
+        }
+        const modWri = document.getElementById(`modal-wri-${userDocId}`);
+        if (modWri) {
+          modWri.innerHTML = `<strong>${wriVal}</strong>`;
+        }
+        const modOver = document.getElementById(`modal-over-${userDocId}`);
+        if (modOver) {
+          modOver.innerHTML = `<span class="badge-band">${overVal}</span>`;
+        }
+
+        // 3. Keep internal objects in memory synchronized so TRF and Answer Script modals update instantly
+        if (activeCandObj && activeCandObj.results) {
+          const item = activeCandObj.results.find(x => String(x.userDocId) === String(userDocId));
+          if (item) {
+            item.speakingBand = data.speakingBand;
+            item.writingBand = data.writingBand;
+            item.overallBand = data.overallBand;
+            item.cefrLevel = data.cefrLevel;
+            item.task1Feedback = data.task1Feedback;
+            item.task2Feedback = data.task2Feedback;
+            item.teacherRecommendation = data.teacherRecommendation;
+          }
+        }
+        if (currentAnsRecord && String(currentAnsRecord.userDocId) === String(userDocId)) {
+          currentAnsRecord.speakingBand = data.speakingBand;
+          currentAnsRecord.writingBand = data.writingBand;
+          currentAnsRecord.overallBand = data.overallBand;
+          currentAnsRecord.cefrLevel = data.cefrLevel;
+          currentAnsRecord.task1Feedback = data.task1Feedback;
+          currentAnsRecord.task2Feedback = data.task2Feedback;
+          currentAnsRecord.teacherRecommendation = data.teacherRecommendation;
+        }
+
+        if (!silent) {
+          showToast(`✓ Scores updated live! Speaking: ${spkVal} | Writing: ${wriVal} | Overall: ${overVal}`, 3500);
+          closeScoreModal();
+        }
+
+        // Silent background sync with zero screen flicker (DO NOT close candidate modal!)
+        loadRecentResults(currentResPage, true);
+        loadCandidates(currentCandPage, currentCandQuery, true);
+      } catch (e) {
+        if (!silent) alert("Error: " + e.message);
+      }
+    }
+
+    // Download Official TRF PDF (Explicitly triggered when user clicks "Download Official PDF")
+    async function downloadResultPDF(name, mockID, pass, lBand, lRaw, rBand, rRaw, wBand, sBand, over, cefr, feed1, feed2, teacherRec) {
+      showToast("Generating High Quality 2-Page Official TRF PDF...", 2500);
+
+      document.getElementById('pdfOutName').innerText = (name || 'CANDIDATE').toUpperCase();
+      document.getElementById('pdfOutType').innerText = 'ACADEMIC';
+      document.getElementById('pdfOutPass').innerText = pass || 'UKA-MOCK';
+      document.getElementById('pdfOutDate').innerText = new Date().toLocaleDateString('en-GB');
+
+      document.getElementById('pdfOutL').innerText = lBand > 0 ? parseFloat(lBand).toFixed(1) : '-';
+      document.getElementById('pdfRawL').innerText = lRaw ? `(${lRaw}/40)` : '';
+      document.getElementById('pdfOutR').innerText = rBand > 0 ? parseFloat(rBand).toFixed(1) : '-';
+      document.getElementById('pdfRawR').innerText = rRaw ? `(${rRaw}/40)` : '';
+      document.getElementById('pdfOutW').innerText = wBand > 0 ? parseFloat(wBand).toFixed(1) : '-';
+      document.getElementById('pdfOutS').innerText = sBand !== '-' ? parseFloat(sBand).toFixed(1) : '-';
+      document.getElementById('pdfOutOver').innerText = over || '-';
+      document.getElementById('pdfOutCEFR').innerText = cefr || '-';
+
+      document.getElementById('pdfOutFeed1').innerText = feed1 || 'Writing Task 1 feedback provided during examination review.';
+      document.getElementById('pdfOutFeed2').innerText = feed2 || 'Writing Task 2 feedback provided during examination review.';
+      document.getElementById('pdfOutRec').innerText = teacherRec || 'Consistent practice on task achievement, lexical resource, and grammatical accuracy is advised.';
+
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF('p', 'mm', 'a4');
+
+      const page1 = document.getElementById('pdfPage1');
+      const page2 = document.getElementById('pdfPage2');
+
+      const canvas1 = await html2canvas(page1, { scale: 2 });
+      pdf.addImage(canvas1.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, 210, 297);
+
+      pdf.addPage();
+      const canvas2 = await html2canvas(page2, { scale: 2 });
+      pdf.addImage(canvas2.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, 210, 297);
+
+      pdf.save(`UKA_TRF_${name.replace(/\s+/g, '_')}_${mockID}.pdf`);
+      showToast("TRF PDF Export Complete!");
+    }
+
+    function cleanPhone(p) {
+      return (p || '').replace(/\D/g, '').replace(/^88/, '');
+    }
+    function escapeHtml(s) {
+      return (s || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
+    }
+    function escapeQuotes(s) {
+      return (s || '').replace(/[`\\$]/g, '\\$&');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadStats();
+      loadCandidates(1);
+    });
+  </script>
+</body>
+</html>

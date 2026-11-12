@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>90 Days English Practice</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    header img {
+      width: 600px;
+      height: 150px;
+      max-width: 100%;
+    }
+
+    .section {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .instructions {
+      font-size: 16px;
+      margin: 10px 0;
+    }
+
+    .word-count {
+      float: right;
+      font-size: 14px;
+      color: #555;
+    }
+
+    textarea {
+      width: 100%;
+      height: 150px;
+      resize: none;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px;
+      outline: none;
+    }
+
+    .upload-btn {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .output {
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #e8f5e9;
+      border-left: 5px solid #4CAF50;
+      white-space: pre-wrap;
+    }
+
+    .form-inputs {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .form-inputs input {
+      padding: 10px;
+      margin: 5px;
+      font-size: 16px;
+      width: 250px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    #login-section input {
+      width: 300px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login Section -->
+  <div class="section" id="login-section">
+      <img style="width:600px; height:150px; display:block; margin-left: auto; margin-right: auto;" src="https://pub-35f6e385af654edaa1c5aded83150048.r2.dev/external-images/2-UKA-British-council-Logo.png" alt="UKA Technical Institute Logo" />
+    <h2 style="text-align:center">User Login</h2>
+    <div class="form-inputs">
+      <input type="text" id="loginUsername" placeholder="Username" /><br/>
+      <input type="password" id="loginPassword" placeholder="Password" /><br/>
+      <button class="upload-btn" onclick="checkLogin()">Login</button>
+    </div>
+    <p id="loginError" style="color:red;text-align:center;"></p>
+  </div>
+
+  <!-- Main App Section -->
+  <div id="app" class="hidden">
+
+    <header>
+      <img src="https://pub-35f6e385af654edaa1c5aded83150048.r2.dev/external-images/2-UKA-British-council-Logo.png" alt="UKA Technical Institute Logo" />
+      <h2>Life in the city vs village</h2>
+      <p class="instructions">Write 500 words</p>
+    </header>
+
+    <div class="form-inputs">
+      <input type="text" id="candidateName" placeholder="Candidate Name" />
+      <input type="text" id="candidatePhone" placeholder="Phone Number" />
+    </div>
+
+    <div class="section" id="step1">
+      <h3>Step 1 -Life in the city vs village</h3>
+      <div class="word-count" id="count1">Words: 0</div>
+      <textarea id="text1" spellcheck="false"></textarea>
+      <button class="upload-btn" onclick="uploadText(1)">Upload</button>
+      <div class="output" id="output1"></div>
+    </div>
+
+    <div class="section" id="step2" style="display:none">
+      <h3>Step 2 - Breakdown Mistake & Correction Format</h3>
+      <div class="word-count" id="count2">Words: 0</div>
+      <textarea id="text2" spellcheck="false"></textarea>
+      <button class="upload-btn" onclick="uploadText(2)">Upload</button>
+      <div class="output" id="output2"></div>
+    </div>
+
+    <div class="section" id="step3" style="display:none">
+      <h3>Step 3 - Rewrite Your Topic</h3>
+      <div class="word-count" id="count3">Words: 0</div>
+      <textarea id="text3" spellcheck="false"></textarea>
+      <button class="upload-btn" onclick="uploadText(3)">Upload</button>
+      <div class="output" id="output3"></div>
+    </div>
+
+    <div class="section" id="step4" style="display:none">
+      <h3>Step 4 - Upload Progressive Report</h3>
+      <div class="word-count" id="count4">Words: 0</div>
+      <textarea id="text4" spellcheck="false"></textarea>
+      <button class="upload-btn" onclick="uploadText(4)">Upload</button>
+      <div class="output" id="output4"></div>
+    </div>
+
+    <div class="section" id="pdf-export" style="display:none">
+      <h3>Export All Writings</h3>
+      <button class="upload-btn" onclick="exportPDF()">Download PDF</button>
+    </div>
+  </div>
+
+  <!-- jsPDF Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script>
+    function checkLogin() {
+      const username = document.getElementById("loginUsername").value;
+      const password = document.getElementById("loginPassword").value;
+      const errorMsg = document.getElementById("loginError");
+
+      if (username === "life" && password === "5433") {
+        document.getElementById("login-section").classList.add("hidden");
+        document.getElementById("app").classList.remove("hidden");
+      } else {
+        errorMsg.textContent = "Invalid username or password!";
+      }
+    }
+
+    const wordCounts = {
+      1: document.getElementById("count1"),
+      2: document.getElementById("count2"),
+      3: document.getElementById("count3"),
+      4: document.getElementById("count4")
+    };
+
+    const textAreas = {
+      1: document.getElementById("text1"),
+      2: document.getElementById("text2"),
+      3: document.getElementById("text3"),
+      4: document.getElementById("text4")
+    };
+
+    Object.keys(textAreas).forEach(num => {
+      textAreas[num].addEventListener('input', () => {
+        const text = textAreas[num].value.trim();
+        const words = text === '' ? 0 : text.split(/\s+/).length;
+        wordCounts[num].textContent = `Words: ${words}`;
+      });
+    });
+
+    function uploadText(step) {
+      const input = textAreas[step].value.trim();
+      if (input.length === 0) return;
+      document.getElementById("output" + step).textContent = input;
+
+      if (step < 4) {
+        document.getElementById("step" + (step + 1)).style.display = "block";
+      } else {
+        document.getElementById("pdf-export").style.display = "block";
+      }
+    }
+
+    async function exportPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      const name = document.getElementById("candidateName").value.trim();
+      const phone = document.getElementById("candidatePhone").value.trim();
+
+      doc.setFontSize(16);
+      doc.setFont(undefined, 'bold');
+      doc.text("English Practice Report", 10, 15);
+
+      doc.setFontSize(12);
+      doc.setFont(undefined, 'normal');
+      doc.text("Candidate Name: " + name, 10, 25);
+      doc.text("Phone Number: " + phone, 10, 32);
+
+      let y = 42;
+      const titles = [
+        "Step 1 - Tell Yourself",
+        "Step 2 - Correction Format",
+        "Step 3 - Rewrite Your Topic",
+        "Step 4 - Progressive Report"
+      ];
+
+      for (let i = 1; i <= 4; i++) {
+        const content = document.getElementById("output" + i).textContent.trim();
+        if (content) {
+          doc.setFontSize(14);
+          doc.setFont(undefined, 'bold');
+          doc.text(titles[i - 1], 10, y);
+          y += 8;
+
+          doc.setFontSize(12);
+          doc.setFont(undefined, 'normal');
+          const lines = doc.splitTextToSize(content, 180);
+          doc.text(lines, 10, y);
+          y += lines.length * 7 + 10;
+
+          if (y > 260 && i < 4) {
+            doc.addPage();
+            y = 20;
+          }
+        }
+      }
+
+      doc.save("English_Practice_Report.pdf");
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,604 @@
+final data prototypes:
+        >mcq: 
+          {
+            "part": 2,
+            "group": 22,
+            "id": 20,
+            "type": "mcq",
+            "text": "A local company is...",
+            "options": ["... hiring new employees", "... expanding to increase competition", "... reducing IT workers."],
+            "answer": "... hiring new employees"
+  },
+        >mcq-two-choice:
+        {   
+            "part": 4,
+            "group": 41,
+            "id": [31, 32],
+            "type": "mcq-two-choice",
+            "text": "Which two tips does Liz recommend for new runners?",
+            "options": ["doing two runs a week", "running in the evening", "going on runs with a friend", "listening to music during runs", "running very slowly"],
+            "answer": ["A", "C"] 
+  },
+
+        >sentence-completion:
+        {
+            "part": 4,
+            "group": 42,
+            "id": 38,
+            "type": "sentence-completion",
+            "text": "Visitors will be able to learn about [blank] and then collect some",
+            "answer": "mushrooms",
+  },
+        >short-answer:
+        {
+            "part": 1,
+            "group": 12,
+            "id": 10,
+            "type": "shortAnswer",
+            "text": "How much will Mr Griffin pay for his food?",
+            "answer": "Friday"
+  },
+
+
+
+        >note:
+        {
+    "part": 3,
+    "group": 31,
+    "title": "First Day at work",
+    "id": [21, 22, 23, 24, 25, 26],
+    "type": "note",
+    "col-one": [["Name of supervisor:"], ["Where to leave coat and bag:"], ["See tiffany in HR:"], ["Location of HR Office:"], ["Supervisor's mobile number:"]],
+    "col-two": [["[blank]"], ["use [blank] in staffroom", "then die [blank]"],["to give [blank] number to collect [blank]"], ["on [blank] floor"], ["[blank]"]],
+    "answers": ["Me", "heaven", "soul", "payment", "hell", "bruh"]
+
+  }
+
+        >mcq-updated:
+        {
+            "part": 3,
+            "group": 31,
+            "type": "mcq-updated",
+            "id": [21, 22, 23, 24],
+            "questions": ["question 21", "question 22", "question 23", "question 24"],
+            "options": [["opt 1", "opt 2", "opt 3"], ["opt 1", "opt 2", "opt 3"], ["opt 1", "opt 2", "opt 3"], ["opt 1", "opt 2", "opt 3"]],
+            "answers": ["answer1","answer2","answer3","answer4"]
+        }
+        >short-answer-update:
+        {
+            "part": 3,
+            "group": 31,
+            "type": "short-answer-updated",
+            "id": [21, 22, 23, 24],
+            "questions": ["question 1", "question 2", "question 3", "question 4"],
+            "answers": ["answer 1", "answer 2", "answer 3", "answer 4"]
+
+        }
+
+        >mcq-two-choice-updated:
+        {
+            "part": 3,
+            "group": 32,
+            "type": "mcq-two-choice-updated",
+            "id": [[27, 28], [29, 30]],
+            "questions": [["Which two tips does Liz recommend for new runners?"], ["Which two reasons does Liz convey to the fat people?"]],
+            "options": [["doing two runs a week", "running in the evening", "going on runs with a friend", "listening to music during runs", "running very slowly"],
+            ["doing two runs a week", "running in the evening", "going on runs with a friend", "listening to music during runs", "running very slowly"]],
+            "answers": [["A", "C"], ["D", "E"]]
+  }
+
+
+        >features:
+            {
+                "part": 3,
+                "group": 31,
+                "type": "feature-matching",
+                "id": [24, 25, 26, 27],
+                "options": ["one shoe was missing", "the colour of one shoe had faded", "one shoe had a hole in it", "the shoes were brand new", "the shoes were too dirty", "the stitching on the shoes was broken"],
+                "features": ["the high-heeled shoes", "the ankle boots", "the baby shoes", "the trainers"],
+                "answers": [1, 3, 2, 5]
+            }
+
+
+        >table-completion:
+                {
+                    "part": 3,
+                    "group": 31,
+                    "type": "table-completion",
+                    "table-structure": [1, 3, 3, 3, 3],
+                    "id": [24, 25, 26, 27],
+                    "cells": [["<strong>shopping</strong>"], 
+                    ["", "<strong>to buy</strong>", "<strong>other ideas</strong>"], 
+                    ["<strong>Fish market</strong>", "a dozen prawns", "a handful of [blank] (type of seaweed)"],
+                    ["<strong>Organic shop</strong>", "beans and a [blank] for dessert", "spices and [blank]"],
+                    ["<strong>Bakery</strong>", "a brown loaf", "a [blank] tart"]
+                    ],
+                    "answers": [1, 3, 2, 5]
+                }
+
+
+        >diagram-labelling{
+  "part": 3,
+  "group": 33,
+  "type": "diagram-labelling",
+  "image": "https://pub-35f6e385af654edaa1c5aded83150048.r2.dev/external-images/cambridge-ielts-18-academic-listening-test-2-15-20.jpg",
+  "options": ["A", "B", "C", "D", "E", "F", "G", "H", "I"],
+  "id": [35, 36, 37, 38, 39, 40],
+  "labels": ["School",
+             "Sports centre",
+             "Clinic",
+             "Community centre",
+             "Supermarket",
+             "Playground"
+  ]
+}
+
+      >TFNG {
+        "part": 1,
+        "group": 11,
+        "type": "T/F/NG",
+        "id": [1, 2, 3, 4, 5, 6, 7],
+        "questions": ["Archaeological research had taken place on the island of Obi before the arrival of Ceri Shipton and his colleagues.",
+                "At the Kelo sites, the researchers found the first clam shell axes ever to be discovered in the region.",
+                "The size of Obi today is less than it was 18,000 years ago.",
+                "A change in the climate around 11,700 years ago had a greater impact on Obi than on the surrounding islands.",
+                "The researchers believe there is a connection between warmer, wetter weather and a change in the material used to make axes.",
+                "Shipton's team were surprised to find evidence of the Obi islanders’ hunting practices.",
+                "It is thought that the Kelo shelters were occupied continuously until about 1,000 years ago."
+  ]
+      }
+
+      >matching-information for reading
+      {
+  "part": 2,
+  "group": 21,
+  "type": "matching-information",
+  "paragraphs": ["A", "B", "C", "D", "E", "F", "G", "H"],
+  "id": [14, 15, 16, 17],
+  "information": ["reference to the need to ensure that inhibitants of wetland regions continue to benefit from them",
+                  "the proportion of wetlands which have already been lost",
+                  "reference to the idea that people are beginning to appreciate the value of wetlands",
+                  "mention of the cultural significance of wetlands"
+  ]
+}
+
+    >list of headings:
+    {
+      "part": 3,
+  "group": 33,
+  "type": "list-of-headings",
+  "id": [35, 36, 37, 38, 39, 40],
+  "paragraphs": ["A", "B", "C", "D", "E", "F"],
+  "headings": ["An increasing divergence of attitudes towards AI", 
+               "Reasons why we have more faith in human judgement than in AI", 
+               "The superiority of AI projections over those made by humans", 
+               "The process by which AI can help us make good decisions", 
+               "The advantages of involving users in AI processes", 
+               "Widespread distrust of an AI innovation",
+               "Encouraging openness about how AI functions",
+               "A surprisingly successful AI application"],
+  
+}
+
+
+
+ >summary with list of words 
+ {"part": 3,
+  "group": 33,
+  "type": "summary-with-list-of-words",
+  "id": [35, 36, 37, 38, 39],
+  "word-list": ["fast", "isolated", "emotional", "worrying", "many", "hard", "combined", "thorough"],
+  "title": "Studies on digital screen use",
+  "summary": ["There have been many studies on digital screen use, showing some [blank] trends. Psychologist Anne Mangen gave high-school students a short story to read, half ausing digital and half using print mediums. Her team then used a question-and-answer technique to find out how [blank] each group's understanding of the plot was. The findings showed a clear pattern in the responses, with those who read screens finding the order of information [blank] to recall. <br>Studies by Ziming Liu show that students are tending to read [blank] words and phrases in a text to save time. This approach, she says, gives the reader a superficial understanding of the [blank] content of material, leaving no time for thought."],
+  
+}
+
+
+
+26th may,
+
+
+    Problems:
+        Worked on flowchart,
+        faced issue looping through options for each question block
+        facing difficulty adding the arrows in appropriate manner
+        tried adding the dynamic logic for table but could not find any solution
+    
+    Necessary work that needs to be done:
+        >Checkmark logic
+        >Need to limit choices for only two choice mcqs
+        >Might need to change the dataset to suit my needs
+        >
+
+
+27th may,
+    
+    work done:
+        added part logic
+        added groupd logic 
+        added instruction logic
+        added dynamic question logic for every type of questions except table and features
+        added instruction logic. Works as intended. IMPORTANT NOTE: if the dataset has a mismatch from questions to instructions then there will be an index error.
+
+    Necessary work that needs to be done:
+        >Looping inside the literal to insert every option in select. {FeatureContainer}
+        >Checkmark logic
+        >Need to add toggle functionallity for display styles. FOR EXAMPLE: an empty background container with grey color just hanging there
+        >Need to sort out the drag and drop functionallity and add it dynamically.
+        >Need to limit choices for only two choice mcqs.
+        >Need to create a whole another dataset to create tables
+        >Need to add indexes for each options in mcq
+        >Might need to remove borders from each question container
+        >A dynamic logic for feature and table will be the end of listening logic 
+
+    Styling:
+        >start styling all the questions and their instructions
+        >PARTS
+        >PREVIOUS _ NEXT buttons
+
+        >
+        
+
+29th may,
+
+
+    Work done:
+        added limit choice logic
+
+31st may,
+
+    Work done:
+        added a sessionStorage to notify the server to change the value of boolean on listeningTestISCompleted.
+        added styles for the next and previous button.
+
+
+
+2nd may,
+
+    necessary work:
+        changing the dataset to suit each type of question in only one index
+        due to that:
+            need to change the group header logic
+            need to change the placeholder logic
+    check:
+        "mcq-updated"
+        "note"
+
+
+15th June,
+    work-done:
+        captured all the input that was altered
+        fixed the drag and drop handling (not swapping the option boxes)
+    
+    necessary work:
+        sorting all the answers according to their id in an array
+        sorting all the input value according to their id in an array
+          forcing all value to be lower case before comparison
+          comparing both the arrays(minus from 40 if mismatch)
+          
+          
+
+    
+
+
+
+
+html-structure:
+        <div class="flowchart-container">
+
+  <!-- Top Box: Draggable Reasons -->
+  <div class="flowchart-options">
+    <div class="box" draggable="true" data-item="Because it was raining.">Because it was raining.</div>
+    <div class="box" draggable="true" data-item="He forgot his keys.">He forgot his keys.</div>
+    <div class="box" draggable="true" data-item="The shop was closed.">The shop was closed.</div>
+    <div class="box" draggable="true" data-item="Because it was raining.">Because it was raining.</div>
+    <div class="box" draggable="true" data-item="Because it was raining.">Because it was raining.</div>
+    <div class="box" draggable="true" data-item="Because it was raining.">Because it was raining.</div>
+  </div>
+
+  <!-- Flowchart: Questions descending -->
+  <div class="flowchart">
+    <div class="step">
+      <div class="index"><strong>(1)</strong></div>
+      <div class="question">Why did he stay home?</div>
+      <div class="arrow">↓</div>
+      <div class="box dropzone" data-item="" data-initial="empty"></div>
+    </div>
+
+    <div class="step">
+      <div class="question">Why couldn't he enter?</div>
+      <div class="arrow">↓</div>
+      <div class="box dropzone" data-item="" data-initial="empty"></div>
+    </div>
+
+    <div class="step">
+      <div class="question">Why didn't he buy milk?</div>
+      <div class="arrow">↓</div>
+      <div class="box dropzone" data-item="" data-initial="empty"></div>
+    </div>
+  </div>
+
+</div>
+
+
+
+feature-matching:
+
+        <div class="matching-container">
+     
+  <div class="all-boxes">
+
+     
+    <div class="matching-features">
+      <div class="qa-pair">
+        <div class="question-feature">Where is the sofa?</div>
+        <div class="box dropzone" data-item="" data-initial="empty"></div>
+      </div>
+      <div class="qa-pair">
+        <div class="question-feature">Where are the boxes?</div>
+        <div class="box dropzone" data-item="" data-initial="empty"></div>
+      </div>
+      <div class="qa-pair">
+        <div class="question-feature">Where is the cashier desk?</div>
+        <div class="box dropzone" data-item="" data-initial="empty"></div>
+      </div>
+    </div>
+    
+    <div class="matching-options">
+      <div class="box" data-item="near the entrance">near the entrance</div>
+      <div class="box" data-item="in the attic">in the attic</div>
+      <div class="box" data-item="at the back of the shop">at the back of the shop</div>
+    </div>
+
+   
+  </div>
+
+  </div>
+
+
+
+
+
+
+
+
+
+  21st June:
+
+ route structure: / -> /login -> /select-mock -> /mock-test -> /listening-test 
+
+ api: get: /plan-limit = plan-limit, /mockTest = mock-test data
+      post: /update-mock-info = update user database
+
+ sessions: user
+           mock
+
+
+  22nd June:
+    route structure: / -> /login -> /select-mock -> /mock-test -> /listening-test
+
+    api: get: /plan-limit = plan-limit, /mockTest = mock-test data
+         post: /update-mock-info = update user database
+
+    sessions: user
+              mock
+
+    added: (scores retrieved from /listening-test -> goes back to /select-mock) -> issues: (does not update the mock boxes when we route to it the second time)
+           (scores added to the database after submitting in /listening-test) -> issues: (no issues);
+
+
+
+  23rd June:
+    test taken:
+        ISSUES: highlight - audio in backend (database) - need to update answercheck() {check all lowercase, might have multiple answers} - 
+
+        need: FE & BE for user activity - FE for mock select - FE for login  
+
+
+
+24th June:
+
+    updates:
+
+        answerCheck- better checking with many potential answers
+        added convenient addition of audio for each mockID
+        
+
+25th June:
+
+    updates:
+      made changes to user mockInformation dataset
+      added better answerCheck to backend
+
+    25th JUNE DUMMY:
+        trying to change the dataset for the questions
+
+
+          CHANGED THE DATASET FOR THE QUESTIONS
+
+          need to work on reading.html to check on functionallity with database
+
+
+26th June:
+
+    updates:
+
+        markModified for nested elements in mongoDB
+        scores and mistakes are being sorted and sent perfectly
+
+
+    need: 
+      working template for reading
+
+
+
+
+28th June:
+
+    updates:
+
+        reading template is ready
+
+    need:
+
+        passage logic
+        question logics
+
+
+
+1st JULY:
+  
+    need:
+
+
+      summary completion
+      list of headings with drag and drop --- need to add specific target linkup between option and empty box
+      summary completion with list of phrases
+      table completion
+      mcq-two-choice
+      diagram logic - listening
+
+      highlight option
+
+
+
+
+3rd JULY:
+
+
+  need: need to add specific target linkup between option and empty box
+        
+
+
+5th JULY:
+
+
+
+  need:
+
+    add 5 mock test for each
+
+
+6th JULY:
+
+  need: reading.js fix drag and drop
+
+    
+
+function handleDrop(e) {
+  if (e.stopPropagation) e.stopPropagation();
+
+  if (dragElement !== this) {
+    const draggedGroup = dragElement.getAttribute("data-class");
+    const targetGroup = this.getAttribute("data-class");
+
+    if (draggedGroup !== targetGroup) {
+      this.classList.add("invalid-drop");
+      setTimeout(() => this.classList.remove("invalid-drop"), 1000);
+      return false;
+    }
+
+    // Proceed with swap
+    const draggedHTML = dragElement.innerHTML;
+    const draggedItem = dragElement.getAttribute("data-item");
+
+    this.innerHTML = draggedHTML;
+    this.setAttribute("data-item", draggedItem || "");
+
+    addDragEvents(dragElement);
+    addDragEvents(this);
+  }
+}
+
+
+
+
+
+july 8th->
+
+
+    done:
+      added functionality to restrict drop area 
+
+    need: 
+      a static page for ending test
+
+
+
+
+july 12th ->
+
+  done:
+    added new user page
+
+  need:
+
+    fullscreen
+    timer
+
+
+
+july 13th ->
+
+  done:
+    removed spellcheck
+
+  need:
+    fullscreen
+    timer
+    
+
+
+
+    git update check
+
+
+july 17th ->
+
+  bug found->
+    enter to submit (needs to be removed)
+    
+  
+  fix needed immediately->
+  fix answerChecking using trim
+  fix answers in mockID 2
+
+      pdf mistakes
+
+
+
+july 19th ->
+
+  fix ->
+      add newline functionality for passages
+      list of heading bug
+      add audio for cambridge
+
+
+
+
+
+
+
+
+
+      FIXES:
+          HIGHLIGHT CONVENIENCE
+          mcq in grid not flex
+
+
+
+<a href="https://imgbb.com/"><img src="https://pub-35f6e385af654edaa1c5aded83150048.r2.dev/external-images/highlighter.png" alt="highlighter" border="0"></a>
+
+<a href="https://imgbb.com/"><img src="https://pub-35f6e385af654edaa1c5aded83150048.r2.dev/external-images/highlighter-outline.png" alt="highlighter-outline" border="0"></a>
+<a href="https://imgbb.com/"><img src="https://pub-35f6e385af654edaa1c5aded83150048.r2.dev/external-images/marker.png" alt="marker" border="0"></a>
+      
+
+
+
+practice types
+
+          READING  
+        True-False-NotGiven
+    
+

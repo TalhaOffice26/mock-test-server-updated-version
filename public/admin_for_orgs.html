@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='15' fill='%231A365D' /><path d='M30 25 V55 C30 65 35 75 50 75 C65 75 70 65 70 55 V25 H60 V55 C60 62 58 65 50 65 C42 65 40 62 40 55 V25 H30Z' fill='white' /><rect x='25' y='25' width='15' height='5' fill='white' /><rect x='60' y='25' width='15' height='5' fill='white' /></svg>">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel</title>
+  <style>
+
+    :root {
+      --primary: #3B1E54;
+      --light: #EEEEEE;
+      --muted: #9B7EBD;
+      --text: #2b2b2b;
+      --radius: 10px;
+      --shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f6fa;
+      color: #333;
+    }
+    header {
+      background: #2d3436;
+      color: #fff;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.5rem;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      background: #636e72;
+    }
+    nav button {
+      background: none;
+      border: none;
+      color: #fff;
+      padding: 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    nav button:hover {
+      background: #2d3436;
+    }
+    .container {
+      padding: 2rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+    .section {
+      display: none;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      
+    }
+    .active {
+      display: block;
+    }
+    input, select, button {
+      display: block;
+      margin: 1rem 0;
+      padding: 0.5rem;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+       .user-list {
+      width: 100%;
+      max-width: 1200px;
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1rem;
+      overflow: auto;
+      max-height: 400px;
+    }
+
+    .user-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fafafa;
+      border: 1px solid #f0f0f0;
+      border-radius: var(--radius);
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.75rem;
+      transition: transform 0.2s ease;
+    }
+
+    .user-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .user-name {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .user-email {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .view-btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      padding: 0.4rem 0.9rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s ease;
+      width: 20%;
+    }
+
+    .view-btn:hover {
+      background: #5a2b77;
+    }
+
+    .view-btn-grey{
+      background: grey;
+      color: #000000;
+      border: none;
+      border-radius: var(--radius);
+      padding: 0.4rem 0.9rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s ease;
+      width: 20%;
+    }
+    .view-btn-grey:hover{
+      background: grey;
+    }
+    .hidden{
+      display: none;
+    }
+
+
+
+    /*view passcodes*/
+    .dual-list {
+  
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.list-box {
+  flex: 1;
+  background: #fff;
+  padding: 3rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.list-box h3 {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  color: #2d3436;
+}
+
+.user-list {
+  position: relative;
+  flex: 1;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 1rem;
+  right: 20px;
+}
+
+/* Each assigned item */
+.assigned-item {
+  background: #f1f2f6;
+  border-radius: 5px;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.used-label{
+    position: relative;
+    left: 20rem;
+    bottom: 4rem;
+    background: #ff4757;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+/* Stack vertically on small screens */
+@media (max-width: 768px) {
+  .dual-list {
+    flex-direction: column;
+  }
+}
+
+/* Container styling */
+#passList ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* space between each item */
+}
+
+/* Each list item */
+#passList li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Passcode text */
+#passList li p {
+  margin: 0;
+  font-weight: 600;
+  min-width: 180px; /* optional fixed width for alignment */
+  font-family: monospace;
+  color: #3B1E54;
+}
+
+/* Input box */
+.candidate-input {
+  flex: 1 1 auto;
+  min-width: 80px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  color: #111827;
+  background-color: #fff;
+}
+
+/* Assign button */
+.assigned-toggle-buttons{
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+.assign-button {
+padding: 6px 14px;   
+background-color: #3B1E54; 
+color: white; 
+font-weight: 600; 
+cursor: pointer; 
+transition: background 0.2s;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #ccc;   /* default border */
+  border-radius: 8px;
+  font-weight: 500;
+  transition: border-color 0.3s ease; /* smooth animation */
+  cursor: pointer;
+
+}
+
+.assign-button.selected{
+  border-color: #fd0505;  /* indicates selection */
+}
+
+.assign-button:hover {
+  background-color: #9B7EBD;
+}
+
+
+/*notification section*/
+    .notification-box {
+      position: absolute;
+      width: 600px;
+      max-width: 600px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 1rem;
+      margin: 0 auto;
+      top: 700px;
+      margin-bottom: 20px;
+    }
+
+    .notification-header {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 8px;
+    }
+
+    .notification-list {
+      max-height: 300px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .notification {
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #eee;
+      border-left: 4px solid #3498db;
+      border-radius: 6px;
+      background-color: #fafafa;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .notification-list p {
+      margin: 0;
+      font-size: 14px;
+      color: #333;
+      flex-grow: 1;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 4px; /* optional for spacing */
+      margin-bottom: 8px;  /* optional spacing between paragraphs */
+    }
+
+    .notification button {
+      background: none;
+      border: none;
+      font-size: 16px;
+      color: #999;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    .notification button:hover {
+      color: red;
+    }
+
+    .empty-message {
+      text-align: center;
+      color: #777;
+      padding: 20px 10px;
+    }
+
+    /* Scrollbar styling (optional) */
+    .notification-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .notification-list::-webkit-scrollbar-thumb {
+      background-color: #ccc;
+      border-radius: 3px;
+    }
+
+
+
+    .addBorder{
+      position: relative;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #999;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #333;
+  font-weight: 500;
+  transition: box-shadow 0.3s ease;
+  background-clip: padding-box;
+  /* animate border color via gradient with mask */
+  background-image: linear-gradient(90deg, #999, #666, #999);
+  background-size: 200% 100%;
+  -webkit-background-clip: border-box;
+  -webkit-text-fill-color: #333;
+  animation: borderPulse 3s linear infinite;
+    }
+
+    .addBorder::after {
+    content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 8px;
+  border: 2px solid #999;
+  background: linear-gradient(90deg, #999, #666, #999);
+  background-size: 200% 200%;
+  animation: borderPulse 3s linear infinite;
+  z-index: -1;           /* put behind content */
+  pointer-events: none;  /* let clicks pass through */
+}
+
+    @keyframes borderPulse {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+
+}
+
+
+.usedList .assigned-item{
+  background-color: #f2f2f2;   /* light grey */
+  border: 1px solid #c8c8c8;   /* soft grey border */
+  color: #555;                 /* neutral text */
+}
+
+.unusedList .assigned-item{
+  background-color: #ffffff;   /* pure white */
+  border: 1px solid #8ab6ff;   /* soft blue border */
+  color: #1f3f73;              /* subtle blue text */
+}
+
+.notification-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 25px;
+  margin: 30px auto;
+  font-family: Arial, sans-serif;
+}
+
+.notification-section {
+  background: #fff;
+  border: 1px solid #e1e1e1;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  width: 100%;
+}
+
+.notification-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.notification-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.notification-item {
+  padding: 15px;
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  background: #fafafa;
+  transition: 0.2s ease;
+}
+
+.notification-item:hover {
+  background: #f0f0f0;
+}
+
+.notification-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 0;
+}
+
+.notification-label {
+  font-weight: 600;
+  color: #555;
+}
+
+.notification-value {
+  color: #222;
+}
+
+
+/* Loading Overlay Styles */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(3px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Ensure it's on top */
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid var(--light);
+  border-top: 5px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Premium Toggle Styles */
+.premium-toggle {
+    padding: 6px 12px;
+    border: 2px solid #9B7EBD;
+    background: transparent;
+    color: #3B1E54;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    width: 96.47px; /* Overriding your global 100% width */
+    margin: 0;
+}
+
+.premium-toggle.active {
+    background: #FFD700; /* Gold color */
+    border-color: #B8860B;
+    color: #000;
+}
+
+/* Advanced Admin Button in Navbar */
+.btn-adv-nav {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.3px;
+  border-radius: 6px !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+  margin: 4px 8px !important;
+  padding: 0.6rem 1.25rem !important;
+  width: auto !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+.btn-adv-nav:hover {
+  background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%) !important;
+  box-shadow: 0 4px 12px rgba(30, 60, 114, 0.45) !important;
+  transform: translateY(-1px);
+}
+
+/* Password Toggle Wrapper */
+.password-wrapper {
+  position: relative;
+  width: 100%;
+  margin: 1rem 0;
+  box-sizing: border-box;
+}
+.password-wrapper input {
+  margin: 0 !important;
+  width: 100% !important;
+  padding-right: 42px !important;
+  box-sizing: border-box;
+}
+.password-wrapper .toggle-password-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  cursor: pointer;
+  color: #6c757d;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none !important;
+}
+.password-wrapper .toggle-password-btn:hover {
+  color: #1e3c72;
+}
+  </style>
+</head>
+<body>
+  <header>Admin Panel</header>
+  <nav>
+    <button onclick="showSection('addUser')">Generate Passcodes</button>
+    <button onclick="showSection('viewPass')">View Passcodes</button>
+    <button onclick="showSection('viewResults')">Results</button>
+    <button onclick="showSection('notifications')">Notifications</button>
+    <button id="btnAdvancedHub" onclick="window.location.href='/admin_advanced'" class="btn-adv-nav" style="display: none;">Advanced Admin Panel</button>
+  </nav>
+
+  <div class="container">
+    <!-- Generate Passcodes -->
+    <div id="addUser" class="section active">
+      <h2>Generate Pass</h2>
+      <div class="password-wrapper">
+        <input type="password" id="password" placeholder="Admin Password">
+        <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('password', this)" title="Show password">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        </button>
+      </div>
+      <input type="number" id="generateAmount" placeholder="Generate passcodes....">
+      <button onclick="addUser()">Generate Passcodes</button>
+    </div>
+
+    <!--View Passcodes-->
+    <!-- View Passcodes -->
+<div id="viewPass" class="section">
+  <h2>View Passcodes</h2>
+  <div class="password-wrapper">
+    <input type="password" id="viewPassPassword" placeholder="Admin Password">
+    <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('viewPassPassword', this)" title="Show password">
+      <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+    </button>
+  </div>
+  <button onclick=" viewAssignedPasscodes() ; ">View Passcodes</button>
+
+  <!-- Container for both lists -->
+  <div id="passListsContainer" class="dual-list hidden">
+    <div class="list-box">
+      <h3>Unassigned Passcodes</h3>
+      <div class="user-list" id="passList"></div>
+    </div>
+    <div class="list-box">
+      <h3>Assigned Passcodes</h3>
+      <div class="user-list" id="assignedList">
+          <div class="assigned-toggle-buttons" style="margin-bottom: 1rem; text-align:center;">
+    <button id="assignButtonUnused" class="assign-button selected" onclick="toggleAssignedList('unused')">Unused</button>
+  </div>
+
+  
+  <div id="unusedList" class="assigned-sublist unusedList hidden"></div>
+        <!-- Example item structure -->
+        <!--
+        <div class="assigned-item">
+          <p><strong>Passcode:</strong> ABC123XYZ</p>
+          <p><strong>Candidate:</strong> JohnDoe001</p>
+          <p><strong>Date:</strong> 2025-10-16</p>
+        </div>
+        -->
+      </div>
+      <input type="text" id="searchCandidates" class="search-bar" placeholder="Search by Candidate ID" onkeyup="searchCandidates()">
+    </div>
+
+    
+  </div>
+</div>
+
+    <!-- View Users Section -->
+    <div id="viewResults" class="section">
+      <h2>View Users</h2>
+      <div class="password-wrapper">
+        <input type="password" id="viewResultsPassword" placeholder="Enter Admin Password">
+        <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('viewResultsPassword', this)" title="Show password">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        </button>
+      </div>
+      <button onclick="viewResults()">Submit</button>
+      <div id="userSection" style="display:none;">
+        <input type="text" id="search" class="search-bar" placeholder="Search by PASSCODE or CANDIDATE ID" onkeyup="searchUsers()">
+        <div class="user-list" id="userList"></div>
+      </div>
+    </div>
+
+    <!-- Notifications Section -->
+    <div id="notifications" class="section">
+      <div class="notification-container">
+
+  <!-- Assigned IDs Section -->
+  <section id="usedIdSection" class="notification-section">
+    <h2 class="notification-title">Used IDs</h2>
+
+    <div id="usedIdList" class="notification-list">
+      <!-- duplicate items dynamically -->
+    </div>
+  </section>
+
+  <!-- History Section -->
+  <section id="testHistorySection" class="notification-section">
+    <h2 class="notification-title">History of Candidates</h2>
+
+    <div id="testHistoryList" class="notification-list">
+    </div>
+
+  </section>
+
+</div>
+<input type="text" id="searchNotifs" class="search-bar" placeholder="Search by PASSCODE or CANDIDATE ID" onkeyup="searchNotifs()">
+    </div>
+
+
+
+
+    <div id="loadingOverlay" class="loading-overlay hidden">
+  <div class="spinner"></div>
+  <p>Processing...</p>
+</div>
+
+  </div>
+
+  <script>
+
+function showLoading() {
+  document.getElementById('loadingOverlay').classList.remove('hidden');
+}
+
+function hideLoading() {
+  document.getElementById('loadingOverlay').classList.add('hidden');
+}
+
+
+async function smartFetch(url, options = {}) {
+  showLoading();
+  try {
+    const response = await fetch(url, options);
+    return response;
+  } catch (error) {
+    console.error("Fetch error:", error);
+    throw error;
+  } finally {
+    hideLoading();
+  }
+}
+  function generateRandomStrings(number) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$&';
+  const strings = [];
+
+  for (let i = 0; i < number; i++) {
+    let str = '';
+    for (let j = 0; j < 12; j++) {
+      str += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    strings.push(str);
+  }
+
+  return strings;
+}
+
+
+function toggleAssignedList(type) {
+  const unusedList = document.getElementById("unusedList");
+
+  const unusedButton = document.getElementById("assignButtonUnused");
+
+  if (type === "used") {
+    unusedList.classList.add("hidden");
+    unusedButton.classList.remove("selected");
+  } else {
+    unusedList.classList.remove("hidden");
+    unusedButton.classList.add("selected");
+  }
+}
+
+
+    //format time function
+    function formatReadableTime(isoString) {
+    const date = new Date(isoString);
+
+    // Extract components
+    const hours = date.getHours();
+    const minutes = date.getMinutes(); // optional if you want to include minutes
+    const day = date.getDate();
+    const month = date.toLocaleString('default', { month: 'long' }); // e.g., August
+    const year = date.getFullYear();
+
+    // Convert to 12-hour format
+    const hour12 = hours % 12 || 12;
+    const ampm = hours >= 12 ? 'pm' : 'am';
+
+    return `${hour12}${ampm} ${day} ${month}, ${year}`;
+}
+
+
+
+
+
+  window.addEventListener("DOMContentLoaded", async(req, res)=>{
+
+    renderAdminPassGenerator();
+
+    const EYE_OPEN_SVG = `<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+    const EYE_OFF_SVG = `<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+
+    function togglePasswordVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      if (input.type === "password") {
+        input.type = "text";
+        if (btn) {
+          btn.innerHTML = EYE_OFF_SVG;
+          btn.title = "Hide password";
+        }
+      } else {
+        input.type = "password";
+        if (btn) {
+          btn.innerHTML = EYE_OPEN_SVG;
+          btn.title = "Show password";
+        }
+      }
+    }
+    window.togglePasswordVisibility = togglePasswordVisibility;
+
+    window.addUser = addUser;
+    window.viewPassCodes = viewPassCodes;
+    window.viewAssignedPasscodes = viewAssignedPasscodes;
+    window.assignCandidate = assignCandidate;
+    window.viewResults = viewResults;
+    window.redirectToResult = redirectToResult;
+
+
+    async function retrieveAdminData() {
+  const res = await smartFetch("/admin_orgs/get_data");
+  const resOrgData = await res.json();
+  return {
+    username: resOrgData.admin_name,
+    password: resOrgData.admin_pass,
+    admin_limit: resOrgData.admin_limit
+  };
+}
+    let orgData = await fetch("/admin_orgs/get_data");
+    let resOrgData = await orgData.json();
+    if (resOrgData && resOrgData.admin_name === "ukatech") {
+      const hubBtn = document.getElementById("btnAdvancedHub");
+      if (hubBtn) hubBtn.style.display = "inline-flex";
+    }
+
+    let data = {username: resOrgData.admin_name, password: resOrgData.admin_pass, admin_limit: resOrgData.admin_limit};
+
+    async function renderAdminPassGenerator(){
+
+      const adminData = await retrieveAdminData();
+
+      const renderSection =  document.getElementById("addUser");
+
+      renderSection.innerHTML = `
+      <h2>Generate Pass</h2>
+      <p> Pass Limit: ${adminData.admin_limit} </p>
+      <div class="password-wrapper">
+        <input type="password" id="password" placeholder="Admin Password">
+        <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('password', this)" title="Show password">
+          ${EYE_OPEN_SVG}
+        </button>
+      </div>
+      <input type="number" id="generateAmount" placeholder="Generate passcodes....">
+
+      <button onclick="addUser()">Add User</button>
+      `
+    }
+
+    //post requests
+      async function generatePassCodePostReq(organization, passcode) {
+  await smartFetch("/admin_orgs/generate_pass", {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ org_name: organization, passcode: passcode })
+  });
+}
+
+    async function updateAdminLimit(adminName, generateAmount) {
+  await smartFetch("/admin_orgs/updateAdminLimit", {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ adminName: adminName, generateAmount: generateAmount })
+  });
+}
+
+    async function postReqforViewPasscodes(organization) {
+  const res = await smartFetch("/admin_orgs/view_passcodes?organization=" + encodeURIComponent(organization));
+  return res.ok ? await res.json() : "failed";
+}
+
+    async function postReqforViewAllPasscodes(organization) {
+  const res = await smartFetch("/admin_orgs/view_all_passcodes?organization=" + encodeURIComponent(organization));
+  return res.ok ? await res.json() : "failed";
+}
+
+    async function postReqForViewAssignedPasscodes(organization) {
+  const res = await smartFetch("/admin_orgs/view_assigned_passcodes?organization=" + encodeURIComponent(organization));
+  return res.ok ? await res.json() : "failed";
+}
+
+
+    async function postReqForInsertingCandidate(username, passcode, organization, level) {
+  const res = await smartFetch("/admin_orgs/assign_candidate", {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, passcode, organization, level })
+  });
+  return await res.text();
+}
+
+    async function postReqForViewingCandidates(organization) {
+  const res = await smartFetch("/admin_orgs/view_candidates?organization=" + encodeURIComponent(organization));
+  if (res.ok) return await res.json();
+  alert("There was an issue fetching candidates.");
+}
+
+    async function postReqForNotifications(organization) {
+  const res = await smartFetch("/admin_orgs/notifications?organization=" + encodeURIComponent(organization));
+  if (res.ok) return await res.json();
+  alert("There was an issue fetching notifications.");
+}
+
+
+
+    async function postReqForOpeningResultSession(passcode) {
+  const res = await smartFetch("/admin_orgs/redirect_to_results", {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ passcode })
+  });
+
+  if (res.ok) {
+    window.location = res.url;
+  } else {
+    const errorText = await res.text();
+    alert(errorText);
+  }
+}
+    //post requests
+
+
+
+    async function addUser() {
+      const generateAmount = document.getElementById("generateAmount").value;
+      const password = document.getElementById("password").value.trim();
+      const adminData = await retrieveAdminData();
+
+      const passcodes = generateRandomStrings(generateAmount);
+
+
+      if (!generateAmount) {
+        alert('Please fill all fields');
+        return;
+      }
+
+      if(password !== data.password){
+        alert("Wrong Password");
+      }else{
+        if(generateAmount > adminData.admin_limit){
+          alert('You have run out of limit');
+          return;
+        }else{
+          updateAdminLimit(data.username, generateAmount);
+          passcodes.forEach((passcode)=>{
+          generatePassCodePostReq(data.username, passcode);
+        })
+        }
+
+      
+
+      document.getElementById('generateAmount').value = '';
+      renderAdminPassGenerator();
+      updateAdminLimit();
+      }
+
+
+    }
+    async function viewAssignedPasscodes() {
+  const password = document.getElementById("viewPassPassword").value.trim();
+
+  if (password !== data.password) {
+    alert("Wrong Password");
+  } else {
+    const passCodes = await postReqForViewAssignedPasscodes(data.username);
+    const pass = await postReqforViewAllPasscodes(data.username)
+    const unusedList = document.getElementById("unusedList");
+    unusedList.innerHTML = "";
+
+    if (passCodes == "failed") {
+      alert("Error getting passcodes!!");
+      return;
+    }
+
+    passCodes.reverse().forEach((passcode) => {
+      const time = formatReadableTime(passcode.time);
+      const itemHTML = `
+        <div class="assigned-item">
+          <p><strong>Candidate ID:</strong> ${passcode.username}</p>
+          <p><strong>Passcode:</strong> ${passcode.passcode}</p>
+          <p><strong>Level:</strong> ${passcode.level}</p>
+          <p><strong>Time:</strong> ${time}</p>
+          
+        </div>
+      `;
+        console.log("Checking:", passcode.passcode, "against list:", pass.map(p => p.pass));
+      if (passcode.status || passcode.mockInformation || !pass.some(p => p.pass == passcode.passcode)) {
+        let dummy = 0;
+      } else {
+        unusedList.insertAdjacentHTML("beforeend", itemHTML);
+      }
+    });
+
+    unusedList.classList.remove("hidden");
+    unusedList.classList.add("selected");
+  }
+  viewPassCodes()
+  
+}
+
+    async function viewPassCodes() {
+  const password = document.getElementById("viewPassPassword").value.trim();
+
+  if (password !== data.password) {
+    alert("Wrong Password");
+  } else {
+    // Show both lists after password is verified
+    document.getElementById("passListsContainer").classList.remove("hidden");
+    document.getElementById("passListsContainer").style.display = "flex";
+
+    const passCodes = await postReqforViewPasscodes(data.username);
+    const passListDiv = document.getElementById("passList");
+    passListDiv.innerHTML = ""; // Clear previous content
+
+    const passList = document.createElement("ul");
+    if (passCodes == "failed") {
+      console.log("error getting passcodes!!");
+    }
+
+    passCodes.forEach((passcode, index) => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <p id="passcode-${index}">${passcode.pass}</p>
+        <input type="text" id="candidateID-${index}" class="candidate-input" placeholder="Candidate ID" />
+        <button 
+            type="button" 
+            class="premium-toggle" 
+            id="levelToggle-${index}" 
+            onclick="this.classList.toggle('active'); this.innerText = this.classList.contains('active') ? 'Premium' : 'Free'">
+            Free
+        </button>
+        <button onclick="assignCandidate(${index})" class="assign-button" id="assign-button">Assign</button>`;
+      passList.appendChild(li);
+    });
+
+    passListDiv.appendChild(passList);
+  }
+}
+
+function escapeSingleQuotes(str) {
+  return str.replace(/'/g, "\\'");
+}
+    async function viewResults(){
+      document.getElementById("userSection").style.display = "block";
+      const userList = document.getElementById("userList");
+
+      userList.innerHTML = '';
+      const users = await postReqForViewingCandidates(data.username);
+
+
+      users.reverse().forEach((user)=>{
+        const userCard = document.createElement('div');
+        userCard.className = 'user-card';
+        const userPassCode = escapeSingleQuotes(user.passcode);
+        userCard.innerHTML = `
+          <div class="user-info">
+            <span class="user-name">${user.username}</span>
+            <span class="user-email">${user.passcode}</span>
+          </div>
+          
+        `;
+        if(user.mockInformation){
+          userCard.innerHTML += `<button class="view-btn" data-id="${user.passcode}" onclick="redirectToResult('${userPassCode}')">View Result</button>`
+        } else{
+          userCard.innerHTML += `<button class="view-btn-grey" data-id="${user.passcode}" onclick="redirectToResult('${userPassCode}')" disabled>NOT ATTEMPTED</button>`
+        }
+        userList.appendChild(userCard);
+      })
+
+
+    }
+
+    async function assignCandidate(passcodeID){
+      const passcode = document.getElementById(`passcode-${passcodeID}`).textContent;
+      const candidateID = document.getElementById(`candidateID-${passcodeID}`).value.trim();
+
+      // Check if the toggle has the 'active' class
+    const isPremium = document.getElementById(`levelToggle-${passcodeID}`).classList.contains('active');
+    const level = isPremium ? "Premium" : "Free";
+
+
+      const prefix = `${data.username}-roll-${candidateID}`;
+
+      if(!candidateID){
+        alert("Please Insert a Candidate ID");
+      }else{
+        const response = await postReqForInsertingCandidate(prefix, passcode, data.username, level);
+        alert(response);
+        await viewAssignedPasscodes();
+        viewPassCodes();
+        
+      }
+    }
+
+
+    async function redirectToResult(passcode){
+      await postReqForOpeningResultSession(passcode);
+    }
+
+    async function renderNotifications(){
+      const notifData = await postReqForNotifications(data.username);
+      const assignedData = await postReqForViewAssignedPasscodes(data.username);
+      const pass = await postReqforViewAllPasscodes(data.username);
+      const notifSection = document.getElementById("notifications");
+
+      if(notifData.length < 1 && assignedData.length < 1){
+        return
+      }else{
+
+      const usedIdList = document.getElementById("usedIdList");
+      const testHistoryList = document.getElementById("testHistoryList");
+
+      const usedIdSection = document.getElementById("usedIdSection");
+      const testHistorySection = document.getElementById("testHistorySection");
+
+
+      notifData.reverse().forEach((notif, idx)=>{
+        testHistoryList.innerHTML += `
+        <div class="notification-item">
+        <div class="notification-row">
+          <span class="notification-label">Candidate:</span>
+          <span class="notification-value">${notif.username}</span>
+        </div>
+        <div class="notification-row">
+          <span class="notification-label">Passcode:</span>
+          <span class="notification-value">${notif.passcode}</span>
+        </div>
+        <div class="notification-row">
+          <span class="notification-label">Mock ID:</span>
+          <span class="notification-value">${notif.mockNumber}</span>
+        </div>
+        <div class="notification-row">
+          <span class="notification-label">Date:</span>
+          <span class="notification-value">${formatReadableTime(notif.time)}</span>
+        </div>
+      </div>
+        `
+      })
+
+      testHistorySection.innerHTML = `<h2 class="notification-title">History of Candidates</h2>` + testHistoryList.outerHTML;
+
+
+
+      assignedData.reverse().forEach((data)=>{
+        const time = formatReadableTime(data.time);
+        const itemHTML = `
+          <div class="notification-item">
+        <div class="notification-row">
+          <span class="notification-label">Candidate:</span>
+          <span class="notification-value">${data.username}</span>
+        </div>
+        <div class="notification-row">
+          <span class="notification-label">Passcode:</span>
+          <span class="notification-value">${data.passcode}</span>
+        </div>
+        <div class="notification-row">
+          <span class="notification-label">Date:</span>
+          <span class="notification-value">${time}</span>
+        </div>
+      </div>
+        `
+
+        if(data.status || data.mockInformation || !pass.some(p => p.pass == data.passcode)) {
+          usedIdList.innerHTML += itemHTML;
+        }
+
+
+      })
+
+      usedIdSection.innerHTML = `<h2 class="notification-title">Used IDs</h2>` + usedIdList.outerHTML;
+      }
+
+    }
+    await renderNotifications();
+    
+    async function authenticate() {
+  const pass = document.getElementById('viewPassword').value;
+  if (pass === data.password) {
+    const res = await smartFetch('/admin_orgs/users?org=' + encodeURIComponent(data.username));
+    const users = await res.json();
+    renderUsers(users);
+  }
+}
+
+    window.authenticate = authenticate;
+
+  })
+
+
+
+
+
+  async function sendUserToApi(email){
+    const res = await fetch('/api/send-user-for-update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({email: email})
+      })
+    window.location.href = "/admin_orgs/user-updates";
+  }
+
+  
+
+
+
+    
+
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+
+
+
+
+    function renderUsers(list) {
+      console.log(list);
+      const userList = document.getElementById('userList');
+      const userSection = document.getElementById('userSection')
+      userList.innerHTML = '';
+      list.forEach((user, index) => {
+        console.log(user.username);
+        const div = document.createElement('div');
+        div.className = 'user-item';
+        div.innerText = `${user.username} - ${user.email} - ${user.phone}`;
+        div.onclick = () => {
+          sendUserToApi(user.email);
+          
+        };
+        userList.appendChild(div);
+      });
+      userSection.style.display = "block";
+    }
+
+    function searchUsers() {
+      const query = document.getElementById('search').value.toLowerCase();
+      const userNodes = document.querySelectorAll(".user-card");
+      
+      userNodes.forEach(user=>{
+        const text = user.textContent.toLowerCase();
+        user.classList.toggle("hidden", !text.includes(query));
+      })
+
+
+    }
+
+    function searchCandidates(){
+      const query = document.getElementById('searchCandidates').value.toLowerCase();
+      const candidateNodes = document.querySelectorAll(".assigned-item");
+
+      candidateNodes.forEach(candidate=>{
+        const text = candidate.textContent.toLowerCase();
+        candidate.classList.toggle("hidden", !text.includes(query));
+      })
+    }
+
+    function searchNotifs(){
+      const query = document.getElementById('searchNotifs').value.toLowerCase();
+      const notifNodes = document.querySelectorAll(".notification-item");
+      
+      notifNodes.forEach(notif=>{
+        const text = notif.textContent.toLowerCase();
+        notif.classList.toggle("hidden", !text.includes(query));
+      })
+      
+    }
+
+
+
+
+
+  </script>
+</body>
+</html>

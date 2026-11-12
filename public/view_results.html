@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='15' fill='%231A365D' /><path d='M30 25 V55 C30 65 35 75 50 75 C65 75 70 65 70 55 V25 H60 V55 C60 62 58 65 50 65 C42 65 40 62 40 55 V25 H30Z' fill='white' /><rect x='25' y='25' width='15' height='5' fill='white' /><rect x='60' y='25' width='15' height='5' fill='white' /></svg>">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>IELTS Result Viewer</title>
+<style>
+:root{
+  --bg:#FAFAFA;--card:#FFFFFF;--muted:#6B7280;--accent:#3B1E54;--secondary:#9B7EBD;--light:#EEEEEE;--radius:12px;--shadow:0 6px 18px rgba(11,15,25,0.06);font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+html,body{height:100%;margin:0;background:var(--bg);color:#111827;}
+.container{max-width:920px;margin:36px auto;padding:22px;box-sizing:border-box;}
+header{display:flex;justify-content:space-between;margin-bottom:18px;}
+.brand{display:flex;gap:14px;align-items:center;}
+.logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-weight:700;}
+h1{font-size:20px;margin:0;}
+p.lead{margin:0;color:var(--muted);font-size:13px;}
+main.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
+@media(max-width:760px){main.grid{grid-template-columns:1fr;}}
+.card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border:1px solid var(--light);box-sizing:border-box;max-width:100%;overflow-wrap:break-word;}
+.section-title{display:flex;justify-content:space-between;margin-bottom:12px;}
+.section-title h2{margin:0;font-size:16px;}
+.score{font-weight:700;color:var(--accent);font-size:20px;}
+.mistake-item {
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  border: 1px solid var(--light);
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-sizing: border-box;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.mistake-item .q-key {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.mistake-item .answer-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 10px;
+  background: #eeeeee;
+  border-radius: 6px;
+  font-size: 13px;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+.muted{color:var(--muted);font-size:13px;}
+.writing-wrap{grid-column:1/-1;max-width:100%;box-sizing:border-box;}
+.writing-text{
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  word-wrap: break-word;
+  max-width: 100%;
+  box-sizing: border-box;
+  background: linear-gradient(180deg,#fff,#fbfbfb);
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid var(--light);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-top: 8px;
+}
+.controls{display:flex;gap:10px;align-items:center;margin-top:14px;}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;font-weight:600;cursor:pointer;border:none;background: var(--accent);color:white;}
+.btn.secondary{background:transparent;color: var(--accent);border:1px solid var(--light);font-weight:600;}
+.meta{font-family: monospace;font-size:12px;color:var(--muted);background: rgba(27,31,35,0.03);padding:8px 10px;border-radius:8px;}
+footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px;}
+.back-btn-fixed {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 9999;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid var(--light, #EEEEEE);
+  background: var(--accent, #3B1E54);
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+}
+
+.back-btn-fixed:hover {
+  background: var(--secondary, #9B7EBD);
+}
+
+.writing-question-box {
+  background: #ffffff;
+  border: 1px solid var(--light);
+  padding: 12px;
+  border-radius: 10px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  max-width: 100%;
+  box-sizing: border-box;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.task-image {
+  width: 100%;
+  max-width: 480px;
+  border-radius: 8px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.question-text {
+  font-weight: 600;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+
+/* Loading Overlay */
+#loadingOverlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(255,255,255,0.9); display: none;
+    flex-direction: column; align-items: center; justify-content: center; z-index: 10000;
+}
+.spinner { width: 50px; height: 50px; border: 5px solid var(--light); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Feedback Side-by-Side */
+.feedback-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px; }
+.feedback-card { background: #fdfdfd; border: 1px dashed var(--secondary); padding: 15px; border-radius: 8px; box-sizing: border-box; word-break: break-word; overflow-wrap: anywhere; }
+.editable-score { width: 60px; padding: 5px; border-radius: 4px; border: 1px solid var(--light); font-weight: bold; }
+.edit-area { width: 100%; min-height: 100px; font-family: inherit; font-size: 13px; border: 1px solid var(--light); padding: 8px; margin-top: 5px; border-radius: 6px; box-sizing: border-box; word-break: break-word; overflow-wrap: anywhere; }
+
+/* Category Tags */
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; color: white; margin-bottom: 5px; }
+.tag-err { background: #ef4444; }
+.tag-sug { background: #3b82f6; }
+
+/* Scoring Grid */
+.criteria-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin: 15px 0;
+}
+.criteria-item {
+    background: #f3f4f6;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+}
+.criteria-item label {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+/* Dynamic Correction Table */
+.correction-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    table-layout: fixed;
+}
+.correction-table th {
+    text-align: left;
+    font-size: 12px;
+    padding: 8px;
+    background: #f9fafb;
+    border-bottom: 2px solid var(--light);
+}
+.correction-table td {
+    padding: 8px;
+    border-bottom: 1px solid var(--light);
+    vertical-align: top;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+.row-action {
+    color: #ef4444;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 18px;
+}
+.add-row-btn {
+    margin-top: 10px;
+    font-size: 12px;
+    padding: 4px 10px;
+    background: var(--light);
+    border-radius: 4px;
+    cursor: pointer;
+}
+</style>
+</head>
+<body>
+  <div id="loadingOverlay">
+    <div class="spinner"></div>
+    <p style="margin-top:15px; font-weight:600;">Evaluating...</p>
+</div>
+  <button class="back-btn-fixed">← Back</button>
+<div class="container">
+  <header>
+    <div class="brand">
+      <div class="logo">IELTS</div>
+      <div>
+        <h1 id="mockID">IELTS Results — Viewer</h1>
+        <p class="lead">Read-only view of Listening, Reading and Writing performance</p>
+      </div>
+    </div>
+    <div style="text-align:right">
+      <div class="meta" id="passcodeMeta">Passcode: —</div>
+    </div>
+  </header>
+
+  <main class="grid">
+    <section class="card">
+      <div class="section-title"><h2>Listening</h2><div class="score" id="listeningScore">—</div></div>
+      <div class="muted">Mistakes</div>
+      <ul class="mistakes-list" id="listeningMistakes"></ul>
+    </section>
+
+    <section class="card">
+      <div class="section-title"><h2>Reading</h2><div class="score" id="readingScore">—</div></div>
+      <div class="muted">Mistakes</div>
+      <ul class="mistakes-list" id="readingMistakes"></ul>
+    </section>
+
+    <section class="card writing-wrap">
+      <div class="section-title" style="align-items:flex-start;">
+        <h2>Writing</h2>
+      </div>
+      <!-- WRITING TASK 1 -->
+<strong>Writing Task 1</strong>
+
+<div class="writing-question-box">
+  <img id="task1Image" class="task-image" src="" alt="Task 1 Image">
+  <p id="task1Question" class="question-text"></p>
+</div>
+
+<div id="task1Answer" class="writing-text"></div>
+
+<!-- WRITING TASK 2 -->
+<strong>Writing Task 2</strong>
+
+<div class="writing-question-box">
+  <p id="task2Question" class="question-text"></p>
+</div>
+
+<div id="task2Answer" class="writing-text"></div>
+      <div class="controls">
+        
+        <button class="btn secondary" id="downloadPDFBtn">⤓ Download PDF</button>
+        <button class="btn" id="evaluateBtn">
+    Evaluate
+  </button>
+      </div>
+    </section>
+  </main>
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<!-- jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<script>
+(async function(){
+
+/**
+ * Downloads an image from a URL and converts it to a Base64 string.
+ * @param {string} url - The source URL of the image.
+ * @returns {Promise<string>} - Base64 encoded image data.
+ */
+async function getBase64FromUrl(url) {
+    if (!url) return null;
+    // If it's already base64, return it
+    if (url.startsWith('data:image')) return url.split(',')[1];
+
+    try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                // Remove the "data:image/jpeg;base64," prefix for the API
+                const base64String = reader.result.split(',')[1];
+                resolve(base64String);
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    } catch (error) {
+        console.error("Failed to download image:", error);
+        return null;
+    }
+}
+// --- NEW EVALUATION FUNCTION ---
+document.getElementById('evaluateBtn').addEventListener('click', runEvaluation);
+async function runEvaluation() {
+    const loader = document.getElementById('loadingOverlay');
+    loader.style.display = 'flex';
+    
+    // Clear old feedback
+    document.querySelectorAll('.feedback-section').forEach(el => el.remove());
+
+    try {
+        const imgUrl = document.getElementById('task1Image').src;
+        const base64Image = await getBase64FromUrl(imgUrl);
+
+        // Prepare ONE payload for BOTH tasks
+        const payload = {
+            task1_text: document.getElementById('task1Answer').innerText,
+            task1_image: base64Image,
+            task2_text: document.getElementById('task2Answer').innerText
+        };
+
+        const response = await fetch("http://caboose.proxy.rlwy.net:30618/analyze", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (response.status !== 200) throw new Error(data.detail || "Server Error");
+
+        // Render both sections using the data returned (data.task1 and data.task2)
+        renderFeedbackUI(data.task1, 'task1Answer', 'Task 1');
+        renderFeedbackUI(data.task2, 'task2Answer', 'Task 2');
+
+    } catch (e) {
+        console.error(e);
+        alert("Evaluation failed: " + e.message);
+    } finally {
+        loader.style.display = 'none';
+    }
+}
+
+function renderFeedbackUI(data, targetId, title) {
+    const targetEl = document.getElementById(targetId);
+    
+    // Safety defaults for criteria scores
+    const scores = data.criteria_scores || { 
+        task_response: 0, coherence_cohesion: 0, lexical_resource: 0, grammatical_range: 0 
+    };
+
+    const html = `
+        <div class="feedback-section" style="margin-top: 25px; border: 1px solid var(--secondary); padding: 20px; border-radius: 12px; background: #fff;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3 style="margin:0; color:var(--accent);">${title} Examiner Dashboard</h3>
+                <div style="background:var(--accent); color:white; padding:5px 15px; border-radius:20px; font-weight:700;">
+                    Overall: <input type="number" step="0.5" class="editable-score overall-band" style="background:transparent; color:white; border:none; width:45px;" value="${data.band_score || 0}">
+                </div>
+            </div>
+
+            <div class="criteria-grid">
+                ${Object.entries(scores).map(([key, val]) => `
+                    <div class="criteria-item">
+                        <label>${key.replace('_', ' ')}</label>
+                        <input type="number" step="0.5" class="editable-score crit-val" data-key="${key}" value="${val}" style="width:50px; text-align:center;">
+                    </div>
+                `).join('')}
+            </div>
+
+            <label class="muted">Detailed Evaluation</label>
+            <textarea class="edit-area feedback-text" style="height:80px;">${data.detailed_feedback || ''}</textarea>
+
+            <label class="muted" style="margin-top:15px; display:block;">Error & Correction Analysis</label>
+            <table class="correction-table">
+                <thead>
+                    <tr><th>Original</th><th>Correction</th><th>Explanation</th><th></th></tr>
+                </thead>
+                <tbody class="correction-body">
+                    ${(data.errors || []).map(e => `
+                        <tr>
+                            <td contenteditable="true">${e.original}</td>
+                            <td contenteditable="true">${e.correction}</td>
+                            <td contenteditable="true">${e.explanation}</td>
+                            <td class="row-action" onclick="this.parentElement.remove()">×</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+            <button class="add-row-btn" onclick="addCorrectionRow(this)">+ Add Correction</button>
+
+            <label class="muted" style="margin-top:15px; display:block;">Final Suggestions</label>
+            <textarea class="edit-area suggestions-text" style="height:60px;">${(data.suggestions || []).join('\n')}</textarea>
+        </div>
+    `;
+    targetEl.insertAdjacentHTML('afterend', html);
+}
+
+// Utility for teachers to add manual rows
+
+
+  const backBtn = document.querySelector('.back-btn-fixed');
+  if(backBtn){
+    backBtn.addEventListener('click', () => {
+      if(history.length > 1){
+        history.back();
+      } else {
+        window.location.href = '/'; // fallback homepage
+      }
+    });
+  }
+  async function retrieveMockData(){
+    const res = await fetch("/admin_orgs/candidate_mock_data");
+
+    if(res.ok){
+      const data = await res.json();
+      return data;
+    }else{
+      alert(res.text());
+    }
+  }
+
+  async function retrieveUserData(){
+    const res = await fetch("/admin_orgs/candidate_data");
+    if(res.ok){
+      const data = await res.json();
+      return data;
+    }else{
+      alert(res.text());
+    }
+  }
+
+  async function retrieveMockInfo(mockID){
+    const res = await fetch("/admin_orgs/mock-info?mockID=" + encodeURIComponent(mockID));
+    if(res.ok){
+      const data = await res.json();
+      return data;
+    }else {
+      alert(res.text());
+    }
+  }
+
+
+  const resultData = {
+    passcode: "AB123",
+    listening: {score:8.5,mistakes:{"Q3":"Wrong spelling","Q15":"Missed plural form"}},
+    reading: {score:7.5,mistakes:{"Q9":"Wrong answer","Q26":"Incorrect True/False selection"}},
+    writing: {
+      task1: "The graph illustrates the changes in energy consumption between 2000 and 2020.\nOverall, the use of renewable sources increased significantly.",
+      task2: "Some people believe technology has made life more complex.\nHowever, I argue that it has simplified communication and improved access to information."
+    }
+  };
+
+  
+  const candidateData = await retrieveMockData();
+  const candidatePasscode = candidateData.passcode;
+  const candidateDataMockInformation = candidateData.mockInformation[0];
+
+
+  const testData = await retrieveMockInfo(candidateDataMockInformation.mockID);
+
+  const mockID = document.getElementById("mockID")
+  mockID.innerHTML = `IELTS Results- ${candidateDataMockInformation.mockID}`
+
+  function el(id){ return document.getElementById(id); }
+
+  function renderMistakesList(container, mistakes){
+  container.innerHTML = '';
+  
+  if(!mistakes || Object.keys(mistakes).length === 0){
+    const li = document.createElement('li'); 
+    li.className = 'muted'; 
+    li.textContent = 'No mistakes recorded.'; 
+    container.appendChild(li);
+    return;
+  }
+
+  Object.entries(mistakes).forEach(([key, obj]) => {
+    const li = document.createElement('li');
+    li.className = 'mistake-item';
+
+    const qKey = document.createElement('div');
+    qKey.className = 'q-key';
+    qKey.textContent = key;
+    li.appendChild(qKey);
+
+    const answerBlock = document.createElement('div');
+    answerBlock.className = 'answer-block';
+
+    const yourAnswer = document.createElement('div');
+    yourAnswer.textContent = `Your Answer   : ${obj["Your answer"] ?? '-'}`;
+    answerBlock.appendChild(yourAnswer);
+
+    const correctAnswer = document.createElement('div');
+    correctAnswer.textContent = `Correct Answer: ${obj["Correct answer"] ?? '-'}`;
+    answerBlock.appendChild(correctAnswer);
+
+    li.appendChild(answerBlock);
+    container.appendChild(li);
+  });
+  }
+
+  function populateUI(testData, data, passcode){
+    el('passcodeMeta').textContent = 'Passcode: ' + (passcode||'—');
+    el('listeningScore').textContent = data.listening?.score ?? '—';
+    renderMistakesList(el('listeningMistakes'), data.listening?.mistakes);
+    el('readingScore').textContent = data.reading?.score ?? '—';
+    renderMistakesList(el('readingMistakes'), data.reading?.mistakes);
+
+
+
+    el('task1Image').src = testData.writing.questions[0].image[0] ?? '';
+    el('task1Question').innerHTML = testData.writing.questions[0].question;
+    el('task1Answer').innerHTML = data.writing.writingInputs["part-1"] ?? '';
+
+
+    el('task2Question').innerHTML = testData.writing.questions[1].question;
+    el('task2Answer').innerHTML = data.writing.writingInputs["part-2"] ?? '';
+  }
+
+  populateUI(testData, candidateDataMockInformation, candidatePasscode);
+
+
+  const { jsPDF } = window.jspdf; // Make jsPDF available
+
+
+async function downloadWritingPDF() {
+  const task1ImageEl = document.getElementById("task1Image");
+  const task1Image = task1ImageEl?.src || "";
+  const task1Question = document.getElementById("task1Question")?.textContent || "";
+  const task1Answer = document.getElementById("task1Answer")?.textContent || "";
+
+  const task2Question = document.getElementById("task2Question")?.textContent || "";
+  const task2Answer = document.getElementById("task2Answer")?.textContent || "";
+
+  const pdf = new jsPDF('p', 'mm', 'a4');
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  const margin = 20;
+
+  let y = 15;
+
+  const addText = (text, pdf, x, y, lineHeight = 7, maxWidth = pageWidth - 2 * margin) => {
+    const lines = pdf.splitTextToSize(text, maxWidth);
+    for (let i = 0; i < lines.length; i++) {
+      if (y + lineHeight > pageHeight - margin) {
+        pdf.addPage();
+        y = margin;
+      }
+      pdf.text(lines[i], x, y);
+      y += lineHeight;
+    }
+    return y;
+  };
+
+  // ---------- Task 1 Page ----------
+  pdf.setFontSize(24);
+  pdf.text("Writing Task 1", margin, y);
+  y += 12;
+
+  if (task1Image) {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = task1Image;
+    await new Promise((res, rej) => {
+      img.onload = res;
+      img.onerror = rej;
+    });
+
+    const imgProps = pdf.getImageProperties(img);
+    const imgRatio = imgProps.width / imgProps.height;
+    const imgWidth = pageWidth - 2 * margin;
+    let imgHeight = imgWidth / imgRatio;
+
+    if (imgHeight > 80) imgHeight = 80; // Cap height for layout
+
+    pdf.addImage(img, 'JPEG', margin, y, imgWidth, imgHeight);
+    y += imgHeight + 10;
+  }
+
+  pdf.setFont(undefined, 'bold');
+  pdf.text("Question:", margin, y);
+  y += 7;
+  pdf.setFont(undefined, 'normal');
+  pdf.setFontSize(10);
+  y = addText(task1Question, pdf, margin, y);
+
+  y += 5;
+  pdf.setFontSize(12);
+  pdf.setFont(undefined, 'bold');
+  pdf.text("Student Answer:", margin, y);
+  y += 7;
+  pdf.setFont(undefined, 'normal');
+  pdf.setFontSize(10);
+  y = addText(task1Answer, pdf, margin, y);
+
+  // ---------- Task 2 Page ----------
+  pdf.addPage();
+  y = margin;
+  pdf.setFontSize(24);
+  pdf.text("Writing Task 2", margin, y);
+  y += 12;
+
+  pdf.setFont(undefined, 'bold');
+  pdf.text("Question:", margin, y);
+  y += 7;
+  pdf.setFont(undefined, 'normal');
+  pdf.setFontSize(10);
+  y = addText(task2Question, pdf, margin, y);
+
+  y += 5;
+  pdf.setFontSize(12);
+  pdf.setFont(undefined, 'bold');
+  pdf.text("Student Answer:", margin, y);
+  y += 7;
+  pdf.setFont(undefined, 'normal');
+  pdf.setFontSize(10);
+  y = addText(task2Answer, pdf, margin, y);
+
+  // ---------- FEEDBACK SECTIONS ----------
+  document.querySelectorAll('.feedback-section').forEach((section, idx) => {
+    pdf.addPage();
+    y = 20;
+
+    pdf.setFontSize(20);
+    pdf.setTextColor(44, 62, 80); // Professional Dark Blue
+    pdf.text(`Examiner Report: Task ${idx + 1}`, margin, y);
+    y += 12;
+
+    // 1. Scores Grid
+    const overall = section.querySelector('.overall-band').value;
+    pdf.setFontSize(14);
+    pdf.text(`Overall Band Score: ${overall}`, margin, y);
+    y += 10;
+
+    const critInputs = section.querySelectorAll('.crit-val');
+    pdf.setFontSize(10);
+    pdf.setTextColor(100);
+    critInputs.forEach(input => {
+      pdf.text(`${input.previousElementSibling.innerText}: ${input.value}`, margin, y);
+      y += 6;
+    });
+
+    // 2. Detailed Feedback
+    y += 6;
+    pdf.setTextColor(0);
+    pdf.setFont(undefined, 'bold');
+    pdf.text("Examiner Comments:", margin, y);
+    y += 7;
+    pdf.setFont(undefined, 'normal');
+    const feedbackText = section.querySelector('.feedback-text').value;
+    y = addText(feedbackText, pdf, margin, y, 6, 175);
+
+    // 3. THE CORRECTION TABLE (Using autoTable)
+    y += 10;
+    pdf.setFont(undefined, 'bold');
+    pdf.text("Detailed Corrections:", margin, y);
+    
+    const rows = section.querySelectorAll('.correction-body tr');
+    const tableData = [];
+    
+    rows.forEach(row => {
+      const cells = row.querySelectorAll('td');
+      if (cells.length >= 3) {
+        tableData.push([
+          cells[0].innerText.trim(), // Original
+          cells[1].innerText.trim(), // Correction
+          cells[2].innerText.trim()  // Explanation
+        ]);
+      }
+    });
+
+    pdf.autoTable({
+      startY: y + 5,
+      head: [['Original Text', 'Suggested Correction', 'Explanation']],
+      body: tableData,
+      theme: 'striped',
+      headStyles: { fillGray: [44, 62, 80], textColor: 255, fontStyle: 'bold' },
+      styles: { fontSize: 9, cellPadding: 3, overflow: 'linebreak' },
+      columnStyles: {
+        0: { cellWidth: 50 }, // Original
+        1: { cellWidth: 50 }, // Correction
+        2: { cellWidth: 'auto' } // Explanation gets the rest
+      },
+      margin: { left: margin, right: margin }
+    });
+
+    // Update Y for suggestions based on where table ended
+    y = pdf.lastAutoTable.finalY + 12;
+
+    // 4. Suggestions
+    pdf.setFont(undefined, 'bold');
+    pdf.text("Key Suggestions for Improvement:", margin, y);
+    y += 7;
+    pdf.setFont(undefined, 'normal');
+    const suggestionsText = section.querySelector('.suggestions-text').value;
+    addText(suggestionsText, pdf, margin, y, 6, 175);
+  });
+
+  pdf.save(`IELTS_Writing_${candidatePasscode}.pdf`);
+}
+  
+
+
+document.getElementById("downloadPDFBtn")
+  .addEventListener("click", downloadWritingPDF);
+
+
+
+
+})();
+
+  // This MUST be global (outside any other function or async block)
+function addCorrectionRow(btn) {
+    const section = btn.closest('.feedback-section');
+    const tbody = section.querySelector('.correction-body');
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+        <td contenteditable="true"></td>
+        <td class="row-action" style="text-align:center;" onclick="this.parentElement.remove()">×</td>
+    `;
+    tbody.appendChild(row);
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='15' fill='%231A365D' /><path d='M30 25 V55 C30 65 35 75 50 75 C65 75 70 65 70 55 V25 H60 V55 C60 62 58 65 50 65 C42 65 40 62 40 55 V25 H30Z' fill='white' /><rect x='25' y='25' width='15' height='5' fill='white' /><rect x='60' y='25' width='15' height='5' fill='white' /></svg>">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>IELTS Skill Practice Hub | UKA Technical Institute</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/a2e0f1f6a2.js" crossorigin="anonymous"></script>
+  
+  <!-- Global Shared Layout Styles & Scripts -->
+  <link rel="stylesheet" href="layout.css">
+  <script src="auth.js"></script>
+  <script src="layout.js"></script>
+
+  <style>
+    :root {
+      --uka-teal: #2eb8b8;
+      --uka-teal-dark: #1f8f8f;
+      --uka-teal-light: #e6f7f7;
+      --navy: #0f1d36;
+      --bg: #f8fbff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --shadow: 0 16px 36px rgba(0,0,0,0.05);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    main { flex: 1; }
+    .container { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+
+    /* --- PAGE INTRO --- */
+    .page-intro { text-align: center; padding: 60px 0 35px; }
+    .page-intro h1 { font-family: 'Outfit', sans-serif; font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 800; color: var(--navy); margin-bottom: 16px; }
+    .text-gradient { color: var(--uka-teal); }
+    
+    .description-box {
+        max-width: 780px; margin: 0 auto 40px; background: white; padding: 26px 30px; border-radius: 18px;
+        border: 1px solid rgba(46, 184, 184, 0.2); box-shadow: var(--shadow); text-align: center;
+    }
+    .description-box p { color: var(--text-muted); font-weight: 600; font-size: 1.05rem; line-height: 1.6; }
+
+    /* --- PRACTICE GRID --- */
+    .practice-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; padding-bottom: 90px;
+    }
+
+    .glass-card { 
+      background: white; border-radius: 24px; padding: 38px 30px; 
+      box-shadow: var(--shadow); transition: 0.35s cubic-bezier(0.16, 1, 0.3, 1); border: 1.5px solid rgba(226, 232, 240, 0.9);
+      text-decoration: none; display: flex; flex-direction: column; align-items: center; text-align: center;
+      justify-content: space-between;
+    }
+    .glass-card:hover { transform: translateY(-8px); border-color: var(--uka-teal); box-shadow: 0 25px 45px rgba(46,184,184,0.14); }
+
+    .icon-box {
+      width: 68px; height: 68px; background: var(--uka-teal-light); color: var(--uka-teal-dark);
+      display: flex; align-items: center; justify-content: center; border-radius: 18px; margin-bottom: 22px;
+      transition: transform 0.2s ease;
+    }
+    .glass-card:hover .icon-box { transform: scale(1.08) rotate(3deg); background: var(--uka-teal); color: white; }
+    .icon-box svg { width: 34px; height: 34px; }
+
+    .glass-card h3 { font-family: 'Outfit', sans-serif; font-size: 1.6rem; color: var(--navy); font-weight: 800; margin-bottom: 12px; }
+    .glass-card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 28px; line-height: 1.6; }
+
+    .card-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      text-decoration: none; font-weight: 700; padding: 13px 22px; border-radius: 12px;
+      transition: 0.2s; background: var(--uka-teal-light); color: var(--uka-teal-dark); width: 100%; font-size: 0.95rem;
+    }
+    .glass-card:hover .card-btn { background: var(--uka-teal); color: white; }
+
+    @media (max-width: 992px) {
+      .practice-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .practice-grid { grid-template-columns: 1fr; }
+      .page-intro { padding: 45px 0 25px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- UNIFIED NAVBAR -->
+  <div id="uka-header"></div>
+
+  <main class="container">
+    <section class="page-intro">
+      <h1>Skill <span class="text-gradient">Focused Modules</span></h1>
+      <div class="description-box">
+        <p>Master each section of the IELTS exam with our specialized practice area. Target individual skills and practice specific question types independently to strengthen your score.</p>
+      </div>
+    </section>
+
+    <div class="practice-grid">
+      <a href="reading-practice.html" class="glass-card practice-card">
+        <div>
+          <div class="icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+            </svg>
+          </div>
+          <h3>Reading Practice</h3>
+          <p>Sharpen skimming, scanning, True/False/Not Given, and Headings across authentic academic passages.</p>
+        </div>
+        <span class="card-btn">Enter Reading Lab <i class="fas fa-arrow-right"></i></span>
+      </a>
+
+      <a href="listening-practice.html" class="glass-card practice-card">
+        <div>
+          <div class="icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+              <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+            </svg>
+          </div>
+          <h3>Listening Practice</h3>
+          <p>Drill Form Completions, Maps, and Flow Charts with high-definition audio and real-time transcripts.</p>
+        </div>
+        <span class="card-btn">Enter Listening Lab <i class="fas fa-arrow-right"></i></span>
+      </a>
+
+      <a href="writing-practice.html" class="glass-card practice-card">
+        <div>
+          <div class="icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
+              <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
+              <path d="M2 2l7.5 1.5"></path>
+              <path d="M7 11l5-5"></path>
+            </svg>
+          </div>
+          <h3>Writing Practice</h3>
+          <p>Master Task 1 (Charts, Maps, Diagrams) and Task 2 Essays with live word count and countdown timer.</p>
+        </div>
+        <span class="card-btn">Enter Writing Lab <i class="fas fa-arrow-right"></i></span>
+      </a>
+    </div>
+  </main>
+
+  <!-- UNIFIED FOOTER -->
+  <div id="uka-footer"></div>
+
+</body>
+</html>

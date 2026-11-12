@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='15' fill='%231A365D' /><path d='M30 25 V55 C30 65 35 75 50 75 C65 75 70 65 70 55 V25 H60 V55 C60 62 58 65 50 65 C42 65 40 62 40 55 V25 H30Z' fill='white' /><rect x='25' y='25' width='15' height='5' fill='white' /><rect x='60' y='25' width='15' height='5' fill='white' /></svg>">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Candidate Login | UKA Technical Institute</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Global Shared Layout Styles & Scripts -->
+  <link rel="stylesheet" href="layout.css">
+  <script src="auth.js"></script>
+  <script src="layout.js"></script>
+
+  <style>
+    :root {
+      --uka-teal: #2eb8b8;
+      --uka-teal-dark: #1f8f8f;
+      --uka-teal-light: #e6f7f7;
+      --uka-teal-glow: rgba(46, 184, 184, 0.28);
+      
+      --uka-red: #e51937;
+      --navy: #0f1d36;
+      --navy-dark: #0a1324;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --white: #ffffff;
+      --bg: #f8fbff;
+      --border: rgba(226, 232, 240, 0.9);
+      
+      --shadow-card: 0 20px 45px rgba(15, 29, 54, 0.08), 0 4px 12px rgba(46, 184, 184, 0.05);
+      --radius-md: 14px;
+      --radius-lg: 24px;
+      --radius-pill: 9999px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient animated lights */
+    body::before {
+      content: "";
+      position: fixed;
+      top: -100px;
+      left: 15%;
+      width: 480px;
+      height: 480px;
+      background: radial-gradient(circle, rgba(46, 184, 184, 0.12) 0%, transparent 70%);
+      z-index: -1;
+      pointer-events: none;
+      animation: floatGlow 10s ease-in-out infinite alternate;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      bottom: -80px;
+      right: 15%;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, rgba(229, 25, 55, 0.06) 0%, transparent 70%);
+      z-index: -1;
+      pointer-events: none;
+      animation: floatGlow 8s ease-in-out infinite alternate-reverse;
+    }
+
+    @keyframes floatGlow {
+      0% { transform: translateY(0) scale(1); }
+      100% { transform: translateY(35px) scale(1.1); }
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px 80px;
+    }
+
+    /* ---------------- ANIMATED LOGIN CARD ---------------- */
+    .login-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      width: 100%;
+      max-width: 450px;
+      padding: 44px 38px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      border: 1.5px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      animation: cardSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .login-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--uka-teal), var(--uka-red));
+    }
+
+    @keyframes cardSlideUp {
+      from { opacity: 0; transform: translateY(25px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .badge-login {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--uka-teal-light);
+      color: var(--uka-teal-dark);
+      font-size: 0.76rem;
+      font-weight: 800;
+      padding: 5px 14px;
+      border-radius: var(--radius-pill);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 14px;
+    }
+
+    .login-card h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+
+    .login-card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .form-group label {
+      font-weight: 700;
+      font-size: 0.86rem;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .form-group select,
+    .form-group input {
+      width: 100%;
+      padding: 13px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.25s ease;
+      background: #fafcfe;
+      color: var(--text-main);
+    }
+
+    .form-group select:focus,
+    .form-group input:focus {
+      border-color: var(--uka-teal);
+      background: white;
+      box-shadow: 0 0 0 4px var(--uka-teal-glow);
+      transform: translateY(-1px);
+    }
+
+    .phone-input-container {
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .country-prefix {
+      position: absolute;
+      left: 14px;
+      font-weight: 800;
+      color: var(--uka-teal-dark);
+      font-size: 0.95rem;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .phone-input-container input {
+      padding-left: 64px;
+    }
+
+    .pass-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .toggle-pass {
+      position: absolute;
+      right: 14px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      transition: color 0.2s;
+    }
+
+    .toggle-pass:hover {
+      color: var(--uka-teal);
+    }
+
+    .toggle-pass svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .forgot-link-wrap {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 4px;
+    }
+
+    .forgot-link {
+      font-size: 0.84rem;
+      color: var(--uka-teal-dark);
+      text-decoration: none;
+      font-weight: 700;
+      transition: color 0.2s;
+    }
+
+    .forgot-link:hover {
+      color: var(--uka-red);
+      text-decoration: underline;
+    }
+
+    .btn-login-submit {
+      background: var(--uka-teal);
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 15px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 1.02rem;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 8px 20px var(--uka-teal-glow);
+      margin-top: 8px;
+    }
+
+    .btn-login-submit:hover {
+      background: var(--uka-teal-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 26px rgba(46, 184, 184, 0.35);
+    }
+
+    .btn-login-submit svg {
+      width: 16px;
+      height: 16px;
+      transition: transform 0.2s ease;
+    }
+
+    .btn-login-submit:hover svg {
+      transform: translateX(4px);
+    }
+
+    .login-footer-links {
+      text-align: center;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 0.92rem;
+      color: var(--text-muted);
+    }
+
+    .login-footer-links a {
+      color: var(--uka-teal-dark);
+      text-decoration: none;
+      font-weight: 700;
+      margin-left: 4px;
+    }
+
+    .login-footer-links a:hover {
+      color: var(--uka-red);
+      text-decoration: underline;
+    }
+
+    /* Direct helpline strip */
+    .login-helpline-strip {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 18px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .login-helpline-strip a {
+      color: var(--navy);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .login-helpline-strip a:hover {
+      color: var(--uka-teal);
+      text-decoration: underline;
+    }
+
+    @media (max-width: 500px) {
+      .login-card {
+        padding: 34px 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- UNIFIED NAVBAR -->
+  <div id="uka-header"></div>
+
+  <main>
+    <div class="login-card">
+      <div class="login-header">
+        <div class="badge-login">Official IELTS Portal</div>
+        <h2>Welcome Back</h2>
+        <p>Log in to access your mock tests, diagnostics, and evaluations.</p>
+      </div>
+
+      <form id="loginForm" class="login-form">
+        <div class="form-group">
+          <label for="countryCode">Country Region</label>
+          <select id="countryCode" required>
+            <option value="+880">🇧🇩 Bangladesh (+880)</option>
+            <option value="+91">🇮🇳 India (+91)</option>
+            <option value="+971">🇦🇪 UAE (+971)</option>
+            <option value="+44">🇬🇧 UK (+44)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Candidate Phone Number</label>
+          <div class="phone-input-container">
+            <span class="country-prefix" id="countryPrefix">+880</span>
+            <input type="tel" id="phone" required placeholder="1712345678">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Secret Password</label>
+          <div class="pass-wrapper">
+            <input type="password" id="password" required placeholder="••••••••">
+            <button type="button" class="toggle-pass" id="togglePassword" aria-label="Toggle password visibility">
+              <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+          <div class="forgot-link-wrap">
+            <a href="forgot.html" class="forgot-link">Forgot password?</a>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-login-submit">
+          <span>Login to Account</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </form>
+
+      <div class="login-footer-links">
+        Don't have an account? <a href="register.html">Register Free</a>
+      </div>
+
+      <div class="login-helpline-strip">
+        <span>Need support? Call:</span>
+        <a href="tel:01507063460">01507063460</a> / <a href="tel:01407063431">01407063431</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- UNIFIED FOOTER -->
+  <div id="uka-footer"></div>
+
+  <script>
+    // Password Toggle SVG logic
+    const passInput = document.getElementById('password');
+    const toggleBtn = document.getElementById('togglePassword');
+    const eyeIcon = document.getElementById('eyeIcon');
+
+    toggleBtn.addEventListener('click', function() {
+      if (passInput.type === 'password') {
+        passInput.type = 'text';
+        eyeIcon.innerHTML = `
+          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+          <line x1="1" y1="1" x2="23" y2="23"></line>
+        `;
+      } else {
+        passInput.type = 'password';
+        eyeIcon.innerHTML = `
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        `;
+      }
+    });
+
+    // Country Prefix Update
+    const countrySelect = document.getElementById('countryCode');
+    const prefixDisplay = document.getElementById('countryPrefix');
+    countrySelect.addEventListener('change', () => {
+      prefixDisplay.textContent = countrySelect.value;
+    });
+
+    // Handle Login Form Submit (Links to auth.js)
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      if (typeof loginUser === "function") {
+        loginUser(e);
+      } else {
+        e.preventDefault();
+        alert("auth.js not loaded properly.");
+      }
+    });
+  </script>
+</body>
+</html>

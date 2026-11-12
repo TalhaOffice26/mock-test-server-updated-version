@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='15' fill='%231A365D' /><path d='M30 25 V55 C30 65 35 75 50 75 C65 75 70 65 70 55 V25 H60 V55 C60 62 58 65 50 65 C42 65 40 62 40 55 V25 H30Z' fill='white' /><rect x='25' y='25' width='15' height='5' fill='white' /><rect x='60' y='25' width='15' height='5' fill='white' /></svg>">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Mock Test Details</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    header {
+      background: linear-gradient(135deg, #2d3436, #636e72);
+      color: #fff;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    .mocktest {
+      background: #fff;
+      margin-bottom: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+    details {
+      border-radius: 12px;
+    }
+    summary {
+      cursor: pointer;
+      padding: 1rem 1.5rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      background: #2d3436;
+      color: #fff;
+      user-select: none;
+    }
+    .mocktest-content {
+      padding: 1.5rem;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .inputs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    input {
+      width: 100%;
+      padding: 0.6rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      transition: border 0.2s;
+    }
+    input:focus {
+      border-color: #2d3436;
+      outline: none;
+    }
+    .section {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #f9fafb;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+    }
+    .section h3 {
+      margin-bottom: 0.5rem;
+      color: #2d3436;
+      font-size: 1.1rem;
+    }
+    ul {
+      margin: 0;
+      padding-left: 1.5rem;
+      color: #555;
+    }
+    .score {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      color: #0984e3;
+    }
+    .writing-section p {
+      white-space: pre-line;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header>User Mock Test Details</header>
+  <div class="container" id="mockTests">
+    <!-- Mock Test Sections will load here -->
+  </div>
+
+  <script>
+    // Example mock data with new mistakes structure
+
+    async function loadDataAndShowData(){
+      const response = await fetch("/api/user-information-for-admin");
+      if(!response.ok){
+        console.log(response.statusText + "Lolo");
+      } else{
+        const data = await response.json();
+      }
+    }
+
+    async function questionData(mockID){
+      const response = await fetch("/api/mock-data");
+    }
+    const mockTests = [
+      {
+        testId: 'MT-001',
+        listening: 7.5,
+        reading: 7.0,
+        writing: {
+          task1: "The graph shows population growth over time.\nIt increased steadily.",
+          task2: "Some people think technology improves life.\nOthers disagree."
+        },
+        speaking: 7.0,
+        listeningMistakes: {
+          Q5: { correct: ["A"], user: ["C"] },
+          Q12: { correct: ["B"], user: [""] }
+        },
+        readingMistakes: {
+          Q3: { correct: ["True"], user: ["False"] },
+          Q10: { correct: ["Paragraph C"], user: ["Paragraph D"] }
+        }
+      },
+      {
+        testId: 'MT-002',
+        listening: 8.0,
+        reading: 7.5,
+        writing: {
+          task1: "The table illustrates country-wise pollution levels.",
+          task2: "Governments should take steps to reduce pollution.\nPublic awareness is also vital."
+        },
+        speaking: 6.5,
+        listeningMistakes: {
+          Q2: { correct: ["D"], user: ["B"] },
+          Q8: { correct: ["A"], user: [""] }
+        },
+        readingMistakes: {
+          Q5: { correct: ["False"], user: ["True"] }
+        }
+      }
+    ];
+
+    function renderMistakes(mistakes) {
+      return `<ul>` +
+        Object.entries(mistakes).map(([q, data]) => `
+          <li>
+            <strong>${q}</strong><br>
+            Correct: ${data.correct.join(', ')}<br>
+            Your Answer: ${data.user.join(', ')}
+          </li>
+        `).join('') + `</ul>`;
+    }
+
+    function loadMockTests() {
+      const container = document.getElementById('mockTests');
+      container.innerHTML = '';
+      mockTests.forEach(test => {
+        const details = document.createElement('details');
+        details.className = 'mocktest';
+
+        const summary = document.createElement('summary');
+        summary.textContent = `Mock Test - ${test.testId}`;
+        details.appendChild(summary);
+
+        const content = document.createElement('div');
+        content.className = 'mocktest-content';
+        content.innerHTML = `
+          <div class="inputs">
+            <input type="text" value="${test.testId}" placeholder="Test ID">
+            <input type="text" value="${test.listening}" placeholder="Listening Band">
+            <input type="text" value="${test.reading}" placeholder="Reading Band">
+            <input type="text" value="${test.writing.task1 ? '' : test.writing}" placeholder="Writing Band">
+            <input type="text" value="${test.speaking}" placeholder="Speaking Band">
+          </div>
+
+          <div class="section">
+            <h3>Listening</h3>
+            <p class="score">Score: ${test.listening}</p>
+            ${renderMistakes(test.listeningMistakes)}
+          </div>
+
+          <div class="section">
+            <h3>Reading</h3>
+            <p class="score">Score: ${test.reading}</p>
+            ${renderMistakes(test.readingMistakes)}
+          </div>
+
+          <div class="section writing-section">
+            <h3>Writing Task 1</h3>
+            <p>${test.writing.task1.replace(/\n/g, '\n')}</p>
+            <h3>Writing Task 2</h3>
+            <p>${test.writing.task2.replace(/\n/g, '\n')}</p>
+          </div>
+        `;
+
+        details.appendChild(content);
+        container.appendChild(details);
+      });
+    }
+
+    loadMockTests();
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

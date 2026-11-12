@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='15' fill='%231A365D' /><path d='M30 25 V55 C30 65 35 75 50 75 C65 75 70 65 70 55 V25 H60 V55 C60 62 58 65 50 65 C42 65 40 62 40 55 V25 H30Z' fill='white' /><rect x='25' y='25' width='15' height='5' fill='white' /><rect x='60' y='25' width='15' height='5' fill='white' /></svg>">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>UKA Admin Login</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root{
+      --uka-accent:#2eb8b8;
+      --uka-accent-2:#1f8f8f;
+      --uka-bg:#f9fbff;
+      --uka-text:#1e293b;
+    }
+    body{ background: linear-gradient(180deg, #eef9f9 0%, #ffffff 100%); color:var(--uka-text); }
+    .card { border-radius: 12px; box-shadow: 0 8px 30px rgba(45,60,80,0.07); }
+    .brand { color:var(--uka-accent-2); font-weight:700; font-size:1.25rem; }
+    .btn-login { background: var(--uka-accent); color:white; border:none; transition:0.3s; }
+    .btn-login:hover { background: var(--uka-accent-2); color:white; }
+  </style>
+</head>
+<body>
+  <div class="container vh-100 d-flex align-items-center justify-content-center">
+    <div class="card p-4" style="width:380px;">
+      <div class="text-center mb-3">
+        <div class="brand">UKA Admin Login</div>
+        <small class="text-muted">Sign in to manage users</small>
+      </div>
+      <div id="alert-placeholder"></div>
+
+      <form id="loginForm">
+
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          <input id="username" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <div class="input-group">
+            <input id="password" type="password" class="form-control" required />
+            <button type="button" class="btn btn-outline-secondary" id="togglePass" style="border:1px solid #ced4da;">
+              👁️
+            </button>
+          </div>
+        </div>
+
+        <button class="btn btn-login w-100" type="submit">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById("loginForm");
+
+    const showAlert = (msg, type="danger")=>{
+      document.getElementById("alert-placeholder").innerHTML = 
+        `<div class="alert alert-${type} py-2">${msg}</div>`;
+      setTimeout(()=>document.getElementById("alert-placeholder").innerHTML="",3500);
+    };
+
+    // Password Show/Hide Toggle
+    document.getElementById("togglePass").addEventListener("click", () => {
+      const pass = document.getElementById("password");
+      if (pass.type === "password") {
+        pass.type = "text";
+        document.getElementById("togglePass").textContent = "👀";
+      } else {
+        pass.type = "password";
+        document.getElementById("togglePass").textContent = "👁️";
+      }
+    });
+
+    // Login System
+    loginForm.addEventListener("submit",(e)=>{
+      e.preventDefault();
+      const u = document.getElementById("username").value.trim();
+      const p = document.getElementById("password").value;
+
+      if(u==="UKA" && p==="@abcxyz634#"){
+        sessionStorage.setItem("isAdmin","true");
+        window.location.href="admin-dashboard.html";
+      }else{
+        showAlert("Invalid credentials — try again.");
+      }
+    });
+
+    // Already logged in? Redirect
+    if(sessionStorage.getItem("isAdmin")==="true"){
+      window.location.href="admin-dashboard.html";
+    }
+  </script>
+</body>
+</html>

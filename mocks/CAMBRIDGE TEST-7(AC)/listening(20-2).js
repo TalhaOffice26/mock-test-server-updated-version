@@ -1,0 +1,217 @@
+const questions = [
+      {   
+    "part": 1,
+    "group": 11,
+    "heading": "",
+    "subheadings": ["Local Councils can Arrange Practical Support to Help those Caring for Elderly people at Home.", "Assessment of mother’s needs", "Types of support that may be offered to carers"],
+    "paragraphs": [ 
+                    ["-- This can give the carer:",
+                     "– time for other responsibilities",
+                     "–  a [blank]"
+                    ], 
+                    ["This may include discussion of:", 
+                    "– how much [blank] the caring involves", 
+                    "What types of tasks are involved, e.g.:", 
+                    "– help with dressing", 
+                    "– helping her have a [blank]", 
+                    "– shopping", 
+                    "– helping with meals", 
+                    "– dealing with [blank]", 
+                    "Any aspects of caring that are especially difficult, e.g.:", 
+                    "– loss of [blank]", 
+                    "[blank] her", 
+                    "– preventing a [blank]"], 
+                    ["– transport costs, e.g. cost of a [blank]", 
+                     "– car-related costs, e.g. fuel and [blank]", 
+                     "– help with housework", 
+                     "– help to reduce [blank]"],
+                ],
+    "id": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "type": "note-completion",
+  },
+    {
+    "part": 2,
+    "group": 21,
+    "type": "feature-matching",
+    "id": [11, 12, 13, 14, 15, 16],
+    "options": ["providing entertainment", 
+                "providing publicity about a council service", 
+                "contacting local businesses",
+                "giving advice to visitors",
+                "collecting feedback on events",
+                "selling tickets",
+                "introducing guest speakers at an event",
+                "encouraging cooperation between local organisations",
+                "helping people find their seats"],
+    "features": ["walking around the town centre", "helping at concerts", "getting involved with community groups", "helping with a magazine", "participating at lunches for retired people", "helping with the website"],
+},
+{
+    "part": 2,
+    "group": 22,
+    "type": "mcq-updated",
+    "id": [17, 18, 19, 20],
+    "questions": ["Which event requires the largest number of volunteers?",
+                  "What is the most important requirement for volunteers at the festivals?",
+                  "New volunteers will start working in the week beginning",
+                  "What is the next annual event for volunteers?"
+    ],
+    "options": [
+                ["the music festival", 
+                 "the science festival",
+                 "the book festival"], 
+                ["interpersonal skills",
+                 "personal interest in the event", 
+                 "flexibility"], 
+                ["2 September", 
+                 "9 September", 
+                 "23 September"],
+                [
+                "a boat trip",
+                "a barbecue",
+                "a party"
+               ]
+                ],  
+},
+{
+    "part": 3,
+    "group": 31,
+    "type": "feature-matching",
+    "id": [21, 22, 23, 24, 25],
+    "options": ["The information given about this was too vague.", 
+                "This may not be relevant to their course.", 
+                "This will involve only a small number of statistics.",
+                "It will be easy to find facts about this.",
+                "The facts about this may not be reliable.",
+                "No useful research has been done on this.",
+                "The information provided about this was interesting.",
+            ],
+    "features": ["Population", "Health", "Economies", "Culture", "Poverty"],
+},
+{
+    "part": 3,
+    "group": 32,
+    "type": "mcq-updated",
+    "id": [26, 27, 28, 29, 30],
+    "questions": ["Rosie says that in her own city the main problem is",
+                  "What recent additions to the outskirts of their cities are both students happy about?",
+                  "The students agree that developing disused industrial sites may",
+                  "The students will mention Masdar City as an example of an attempt to achieve",
+                  "When discussing the ecotown of Greenhill Abbots, Colin is uncertain about"
+    ],
+    "options": [
+                ["Crime", 
+                 "Housing",
+                 "Unemployment"], 
+                ["Conference centres",
+                 "Sports centres", 
+                 "Retail centres"], 
+                ["Have unexpected costs", 
+                 "Damage the urban environment", 
+                 "Destroy valuable historical buildings"],
+                [
+                "Daily collections for waste recycling",
+                "Sustainable energy use",
+                "Free transport for everyone"
+               ],
+               [
+                "What its objectives were",
+                "Why there was opposition to it",
+                "How much of it has actually been built"
+               ]
+                ], 
+},
+{
+   "part": 4,
+   "group": 41,
+   "heading": "Food Trends",
+   "subheadings": ["Developing Food Trends", "Marketing campaigns <br><br> The avocado:", "Oat milk:", "Norwegian skrei:", "Quinoa:"],
+   "paragraphs":  [["The growth in interest in food fashions started with [blank] of food being shared on social media.", 
+                    "The UK food industry is constantly developing products which are newor different.",
+                    "Influencers on social media become ‘ambassadors’ for a brand.",
+                    "Sales of [blank] food brands have grown rapidly this way.",
+                    "Supermarkets track demand for ingredients on social media.",
+                    "Famous [blank] are influential." 
+                  ], 
+                  ["[blank] were invited to visit growers in South Africa.",
+                   "— Advertising focused on its [blank] benefits.",
+                  ], 
+                  ["— A Swedish brand’s media campaign received publicity by upsetting competitors.",
+                   "— Promotion in the USA through [blank] shops reduced the need for advertising.",
+                   "— It appealed to consumers who are concerned about the [blank]"
+                  ],
+                  ["— has helped strengthen the [blank] of Norwegian seafood.",
+                    "— Ethical concerns"
+                  ],
+                [
+                    "— Its success led to an increase in its [blank]",
+                    "— Overuse of resources resulted in poor quality [blank]"
+                ]],
+    "id": [31, 32, 33, 34, 35, 36, 37, 38, 39, 40], 
+}
+]
+
+const instructions = [
+  {
+    "group" : 11,
+    "instruction" : "Complete the notes below. <br><br>Write <strong>ONE WORD AND/OR A NUMBER</strong> for each answer.",
+  },
+  {"group" : 21,
+    "instruction": "What is the role of the volunteers in each of the following activities? <br><br> Drag and Drop the correct answer.",
+  },
+  {"group" : 22,
+    "instruction": "Choose the correct option"
+  },
+  {"group" : 31,
+    "instruction": "What is Rosie and Colin’s opinion about each of the following aspects of human geography? <br><br> Drag and Drop the correct answer."
+  },
+  {"group" : 32,
+    "instruction": "Choose the correct option"
+  },
+  {"group" : 41,
+    "instruction": "Complete the notes below. \n Write ONE WORD ONLY for each answer."
+  }
+  ]
+
+
+  const answers = {
+    1: ["break"],
+    2: ["time"],
+    3: ["shower"],
+    4: ["money"],
+    5: ["memory"],
+    6: ["lifting"],
+    7: ["fall"],
+    8: ["taxi"],
+    9: ["insurance"],
+    10:["stress"],
+    11:["giving advice to visitors"],
+    12:["helping people find their seats"],
+    13:["encouraging cooperation between local organisations"],
+    14:["collecting feedback on events"],
+    15:["providing entertainment"],
+    16:["providing publicity about a council service"],
+    17:["2"],
+    18:["1"],
+    19:["2"],
+    20:["1"],
+    21:["it will be easy to find facts about this."],
+    22:["the information provided about this was interesting."],
+    23:["this may not be relevant to their course."],
+    24:["the information given about this was too vague."],
+    25:["the facts about this may not be reliable."],
+    26:["3"],
+    27:["1"],
+    28:["1"],
+    29:["2"],
+    30:["3"],
+    31:["photos", "photographs", "pictures"],
+    32:["vegan"],
+    33:["chefs", "cooks"],
+    34:["journalists", "reporters"],
+    35:["health"],
+    36:["coffee"],
+    37:["environment"],
+    38:["reputation"],
+    39:["cost"],
+    40:["soil"]
+}

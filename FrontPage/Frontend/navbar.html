@@ -1,0 +1,63 @@
+<!-- UKA Technical Institute - Unified Navbar Component -->
+<header class="site-header">
+  <div class="site-nav-container">
+    <!-- Pure Branding Logo (No Text Clutter) -->
+    <a href="/" class="brand-logo-link" aria-label="UKA Technical Institute Home">
+      <img src="2_UKA-&-British-council-Logo.png" alt="UKA Technical Institute & British Council Logo">
+    </a>
+
+    <!-- Desktop Navigation Links -->
+    <nav class="site-nav-links">
+      <a href="/" data-nav="home"><i class="fas fa-home"></i> Home</a>
+      <a href="mocks.html" data-nav="mocks"><i class="fas fa-file-alt"></i> Mock Tests</a>
+      <a href="/practice-hub" data-nav="practice"><i class="fas fa-layer-group"></i> Practice Hub</a>
+      <a href="contact.html" data-nav="contact"><i class="fas fa-envelope"></i> Contact</a>
+      <a href="https://www.ukatechnical.com" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i> About</a>
+    </nav>
+
+    <!-- Compact Auth Control (Login / Sign Up) -->
+    <div class="site-auth-area" id="auth-links">
+      <div class="auth-compact-pill" id="authPillBox">
+        <a href="login.html" class="auth-btn-link" id="loginBtn">Login</a>
+        <a href="register.html" class="auth-btn-link signup" id="registerBtn">Sign Up</a>
+      </div>
+      <a href="profile.html" class="auth-profile-pill" id="profileBtn" style="display: none;">
+        <i class="fas fa-user-circle"></i> Profile
+      </a>
+    </div>
+
+    <!-- Mobile Hamburger Toggle -->
+    <button class="mobile-nav-toggle" onclick="toggleMenu()" aria-label="Open Navigation Menu">
+      <i class="fas fa-bars"></i>
+    </button>
+  </div>
+</header>
+
+<!-- Mobile Drawer & Overlay -->
+<div class="mobile-drawer-overlay" id="sidebarOverlay" onclick="toggleMenu()"></div>
+
+<aside class="mobile-drawer" id="sidebar" aria-label="Mobile Navigation Drawer">
+  <div class="drawer-header">
+    <img src="2_UKA-&-British-council-Logo.png" alt="UKA Logo">
+    <button class="drawer-close-btn" onclick="toggleMenu()" aria-label="Close Mobile Menu">&times;</button>
+  </div>
+  
+  <nav class="drawer-links">
+    <a href="/" onclick="toggleMenu()"><i class="fas fa-home"></i> Home</a>
+    <a href="mocks.html" onclick="toggleMenu()"><i class="fas fa-file-alt"></i> Official Mock Tests</a>
+    <a href="javascript:void(0)" onclick="toggleMenu(); checkLoginBeforeTest();"><i class="fas fa-bullseye"></i> Placement Level Test</a>
+    <a href="/practice-hub" onclick="toggleMenu()"><i class="fas fa-layer-group"></i> Skill Practice Hub</a>
+    <a href="contact.html" onclick="toggleMenu()"><i class="fas fa-envelope"></i> Contact Support</a>
+    <a href="https://www.ukatechnical.com" target="_blank" rel="noopener noreferrer" onclick="toggleMenu()"><i class="fas fa-globe"></i> About UKA Institute</a>
+  </nav>
+  
+  <div class="drawer-footer">
+    <div class="drawer-auth-pill" id="drawerAuthBox">
+      <a href="login.html" class="drawer-auth-btn" id="drawerLoginBtn">Login</a>
+      <a href="register.html" class="drawer-auth-btn signup" id="drawerRegisterBtn">Sign Up</a>
+    </div>
+    <a href="profile.html" class="auth-profile-pill" id="drawerProfileBtn" style="display: none; justify-content: center;">
+      <i class="fas fa-user-circle"></i> View Profile
+    </a>
+  </div>
+</aside>

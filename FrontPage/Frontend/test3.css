@@ -1,0 +1,383 @@
+:root {
+  --bg: #f6f8fb;
+  --card: #ffffff;
+  --accent: #2eb8b8;         
+  --accent-2: #1f8f8f;       
+  --muted: #6b7280;
+  --success: #16a34a;
+  --danger: #dc2626;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  background: linear-gradient(180deg, #eafafc 0%, var(--bg) 100%);
+  color: #0f172a;
+}
+
+/* ===== HEADER ===== */
+header {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: var(--card);
+  box-shadow: 0 6px 18px rgba(12, 24, 60, 0.08);
+  z-index: 50;
+  gap: 12px;
+}
+header .left { display: flex; align-items: center; gap: 12px; }
+header img { height: 100px; width: 220px; object-fit: contain; border-radius: 6px; }
+header h1 { font-size: 18px; margin: 0; letter-spacing: 0.4px; }
+header .timer {
+  font-weight: 700;
+  color: var(--accent);
+  background: linear-gradient(90deg, rgba(46,184,184,0.1), transparent);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.spacer { height: 92px; }
+
+/* ===== MAIN CONTAINER ===== */
+.container {
+  max-width: 980px;
+  margin: 18px auto;
+  padding: 20px;
+  background: transparent;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(12, 24, 60, 0.06);
+  margin-bottom: 18px;
+}
+
+/* ===== PROGRESS BAR ===== */
+.progress-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.progress {
+  flex: 1;
+  height: 10px;
+  background: #e0f7f7;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-right: 12px;
+}
+.progress > span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  width: 0%;
+}
+.page-info { min-width: 120px; text-align: right; color: var(--muted); font-size: 13px; }
+
+
+
+
+/* ===== QUESTIONS ===== */
+.questions-list { display: grid; gap: 14px; }
+.question {
+  border-radius: 10px;
+  padding: 12px;
+  background: linear-gradient(180deg, rgba(240,255,255,0.9), #fff);
+  border: 1px solid rgba(15,23,42,0.04);
+}
+.question p { margin: 0 0 8px 0; font-weight: 700; }
+.passage {
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #111827;
+  background: #f0fcfc;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(2,6,23,0.03);
+}
+
+.options label {
+  display: block;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 6px;
+  border: 1px solid transparent;
+}
+.options input[type="radio"] { margin-right: 8px; }
+.options label:hover {
+  background: #f1fcfc;
+  border-color: rgba(46,184,184,0.2);
+}
+.options label.selected {
+  background: linear-gradient(90deg, rgba(46,184,184,0.08), transparent);
+  border: 1px solid rgba(46,184,184,0.25);
+}
+/* certain level */
+.certainty {
+  margin-top: 10px;
+}
+
+.certainty label {
+  display: inline-block;       
+  padding: 8px 12px;
+  margin-right: 8px;           
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.certainty label:hover {
+  background: #f1fcfc;
+  border-color: rgba(46,184,184,0.2);
+}
+
+.certainty label.selected {
+  background: linear-gradient(90deg, rgba(46,184,184,0.08), transparent);
+  border: 1px solid rgba(46,184,184,0.25);
+}
+
+
+
+
+
+/* ===== FEEDBACK ===== */
+.feedback { margin-top: 8px; font-weight: 700; }
+.feedback.correct { color: var(--success); }
+.feedback.wrong { color: var(--danger); font-weight: 700; }
+
+/* ===== CONTROLS ===== */
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+.controls .left, .controls .right {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* ===== BUTTONS ===== */
+button.btn {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 0;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(12, 24, 60, 0.06);
+  transition: all 0.3s ease;
+}
+
+/* Ghost Button (Clean Final Version) */
+button.btn.ghost {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid rgba(15,23,42,0.10);
+  transition: all 0.3s ease;
+}
+
+button.btn.ghost:hover {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  color: white !important;
+  transform: scale(1.05);
+  border-color: var(--accent-2);
+  box-shadow: 0 0 12px rgba(46,184,184,0.6);
+}
+
+
+/* Warn Button (Submit / Auto-submit) */
+button.btn.warn {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  color: white;
+}
+
+button.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.page-nav { display: flex; gap: 8px; align-items: center; }
+
+/* ===== SUMMARY ===== */
+.summary {
+  padding: 14px;
+  border-radius: 10px;
+  background: #e8fdfd;
+  border: 1px solid rgba(46,184,184,0.25);
+  color: #047c7c;
+  font-weight: 700;
+}
+
+
+/* ===== RESULT AREA (Circular Chart) ===== */
+.result-area {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.circle-wrap {
+  width: 160px;
+  height: 160px;
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+
+.circle-percent {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--accent, #2563eb);
+}
+
+.chart-desc {
+  font-size: 14px;
+  color: var(--muted, #666);
+  max-width: 560px;
+}
+
+/* Ensure both cards are visually identical */
+#resultBox.card, 
+#levelResultBox.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+
+/* Equal circle alignment fix */
+#resultBox .circle-wrap svg,
+#levelResultBox .circle-wrap svg {
+  width: 160px;
+  height: 160px;
+}
+
+/* Optional color tweak for CEFR */
+#levelResultBox .circle-percent {
+  color: #2563eb;
+}
+
+
+/* ===== DOWNLOAD BUTTON ===== */
+.download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+
+  padding: 12px 26px;
+
+  background: var(--accent, #2eb8b8);
+  color: #fff;
+
+  border: none;
+  border-radius: 12px;
+  
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+  transition: all 0.25s ease;
+}
+
+/* Hover effect: darker tone + slight lift */
+.download-btn:hover {
+  background: var(--accent-2, #1f8f8f);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+/* Click effect */
+.download-btn:active {
+  transform: translateY(0px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.09);
+}
+
+/* Optional: Download icon style */
+.download-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke: #fff;
+}
+
+
+/* ===== MODAL (Responsive for Minimize Alert) ===== */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  width: 90%;
+  max-width: 420px;
+  margin: 0 auto;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.modal-content h3 {
+  margin-bottom: 8px;
+  color: var(--accent);
+  font-weight: 700;
+}
+.modal-content p { color: #555; margin-bottom: 16px; }
+
+.modal-content div[style*="display:flex"] {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+}
+.result-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 15px;
+}
+
+
+
+@media (min-width: 480px) {
+  .modal-content div[style*="display:flex"] {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+}
+
+/* ===== RESPONSIVE FIX ===== */
+@media (max-width: 720px) {
+  header { height: 80px; padding: 12px; }
+  .container { padding: 12px; }
+  .controls { flex-direction: column; align-items: stretch; }
+  .progress-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+  header h1 { font-size: 16px; }
+  .result-area { justify-content: center; }
+}

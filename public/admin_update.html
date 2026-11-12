@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='15' fill='%231A365D' /><path d='M30 25 V55 C30 65 35 75 50 75 C65 75 70 65 70 55 V25 H60 V55 C60 62 58 65 50 65 C42 65 40 62 40 55 V25 H30Z' fill='white' /><rect x='25' y='25' width='15' height='5' fill='white' /><rect x='60' y='25' width='15' height='5' fill='white' /></svg>">
+  <meta charset="UTF-8">
+  <title>Expandable Boxes</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 40px;
+      background: #f0f2f5;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .box {
+      width: 300px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .box-header {
+      padding: 16px;
+      background: #4A90E2;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      border-bottom: 1px solid #ccc;
+      position: relative;
+    }
+
+    .box-header::after {
+      content: '▼';
+      position: absolute;
+      right: 16px;
+      transition: transform 0.3s;
+    }
+
+    .box.expanded .box-header::after {
+      transform: rotate(180deg);
+    }
+
+    .box-content {
+      display: none;
+      padding: 16px;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .box.expanded .box-content {
+      display: block;
+    }
+
+    .box-content input {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .info-section {
+      background: #f9f9f9;
+      padding: 10px;
+      border-left: 4px solid #4A90E2;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #333;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container" id="boxContainer"></div>
+
+<script>
+var refresh = window.localStorage.getItem('refresh');
+console.log(refresh);
+setTimeout(function() {
+if (refresh===null){
+    window.location.reload();
+    window.localStorage.setItem('refresh', "1");
+}
+}, 500); // 1500 milliseconds = 1.5 seconds
+
+setTimeout(function() {
+localStorage.removeItem('refresh')
+}, 1000); // 1700 milliseconds = 1.7 seconds
+
+  
+  window.addEventListener("DOMContentLoaded", async ()=>{
+    
+    
+
+    
+    
+    const response = await fetch("/api/user-information-for-admin");
+
+  if(!response.ok){
+    //alert("Failed!");
+    console.log(response.statusText);
+    //window.location.href = '/admin'
+  } else{
+    const data = await response.json();
+    const plan = data.plan;
+    const boxCount = plan === "free" ? 2: plan === "basic" ? 10: 25; // Change this number to load more/less boxes
+    const container = document.getElementById('boxContainer');
+
+
+    const mockInformation = data.mockInformation;
+    mockInformation.sort((a, b)=> a.mockID - b.mockID)
+    const attemptedMocks = mockInformation.length;
+    console.log(mockInformation);
+
+  function listMistakes(mistakesObj){
+    const listElement = document.createElement("ul");
+
+    for (const mistake in mistakesObj){
+      const listItem = document.createElement("li");
+
+      listItem.innerHTML = `❌${mistakesObj[mistake]["Your answer"]}. (${mistakesObj[mistake]["Correct answer"]}).`
+
+     listElement.appendChild(listItem);
+    }
+
+  return listElement.outerHTML;
+  }
+
+  console.log(listMistakes(mockInformation[0].listening.mistakes))
+
+  for (let i = 0; i < attemptedMocks; i++) {
+    const box = document.createElement('div');
+    let writingInputPart1 = "";
+    let writingInputPart2 = "";
+    try {
+      writingInputPart1 = mockInformation[i].writing.writingInputs["part-1"];
+      writingInputPart2 = mockInformation[i].writing.writingInputs["part-2"];
+    } catch(err){
+      console.error(err);
+      writingInputPart1 = "NO INFO";
+      writingInputPart2 = "NO INFO";
+    }
+    box.className = 'box';
+
+    box.innerHTML = `
+      <div class="box-header-${i} box-header">Test ${mockInformation[i].mockID}</div>
+      <div class="box-content">
+        <form id="updateBand-${i}">
+        <label for="mock-id-${i}"></label>
+        <input id="mock-id-${i}" type="text", placeholder="ID..."> 
+        <label for="Listening-band-score-${i}">Listening-band</label>
+        <input id="Listening-band-score-${i}" type="text" placeholder="Listening-band">
+        <label for="Reading-band-score-${i}">Reading-band</label>
+        <input id="Reading-band-score-${i}" type="text" placeholder="Reading-band">
+        <label for="Writing-band-score-${i}">Writing-band-score</label>
+        <input id="Writing-band-score-${i}" type="text" placeholder="Writing-band">
+        <label for="Speaking-band-score-${i}">Speaking-band-score</label>
+        <input id="Speaking-band-score-${i}" type="text" placeholder="Speaking-band">
+        <label for="Overall-band-score-${i}">Overall-band-score</label>
+        <input id="Overall-band-score-${i}" type="text" placeholder="Overall-band">
+        <button type="submit">➕ Update User</button>
+        <div class="status" id="status"></div>
+        </form>
+        <div class="info-section">
+          <p>Listening-score: ${mockInformation[i].listening.score==undefined ? "NO INFO" : mockInformation[i].listening.score}</p>
+          <p>Listening-mistakes: <br> ${listMistakes(mockInformation[i].listening.mistakes)}</p>
+          <p>Reading-score: ${mockInformation[i].reading.score==undefined ?  "NO INFO" : mockInformation[i].reading.score}</p>
+          <p>Reading-mistakes: <br> ${listMistakes(mockInformation[i].reading.mistakes)}</p>
+          <p>Writing Task-1: ${writingInputPart1}</p>
+          <p>Writing Task-2: ${writingInputPart2}</p>
+        </div>
+      </div>
+    `;
+
+    box.querySelector(`.box-header-${i}`).addEventListener('click', () => {
+      box.classList.toggle('expanded');
+    });
+
+    container.appendChild(box);
+
+    document.getElementById(`updateBand-${i}`).addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const id = document.getElementById(`mock-id-${i}`).value.trim();
+    const listeningBand = document.getElementById(`Listening-band-score-${i}`).value.trim();
+    const readingBand = document.getElementById(`Reading-band-score-${i}`).value.trim();
+    const writingBand = document.getElementById(`Writing-band-score-${i}`).value.trim();
+    const speakingBand = document.getElementById(`Speaking-band-score-${i}`).value.trim();
+    const overallBand = document.getElementById(`Overall-band-score-${i}`).value.trim();
+
+
+    const res = await fetch('/admin/update-band-score', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({id, listeningBand, readingBand, writingBand, speakingBand, overallBand})
+    })
+
+    const statusEl = document.getElementById('status');
+    if (res.ok) {
+        statusEl.style.color = 'green';
+        statusEl.textContent = '✅ User band updated successfully';
+        document.getElementById('userForm').reset();
+        //loadUsers(); // Refresh list
+      } else {
+        const error = await res.text();
+        statusEl.style.color = 'red';
+        statusEl.textContent = '❌ ' + error;
+      }
+  })
+  }
+
+  
+  }
+
+
+
+
+  })
+  
+
+
+</script>
+
+</body>
+</html>

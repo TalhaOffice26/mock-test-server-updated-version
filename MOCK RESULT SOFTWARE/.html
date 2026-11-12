@@ -1,0 +1,57 @@
+const express = require('express');
+const fs = require('fs');
+const pdf = require('pdf-parse');
+const app = express();
+
+app.use(express.urlencoded({ extended: true }));
+
+let resultData = {}; // এখানে সব রোল আর রেজাল্ট জমা থাকবে
+
+// ১. PDF ফাইলটি পড়ে ডেটা অবজেক্টে সেভ করার ফাংশন
+const loadPDFData = async () => {
+    let dataBuffer = fs.readFileSync('result.pdf'); // আপনার PDF ফাইলের নাম
+    const data = await pdf(dataBuffer);
+    
+    // PDF-এর টেক্সটকে লাইন অনুযায়ী ভাগ করা
+    const lines = data.text.split('\n');
+    
+    lines.forEach(line => {
+        // ধরুন লাইনে রোল ৬ সংখ্যার এবং তারপর রেজাল্ট আছে
+        // Regex ব্যবহার করে রোল এবং জিপিএ খুঁজে বের করা (এটি PDF এর ফরম্যাটের ওপর নির্ভর করবে)
+        const match = line.match(/(\d{6})\s+([\d.]+)/); 
+        if (match) {
+            resultData[match[1]] = match[2]; // match[1] = Roll, match[2] = Result
+        }
+    });
+    console.log("PDF Data Loaded!");
+};
+
+// ২. হোম পেজ (HTML)
+app.get('/', (req, res) => {
+    res.send(`
+        <body style="font-family: Arial; text-align: center; padding-top: 50px;">
+            <h2>Diploma Result Search</h2>
+            <form action="/search" method="POST">
+                <input type="text" name="roll" placeholder="Enter 6 Digit Roll" required>
+                <button type="submit">Search</button>
+            </form>
+        </body>
+    `);
+});
+
+// ৩. সার্চ রেজাল্ট পেজ
+app.post('/search', (req, res) => {
+    const roll = req.body.roll;
+    const result = resultData[roll];
+    
+    if (result) {
+        res.send(`<h1>Roll: ${roll}</h1> <h2>Result: ${result}</h2> <a href="/">Back</a>`);
+    } else {
+        res.send(`<h1>Result Not Found!</h1> <a href="/">Back</a>`);
+    }
+});
+
+// সার্ভার চালু করা
+loadPDFData().then(() => {
+    app.listen(3000, () => console.log('Server running at http://localhost:3000'));
+});

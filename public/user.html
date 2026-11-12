@@ -1,0 +1,578 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='15' fill='%231A365D' /><path d='M30 25 V55 C30 65 35 75 50 75 C65 75 70 65 70 55 V25 H60 V55 C60 62 58 65 50 65 C42 65 40 62 40 55 V25 H30Z' fill='white' /><rect x='25' y='25' width='15' height='5' fill='white' /><rect x='60' y='25' width='15' height='5' fill='white' /></svg>">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UKA IELTS Mock Tests</title>
+  <style>
+    :root {
+      --primary: #3B1E54;
+      --secondary: #9B7EBD;
+      --accent: #D4BEE4;
+      --base: #EEEEEE;
+      --text-dark: #1a1a1a;
+      --text-light: #f9f9f9;
+      --transition: 0.6s ease;
+    }
+
+    [data-theme="dark"] {
+      --base: #1e1e2f;
+      --text-dark: #f9f9f9;
+      --text-light: #1a1a1a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+  font-family: 'Poppins', sans-serif;
+  background: var(--base);
+  color: var(--text-dark);
+  overflow-x: hidden; /* prevent horizontal scroll */
+  overflow-y: auto;   /* allow vertical scroll */
+  transition: background var(--transition), color var(--transition);
+}
+
+    /* Welcome Screen */
+/* Welcome screen: fully centered and zoom-safe */
+#welcome {
+        position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to right, #eeeeee 100%, transparent 100%, transparent 100%, #eeeeee 100%);
+    color: white;
+    z-index: 10;
+    padding: 2rem;
+    text-align: center;
+    overflow: auto;
+}
+/*
+    #logo {
+      width: 120px;
+      height: 120px;
+      background: var(--accent);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 20px;
+    }
+*/
+    #startBtn {
+      padding: 14px 34px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 12px;
+      background: #4AC3C7;
+      color: #ffffff;
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 50px;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+    #startBtn:hover {
+      background: #ffffff;
+      color: #1E6F74;
+      transform: scale(1.05);
+    }
+
+    /* Curtain */
+    .curtain {
+      position: fixed;
+      top: 0;
+      width: 50%;
+      height: 100vh;
+      background: var(--primary);
+      z-index: 9;
+      transition: transform var(--transition);
+    }
+    .left-curtain { left: 0; transform: translateX(0); }
+    .right-curtain { right: 0; transform: translateX(0); }
+
+    .open .left-curtain { transform: translateX(-100%); }
+    .open .right-curtain { transform: translateX(100%); }
+
+    /* Main UI */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      background: #ffffff;
+      color: white;
+    }
+
+    #themeToggle {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      background: var(--accent);
+      color: var(--primary);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+
+/* Main section - adaptive height */
+main {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: calc(100vh - 80px);
+  padding: 2rem 1rem;
+  background: linear-gradient(to right, #eeeeee 25%, transparent 25%, transparent 75%, #eeeeee 75%);
+  transition: opacity 1s ease;
+  overflow: auto; /* allow scroll on zoom */
+}
+
+.show-main main {
+  opacity: 1;
+}
+
+/* Center wrapper safely */
+.app-wrapper {
+  width: min(90%, 800px);
+  display: flex;
+  justify-content: center;
+}
+
+/* Make the menu flexible */
+.menu-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem 1rem;
+  border: 2px solid #211D70;
+  border-radius: 16px;
+  background: var(--base);
+  transition: all 0.5s ease;
+  box-sizing: border-box;
+}
+
+/* MOCK TEST CARDS */
+.mini-test-box {
+  width: 35%;
+  min-width: 300px;
+  justify-content: space-between;
+  align-items: center; /* <-- already centers vertically */
+  text-align: center;  /* <-- add this to center the text horizontally within its space */
+  background: #4AC3C7;
+  color: #ffffff;
+  padding: 14px 24px;
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.mini-test-box:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+  background: #ffffff;
+  color: #1E6F74;
+}
+
+/* ATTEMPT BUTTON (INSIDE CARD) */
+.mini-test-box button {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 8px;
+  background: #4AC3C7;
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.mini-test-box button:hover {
+  background: #ffffff;
+  color: #1E6F74;
+  transform: scale(1.05);
+}
+
+    .expanded {
+      width: 50%;
+      height: 25%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      transition: all 0.5s ease;
+    }
+
+    #attemptBtn, .backBtn {
+      margin-top: 20px;
+      padding: 12px 28px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 10px;
+      background: #4AC3C7;
+      color: #ffffff;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+
+    .backBtn{
+      position: fixed;
+      top: 12vh;
+      left: 0;
+    }
+    #attemptBtn:hover {
+      background: #ffffff;
+      color: #1E6F74;
+      transform: scale(1.05);
+    }
+
+     .backBtn:hover{
+      background: #211D70;
+      color: #E51937;
+      transform: scale(1.05);
+     }
+
+    .select-logo img{
+      width: 50%;
+    }
+
+    .question-mark img{
+      width: 30px;
+      height: 30px;
+    }
+    /* Make logo responsive */
+.front-logo img {
+  width: min(80%, 500px);
+  height: auto;
+}
+
+        h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    /* color: #ffffff; */
+    min-height: 2.5em;
+    /* background: linear-gradient(to right, #4AC3C7, #211D70, #E51937); */
+    /* background-clip: text; */
+    color: #4AC3C7;
+    }
+
+    p {
+         font-size: 1.2rem;
+    color: #E51937;
+    opacity: 0;
+    transition: opacity 0.5s 
+ease;
+    font-weight: bold;
+    }
+
+    footer {
+  position: fixed;
+  bottom: 10px;
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #4AC3C7;
+  font-weight: 600px;
+}
+
+    .footer-redirect{
+    text-decoration: none;
+    color: #000000;
+    font-weight: bold;
+    }
+
+
+    /*text effects*/
+            .hero {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: white;
+            box-sizing: border-box;
+            min-height: 0;
+        }
+
+        .hero-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .hero-text {
+            flex: 1;
+            min-width: 300px;
+            overflow: hidden;
+        }
+
+        .hero-text-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: opacity 0.8s ease;
+            opacity: 0;
+        }
+
+        .hero-text-content.active {
+            opacity: 1;
+        }
+
+        .hero-text h2 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 0.6rem;
+        }
+
+        .hero-text p {
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .admin-icon {
+  position: fixed;
+  top: 15px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.admin-icon img {
+  width: 40px;
+  height: 40px;
+  border-radius: 20%;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.admin-icon img:hover {
+  transform: scale(1.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.menu-container h1 {
+  color: #1dcfb0;
+}
+
+/* fade-in animation for main mode buttons */
+.mode-button {
+  opacity: 0;
+  animation: fadeIn 0.8s ease forwards;
+}
+
+.mode-button:nth-child(1) {
+  animation-delay: 0.2s;
+}
+
+.mode-button:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+  </style>
+</head>
+<body>
+  <!-- Welcome Screen -->
+  <section id="welcome">
+    
+    <div class="front-logo" id="logo"><img src="2_UKABritish-council-Logo.png"></div>
+    <h1 id="headline">Welcome to International English Language Testing System Mock Test</h1>
+    <p id="subtext">Prepare. Practice. Perform.</p>
+    <button id="startBtn">Start Taking Tests!</button>
+
+
+    <footer>© POWERED BY <a class="footer-redirect" href="https://ukatechnical.com/">UKA TECHNICAL INSTITUTE</a></footer>
+  </section>
+
+  <!-- Curtains -->
+  <div class="curtain left-curtain"></div>
+  <div class="curtain right-curtain"></div>
+
+  <!-- Main Screen -->
+  <div id="app">
+    <header>
+      <div class="select-logo" style="font-weight:700"><img src="https://pub-35f6e385af654edaa1c5aded83150048.r2.dev/external-images/2-UKA-British-council-Logo.png"></div>
+      <div class="question-mark" style="font-weight:700"><a href="https://ukatechnical.com/"><img src="question.png"></a></div>
+    </header>
+    <main>
+    <div class="app-wrapper">
+      <div class="menu-container" id="menuContainer"></div>
+    </div>
+  </main>
+  </div>
+
+  <script>
+
+    //text effect
+        const h1 = document.getElementById('headline');
+    const p = document.getElementById('subtext');
+    const text = "Welcome to International English Language Testing System Mock Test";
+    const words = text.split(" ");
+    let currentWordIndex = 0;
+    let showing = true; // typing or deleting
+    let displayWords = [];
+    const typingSpeed = 30; // ms per word
+    const pauseTime = 2000; // pause before deleting
+    const fadeTime = 1000; // fade duration for <p>
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function typeDeleteLoop() {
+      while (true) {
+        // TYPE PHASE
+        for (let i = 1; i <= text.length; i++) {
+          h1.textContent = text.slice(0, i);
+          await sleep(typingSpeed);
+        }
+
+        // when typing finished → show <p>
+        p.style.opacity = 1;
+        await sleep(1000); // stay visible 1s
+        p.style.opacity = 0;
+
+        // Pause before deleting
+        await sleep(pauseTime);
+
+        // DELETE PHASE
+        for (let i = text.length; i >= 0; i--) {
+          h1.textContent = text.slice(0, i);
+          await sleep(typingSpeed);
+        }
+
+        // small pause before retyping
+        await sleep(500);
+      }
+    }
+
+    window.onload = typeDeleteLoop;
+
+
+    const startBtn = document.getElementById('startBtn');
+    const welcome = document.getElementById('welcome');
+    const body = document.body;
+    const menuContainer = document.getElementById('menuContainer');
+    const themeToggle = document.getElementById('themeToggle');
+
+    const totalTests = 10;
+
+    // === NEW FUNCTION: mode selection screen ===
+function renderModeSelection() {
+  menuContainer.innerHTML = '<h1>Select a Mode</h1>';
+  menuContainer.className = 'menu-container';
+
+  const modes = ['Academic', 'General Training'];
+  modes.forEach(mode => {
+    const modeBox = document.createElement('div');
+    modeBox.className = 'mini-test-box';
+    modeBox.classList.add("mode-button");
+    modeBox.textContent = mode;
+    modeBox.addEventListener('click', () => renderMenu(mode));
+    menuContainer.appendChild(modeBox);
+  });
+}
+
+// === EXISTING: render the 10 mock tests (now includes mode param) ===
+function renderMenu(selectedMode) {
+  menuContainer.innerHTML = '';
+  menuContainer.className = 'menu-container';
+  const numberOfTests = selectedMode == "General Training" ? "NO TESTS": 12;
+  
+  if(numberOfTests == "NO TESTS"){
+    menuContainer.textContent = "NO TESTS AVAILABLE RIGHT NOW."
+  }else{
+    for (let i = 1; i <= numberOfTests; i++) {
+    const miniBox = document.createElement('div');
+    miniBox.className = 'mini-test-box';
+    miniBox.textContent = `Mock Test ${i}`;
+    miniBox.addEventListener('click', () => expandTest(miniBox, i, selectedMode));
+    menuContainer.appendChild(miniBox);
+  }
+  }
+  
+
+  // Back button to go back to mode selection
+  const backBtn = document.createElement('button');
+  backBtn.className = 'backBtn';
+  backBtn.textContent = 'Back';
+  backBtn.addEventListener('click', renderModeSelection);
+  menuContainer.appendChild(backBtn);
+}
+
+    // === EXPANDED VIEW ===
+function expandTest(box, testNum, mode) {
+  menuContainer.innerHTML = '';
+  menuContainer.className = 'menu-container expanded';
+
+  const expandedBox = document.createElement('div');
+  expandedBox.textContent = `Mock Test ${testNum}`;
+  expandedBox.style.color = '#380169';
+
+  const attemptBtn = document.createElement('button');
+  attemptBtn.id = 'attemptBtn';
+  attemptBtn.textContent = 'Attempt Test';
+  attemptBtn.addEventListener('click', () => goToMock(testNum, mode));
+
+  const backBtn = document.createElement('button');
+  backBtn.className = 'backBtn';
+  backBtn.textContent = 'Back';
+  backBtn.addEventListener('click', () => renderMenu(mode));
+
+  menuContainer.append(expandedBox, attemptBtn, backBtn);
+}
+
+    // Curtain animation
+    startBtn.addEventListener('click', () => {
+      body.classList.add('open');
+      setTimeout(() => {
+        welcome.style.opacity = 0;
+        setTimeout(() => {
+          welcome.style.display = 'none';
+          body.classList.add('show-main');
+          renderModeSelection(); // <-- NEW ENTRY POINT
+}, 200);
+})});
+
+
+
+
+
+
+
+
+// === NAVIGATION ===
+function goToMock(mockID, mode) {
+  window.location.href = `/passcodes?mockID=${mode}-UKA-FINAL-${mockID}`;
+}
+</script>
+</body>
+</html>

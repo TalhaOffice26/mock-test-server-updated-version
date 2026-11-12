@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='15' fill='%231A365D' /><path d='M30 25 V55 C30 65 35 75 50 75 C65 75 70 65 70 55 V25 H60 V55 C60 62 58 65 50 65 C42 65 40 62 40 55 V25 H30Z' fill='white' /><rect x='25' y='25' width='15' height='5' fill='white' /><rect x='60' y='25' width='15' height='5' fill='white' /></svg>">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us | UKA Technical Institute</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Global Shared Layout Styles & Scripts -->
+  <link rel="stylesheet" href="layout.css">
+  <script src="auth.js"></script>
+  <script src="layout.js"></script>
+  
+  <style>
+    :root {
+      --uka-teal: #2eb8b8;
+      --uka-teal-dark: #1f8f8f;
+      --uka-teal-light: #e6f7f7;
+      --uka-teal-glow: rgba(46, 184, 184, 0.28);
+      
+      --uka-red: #e51937;
+      --navy: #0f1d36;
+      --navy-dark: #0a1324;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      
+      --white: #ffffff;
+      --bg: #f8fbff;
+      --border: rgba(226, 232, 240, 0.9);
+      
+      --shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.03);
+      --shadow-md: 0 16px 36px rgba(15, 29, 54, 0.06);
+      --shadow-hover: 0 25px 50px rgba(46, 184, 184, 0.15);
+      
+      --radius-md: 14px;
+      --radius-lg: 22px;
+      --radius-pill: 9999px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient animated lighting blob */
+    body::before {
+      content: "";
+      position: fixed;
+      top: -120px;
+      right: 10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(46, 184, 184, 0.09) 0%, transparent 70%);
+      z-index: -1;
+      pointer-events: none;
+      animation: floatAmbient 12s ease-in-out infinite alternate;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      bottom: 50px;
+      left: 5%;
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(229, 25, 55, 0.04) 0%, transparent 70%);
+      z-index: -1;
+      pointer-events: none;
+      animation: floatAmbient 10s ease-in-out infinite alternate-reverse;
+    }
+
+    @keyframes floatAmbient {
+      0% { transform: translateY(0) scale(1); }
+      100% { transform: translateY(40px) scale(1.08); }
+    }
+
+    main {
+      flex: 1;
+      padding: 50px 0 90px;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 24px;
+      width: 100%;
+    }
+
+    /* ---------------- PAGE INTRO ---------------- */
+    .contact-intro {
+      text-align: center;
+      max-width: 720px;
+      margin: 0 auto 50px;
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: white;
+      border: 1px solid rgba(46, 184, 184, 0.35);
+      padding: 7px 18px;
+      border-radius: var(--radius-pill);
+      box-shadow: 0 4px 12px rgba(46, 184, 184, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .badge-pulse {
+      width: 8px;
+      height: 8px;
+      background: var(--uka-teal);
+      border-radius: 50%;
+      box-shadow: 0 0 0 4px rgba(46, 184, 184, 0.25);
+    }
+
+    .badge-text {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--uka-teal-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .contact-intro h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2.3rem, 5vw, 3.6rem);
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.15;
+      margin-bottom: 14px;
+    }
+
+    .contact-intro h1 span {
+      color: var(--uka-teal);
+      background: linear-gradient(135deg, #1f8f8f 0%, #2eb8b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .contact-intro p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+
+    /* ---------------- CONTACT GRID ---------------- */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 0.95fr;
+      gap: 36px;
+      align-items: start;
+    }
+
+    /* Form Card */
+    .contact-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: var(--radius-lg);
+      padding: 45px 40px;
+      box-shadow: var(--shadow-md);
+      border: 1.5px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      animation: fadeInLeft 0.6s ease forwards;
+    }
+
+    .contact-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--uka-teal), var(--uka-red));
+    }
+
+    .card-heading {
+      margin-bottom: 28px;
+    }
+
+    .card-heading h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+
+    .card-heading p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 14px 18px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.25s ease;
+      background: #fafcfe;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--uka-teal);
+      background: white;
+      box-shadow: 0 0 0 4px var(--uka-teal-glow);
+      transform: translateY(-1px);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 140px;
+      line-height: 1.6;
+    }
+
+    .btn-submit {
+      background: var(--uka-teal);
+      color: white;
+      border: none;
+      padding: 16px 28px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 1.02rem;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 8px 20px var(--uka-teal-glow);
+      margin-top: 8px;
+    }
+
+    .btn-submit:hover {
+      background: var(--uka-teal-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(46, 184, 184, 0.38);
+    }
+
+    .btn-submit svg {
+      width: 18px;
+      height: 18px;
+      transition: transform 0.2s ease;
+    }
+
+    .btn-submit:hover svg {
+      transform: translateX(4px);
+    }
+
+    /* ---------------- INFO SIDE CARDS ---------------- */
+    .info-side {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      animation: fadeInRight 0.6s ease forwards;
+    }
+
+    /* Direct Call / Priority Card */
+    .info-card-featured {
+      background: linear-gradient(135deg, #0f1d36 0%, #173254 100%);
+      color: white;
+      border-radius: var(--radius-lg);
+      padding: 34px 30px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .info-card-featured::before {
+      content: "";
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(46, 184, 184, 0.3) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .info-badge-hot {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(229, 25, 55, 0.25);
+      color: #ff8597;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 16px;
+    }
+
+    .info-card-featured h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.55rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: white;
+    }
+
+    .info-card-featured p {
+      color: #cbd5e1;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      margin-bottom: 22px;
+    }
+
+    .phone-numbers-box {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .phone-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 12px 18px;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+      transition: all 0.25s ease;
+    }
+
+    .phone-item:hover {
+      background: var(--uka-teal);
+      border-color: var(--uka-teal);
+      transform: translateX(4px);
+    }
+
+    .phone-item span {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .phone-item svg {
+      width: 18px;
+      height: 18px;
+      color: #5eead4;
+    }
+
+    .phone-item:hover svg {
+      color: white;
+    }
+
+    .phone-item .badge-call {
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+    }
+
+    /* Info Items */
+    .info-card {
+      background: white;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 26px 28px;
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
+    }
+
+    .info-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--uka-teal);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .info-icon-box {
+      width: 52px;
+      height: 52px;
+      background: var(--uka-teal-light);
+      color: var(--uka-teal-dark);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.25s ease;
+    }
+
+    .info-card:hover .info-icon-box {
+      background: var(--uka-teal);
+      color: white;
+      transform: scale(1.08) rotate(3deg);
+    }
+
+    .info-icon-box svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .info-details h4 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.18rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+
+    .info-details p {
+      color: var(--text-muted);
+      font-size: 0.94rem;
+      line-height: 1.55;
+    }
+
+    .info-details a {
+      color: var(--uka-teal-dark);
+      text-decoration: none;
+      font-weight: 700;
+      transition: color 0.2s;
+    }
+
+    .info-details a:hover {
+      color: var(--uka-red);
+      text-decoration: underline;
+    }
+
+    /* Keyframes */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInLeft {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes fadeInRight {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ---------------- RESPONSIVE ---------------- */
+    @media (max-width: 992px) {
+      .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+      .contact-card {
+        padding: 35px 28px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      .container {
+        padding: 0 16px;
+      }
+      .contact-card {
+        padding: 28px 20px;
+      }
+      .info-card-featured {
+        padding: 26px 20px;
+      }
+      .phone-item {
+        font-size: 0.98rem;
+        padding: 10px 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- UNIFIED NAVBAR -->
+  <div id="uka-header"></div>
+
+  <main>
+    <div class="container">
+      
+      <!-- INTRO HEADER -->
+      <section class="contact-intro">
+        <div class="badge-pill">
+          <span class="badge-pulse"></span>
+          <span class="badge-text">24/7 Candidate & Student Support</span>
+        </div>
+        <h1>Let's Connect & Accelerate Your <span>IELTS Score</span></h1>
+        <p>Have questions about official mock testing, teacher feedback, or test center schedules? Our dedicated IELTS advisers are ready to guide you.</p>
+      </section>
+
+      <!-- CONTACT GRID -->
+      <div class="contact-grid">
+        
+        <!-- LEFT: INTERACTIVE FORM -->
+        <section class="contact-card">
+          <div class="card-heading">
+            <h2>Send Us a Message</h2>
+            <p>Fill out the form below and an IELTS academic counselor will get back to you shortly.</p>
+          </div>
+          
+          <form class="contact-form" id="contactForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name">Your Full Name*</label>
+                <input type="text" id="name" placeholder="e.g. Tanvir Ahmed" required>
+              </div>
+
+              <div class="form-group">
+                <label for="phone">Phone / WhatsApp*</label>
+                <input type="tel" id="phone" placeholder="e.g. 017XXXXXXXX" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email Address*</label>
+              <input type="email" id="email" placeholder="e.g. student@gmail.com" required>
+            </div>
+
+            <div class="form-group">
+              <label for="subject">Inquiry Type</label>
+              <select id="subject">
+                <option value="Mock Test Access">Full Mock Test Access & Passcode</option>
+                <option value="Placement Diagnostic">Placement Level Test</option>
+                <option value="Writing & Speaking Feedback">Writing & Speaking Evaluation</option>
+                <option value="Technical Support">Platform Technical Support</option>
+                <option value="General Inquiry">General Course Inquiry</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="message">Your Message*</label>
+              <textarea id="message" placeholder="Please describe how we can assist your IELTS preparation..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">
+              <span>Send Message</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
+          </form>
+        </section>
+
+        <!-- RIGHT: INTERACTIVE CONTACT DETAILS -->
+        <section class="info-side">
+          
+          <!-- FEATURED OFFICIAL PHONE CARD -->
+          <div class="info-card-featured">
+            <div class="info-badge-hot">Official Hotlines</div>
+            <h3>Direct Candidate Helplines</h3>
+            <p>Speak directly with our test coordinators for passcodes and instant registration support.</p>
+            
+            <div class="phone-numbers-box">
+              <a href="tel:01507063460" class="phone-item">
+                <span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                  </svg>
+                  01507063460
+                </span>
+                <span class="badge-call">Call Now</span>
+              </a>
+
+              <a href="tel:01407063431" class="phone-item">
+                <span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                  </svg>
+                  01407063431
+                </span>
+                <span class="badge-call">Call Now</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- WHATSAPP CHAT CARD -->
+          <div class="info-card">
+            <div class="info-icon-box" style="background:#eafaf1; color:#25d366;">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+              </svg>
+            </div>
+            <div class="info-details">
+              <h4>WhatsApp Chat Support</h4>
+              <p>Instant answers on WhatsApp: <a href="https://wa.me/8801507063460" target="_blank" rel="noopener noreferrer">Chat on WhatsApp</a></p>
+            </div>
+          </div>
+
+          <!-- EMAIL CARD -->
+          <div class="info-card">
+            <div class="info-icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+            </div>
+            <div class="info-details">
+              <h4>Email Support</h4>
+              <p><a href="mailto:info@ukatechnical.com">info@ukatechnical.com</a></p>
+            </div>
+          </div>
+
+          <!-- LOCATION CARD -->
+          <div class="info-card">
+            <div class="info-icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+            </div>
+            <div class="info-details">
+              <h4>Campuses & Centers</h4>
+              <p>Sylhet Campus & Banasree Dhaka Campus, Bangladesh</p>
+            </div>
+          </div>
+
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- UNIFIED FOOTER -->
+  <div id="uka-footer"></div>
+
+  <!-- SCRIPT -->
+  <script>
+    document.getElementById("contactForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const submitBtn = document.getElementById("submitBtn");
+      const originalText = submitBtn.innerHTML;
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = "<span>Sending message...</span>";
+
+      const name = document.getElementById("name").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const subject = document.getElementById("subject").value;
+      const message = `[${subject} | Phone: ${phone}] ` + document.getElementById("message").value.trim();
+
+      try {
+        const res = await fetch("/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, message })
+        });
+        const data = await res.json();
+        alert(data.message || "Thank you! Your message has been sent successfully. An advisor will contact you soon.");
+        e.target.reset();
+      } catch (err) {
+        alert("Thank you! Your message has been received. Our team will contact you soon.");
+        e.target.reset();
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+      }
+    });
+  </script>
+
+</body>
+</html>

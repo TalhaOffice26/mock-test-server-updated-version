@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='15' fill='%231A365D' /><path d='M30 25 V55 C30 65 35 75 50 75 C65 75 70 65 70 55 V25 H60 V55 C60 62 58 65 50 65 C42 65 40 62 40 55 V25 H30Z' fill='white' /><rect x='25' y='25' width='15' height='5' fill='white' /><rect x='60' y='25' width='15' height='5' fill='white' /></svg>">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Taking Website</title>
+<style>
+    * {
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: #f5f7fa;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 400px;
+        padding: 20px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    h2 {
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    input[type="text"], input[type="tel"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background: #007BFF;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #0056b3;
+    }
+
+    .question-box {
+        display: none;
+        margin-top: 20px;
+    }
+
+    .question {
+        font-size: 18px;
+        margin-bottom: 15px;
+    }
+
+    .timer {
+        font-size: 16px;
+        margin-bottom: 15px;
+        color: #555;
+    }
+</style>
+</head>
+<body>
+
+<div class="container" id="login-container">
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Username" required>
+    <input type="tel" id="phone" placeholder="Phone Number" required>
+    <button onclick="login()">Login</button>
+</div>
+
+<div class="container question-box" id="question-container">
+    <div class="timer" id="timer">Time Left: 45s</div>
+    <div class="question" id="question">Question will appear here</div>
+    <button onclick="nextQuestion()">Submit</button>
+</div>
+
+<script>
+    const questions = [
+        "What is the capital of France?",
+        "Who wrote 'To Kill a Mockingbird'?",
+        "What is 5 + 7?",
+        "Name the largest planet in our solar system.",
+        "What is the chemical symbol for water?"
+    ];
+
+    let currentQuestionIndex = 0;
+    let timer;
+    let timeLeft = 45;
+
+    function login() {
+        const username = document.getElementById('username').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        if(username && phone) {
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('question-container').style.display = 'block';
+            showQuestion();
+        } else {
+            alert("Please enter username and phone number.");
+        }
+    }
+
+    function showQuestion() {
+        document.getElementById('question').innerText = questions[currentQuestionIndex];
+        resetTimer();
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex = (currentQuestionIndex + 1) % questions.length;
+        showQuestion();
+    }
+
+    function resetTimer() {
+        clearInterval(timer);
+        timeLeft = 45;
+        document.getElementById('timer').innerText = `Time Left: ${timeLeft}s`;
+
+        timer = setInterval(() => {
+            timeLeft--;
+            document.getElementById('timer').innerText = `Time Left: ${timeLeft}s`;
+            if(timeLeft <= 0) {
+                nextQuestion();
+            }
+        }, 1000);
+    }
+</script>
+
+</body>
+</html>

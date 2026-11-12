@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='15' fill='%231A365D' /><path d='M30 25 V55 C30 65 35 75 50 75 C65 75 70 65 70 55 V25 H60 V55 C60 62 58 65 50 65 C42 65 40 62 40 55 V25 H30Z' fill='white' /><rect x='25' y='25' width='15' height='5' fill='white' /><rect x='60' y='25' width='15' height='5' fill='white' /></svg>">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>UKA English Level Test — Final</title>
+
+<!-- jsPDF for PDF generation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="stylesheet" href="test3.css">
+<script src="questions.js"></script>
+
+
+</head>
+<body>
+
+<header>
+  
+  <div class="left">
+    <img src="2_UKA-&-British-council-Logo.png" alt="Logo" onerror="this.style.display='none'">
+    <div>
+      <h1>UKA ENGLISH LEVEL TEST</h1>
+      <!-- <div style="font-size:12px; color:var(--muted)">Interactive placement — 3 questions per page</div> -->
+    </div>
+  </div>
+  <div class="timer" id="timerDisplay">Time Left: 60:00</div>
+</header>
+
+<div class="spacer"></div>
+
+<div class="container">
+  <div class="card">
+    <div class="progress-row" style="margin-bottom:14px;">
+      <div style="display:flex; align-items:center; gap:12px; width:100%;">
+        <div style="font-weight:800; color:#0b1220;">Page</div>
+        <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+      </div>
+      <div class="page-info" id="pageInfo">Page 1 of 10</div>
+    </div>
+
+    <!-- Questions render target -->
+    <div id="questionsArea" class="questions-list"></div>
+
+    <div class="controls">
+      <div class="left">
+        <div class="page-nav">
+          <button class="btn ghost" id="prevBtn" onclick="goPrev()" title="Previous">← Previous</button>
+          <button class="btn ghost" id="nextBtn" onclick="goNext()" title="Next">Next →</button>
+        </div>
+        <div style="margin-left:6px; color:var(--muted); font-size:13px;" id="progressText">Answered: 0 / 0</div>
+      </div>
+
+      <div class="right">
+        <div id="pageJump" style="color:var(--muted); font-size:13px; margin-right:8px;"></div>
+        <button class="btn ghost" id="submitFinalBtn" onclick="manualSubmit()">Submit Test</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔵 Main Result -->
+<div id="resultBox" class="card" style="display:none;">
+  <div class="result-area">
+    <div class="circle-wrap">
+      <svg id="progressCircle" width="160" height="160" viewBox="0 0 120 120">
+        <defs>
+          <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#2563eb"/>
+            <stop offset="100%" stop-color="#60a5fa"/>
+          </linearGradient>
+        </defs>
+        <circle cx="60" cy="60" r="52" stroke="#eef2ff" stroke-width="16" fill="none"></circle>
+        <circle id="progressArc" cx="60" cy="60" r="52" stroke="url(#g1)" stroke-width="16"
+                stroke-linecap="round" stroke-dasharray="0 999" transform="rotate(-90 60 60)" fill="none"></circle>
+      </svg>
+      <div class="circle-percent" id="circlePercent">0%</div>
+    </div>
+    <div class="chart-desc">
+      <div id="resultText" style="font-weight:800; font-size:18px;"></div>
+      <div id="resultDetails" style="margin-top:8px; color:var(--muted)"></div>
+      <div style="margin-top:12px; color:var(--muted); font-size:13px;">
+        You can navigate Next / Previous to review each question with your answer and the correct answer.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 🟢 CEFR Level Result -->
+<div id="levelResultBox" class="card" style="display:none; margin-top:20px;">
+  <div class="result-area">
+    <div class="circle-wrap">
+      <svg width="160" height="160" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="52" stroke="#eef2ff" stroke-width="16" fill="none"></circle>
+        <circle id="levelArc" cx="60" cy="60" r="52" stroke="#2563eb" stroke-width="16"
+                stroke-linecap="round" stroke-dasharray="0 999" transform="rotate(-90 60 60)" fill="none"></circle>
+      </svg>
+      <div class="circle-percent" id="levelCirclePercent">0%</div>
+    </div>
+    <div class="chart-desc">
+      <div id="levelText" style="font-weight:800; font-size:18px; color:#2563eb;"></div>
+      <div id="levelMeaning" style="margin-top:8px; color:var(--muted); font-size:14px;"></div>
+      <div style="margin-top:12px; color:var(--muted); font-size:13px;">
+        Your CEFR English Level based on your score.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!-- Start / visibility modals -->
+<div class="modal-backdrop" id="startModal" style="display:flex; position:fixed; inset:0; align-items:center; justify-content:center; background:rgba(2,6,23,0.45); z-index:80;">
+  <div style="background:white; padding:22px; border-radius:12px; max-width:520px; width:92%;">
+    <h3 style="margin-top:0;">Start English Placement Test?</h3>
+    <p style="color:var(--muted)">When you press <strong>YES</strong> the timer will start and the page will attempt fullscreen mode. If you minimize or exit fullscreen during the test, you'll be prompted and the test may auto-submit.</p>
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:14px;">
+      <!-- <button class="btn ghost" onclick="closeStartModal(event)">NO</button> -->
+       <button class="btn ghost" onclick="window.location.href='home.html'">NO</button>
+
+      <button class="btn ghost" onclick="startTest(event)">YES — Start Test</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="visibilityModal" style="display:none; position:fixed; inset:0; align-items:center; justify-content:center; background:rgba(2,6,23,0.45); z-index:80;">
+  <div style="background:white; padding:22px; border-radius:12px; max-width:520px; width:92%;">
+    <h3 style="margin-top:0;">You left fullscreen / minimized</h3>
+    <p style="color:var(--muted)">If you proceed, the test will be automatically submitted and your result will be downloaded. Do you want to continue (YES) or return to test (NO)?</p>
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:14px;">
+      <button class="btn ghost" onclick="visibilityNo()">NO — Return</button>
+      <button class="btn warn" onclick="visibilityYes()">YES — Auto-submit</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  
+/* ===========================
+   Data (unchanged)
+   =========================== */
+const passageQuestions = [
+  { question: "If I ___ enough money, I’ll buy a new car.", options: ["have","had","will have","having"], answer: "have" },
+  { question: "She’s interested ___ learning foreign languages.", options: ["to","for","in","on"], answer: "in" },
+  { question: "I’ve lived in this city ___ ten years.", options: ["since","from","during","for"], answer: "for" },
+  { question: "When I arrived, they ___ dinner.", options: ["have had","were having","are having","had"], answer: "were having" },
+  { question: "You should ___ your homework before watching TV.", options: ["finish","finished","finishing","to finish"], answer: "finish" },
+  { question: "I wish I ___ taller.", options: ["am","was","were","will be"], answer: "were" },
+  { question: "The film was ___ than I expected.", options: ["more interesting","interestinger","most interesting","too interesting"], answer: "more interesting" },
+  { question: "They haven’t seen each other ___ last summer.", options: ["from","for","since","after"], answer: "since" },
+  { question: "If I had known, I ___ you earlier.", options: ["will call","would have called","called","have called"], answer: "would have called" },
+  { question: "She didn’t come to the party, ___ she?", options: ["did","didn’t","doesn’t","was"], answer: "did" },
+  { question: "We’re looking forward to ___ you soon.", options: ["see","seeing","to see","seen"], answer: "seeing" },
+  { question: "I was so tired that I could hardly ___ my eyes open.", options: ["keep","kept","to keep","keeping"], answer: "keep" },
+  { question: "It’s too late now. We should ___ earlier.", options: ["leave","have left","left","leaving"], answer: "have left" },
+  { question: "The book is not as interesting as the movie, ___?", options: ["is it","isn’t it","was it","does it"], answer: "is it" },
+  { question: "He’s the man ___ car was stolen.", options: ["whose","who","which","whom"], answer: "whose" },
+  { question: "Let’s go out, ___ it’s raining.", options: ["because","although","unless","despite"], answer: "although" },
+  { question: "The teacher asked us if we ___ finished our homework.", options: ["has","have","had","having"], answer: "had" },
+  { question: "I’m not used to ___ up early on weekends.", options: ["get","got","getting","gets"], answer: "getting" },
+  { question: "She told me she ___ to London many times.", options: ["goes","has gone","had been","was going"], answer: "had been" },
+  { question: "By the time we arrived, the show ___.", options: ["has started","had started","started","starts"], answer: "had started" },
+  { question: "Hardly ___ the news when the phone rang.", options: ["I heard","had I heard","I had heard","hearing"], answer: "had I heard" },
+  { question: "If I ___ in your position, I’d have accepted the offer.", options: ["was","were","had been","would be"], answer: "had been" },
+  { question: "Not only ___ the exam, but he also got the highest score.", options: ["he passed","did he pass","he had passed","has he passed"], answer: "did he pass" },
+  { question: "I’d rather you ___ smoking in the house.", options: ["don’t","didn’t","won’t","hadn’t"], answer: "didn’t" },
+  { question: "He spoke so quietly that I could ___ hear him.", options: ["almost","nearly","hardly","rarely"], answer: "hardly" },
+  { question: "The project, ___ completion is expected next month, will create new jobs.", options: ["whose","of which","which","where"], answer: "whose" },
+  { question: "It’s high time we ___ something about climate change.", options: ["do","did","have done","will do"], answer: "did" },
+  { question: "She has a good chance of ___ the scholarship.", options: ["win","to win","winning","to be winning"], answer: "winning" },
+  { question: "No sooner ___ the train left than it started raining.", options: ["had","has","did","would"], answer: "had" },
+  { question: "Despite ___ rich, he lives a very simple life.", options: ["to be","being","been","be"], answer: "being" }
+];
+
+const readingPassages = [
+  {
+    passage:"Many people believe that exercising in the morning is more beneficial than in the evening. Morning workouts can boost your energy and improve focus throughout the day. However, evening exercise may help people sleep better and reduce stress after work. The best time to exercise depends on personal preference and routine.",
+    questions:[ { question:"What is the main idea of the passage?", options:["Morning exercise is better for everyone.","Exercise timing depends on personal choice.","Evening workouts cause stress.","Exercise is only useful in the morning."], answer:"Exercise timing depends on personal choice." }, { question:"According to the passage, evening exercise may help with —", options:["focus","sleep","energy","appetite"], answer:"sleep" } ]
+  },
+  {
+    passage:"Online shopping has become increasingly popular in recent years. It allows people to buy products from home with just a few clicks. However, some customers still prefer traditional shopping because they can see and touch the items before buying. Both methods have their own advantages.",
+    questions:[ { question:"What is the main reason some people prefer traditional shopping?", options:["It’s cheaper.","They enjoy crowds.","They can physically check the items.","It’s faster."], answer:"They can physically check the items." }, { question:"The main topic of the passage is —", options:["types of stores","differences between online and traditional shopping","online scams","fashion marketing"], answer:"differences between online and traditional shopping" } ]
+  },
+  {
+    passage:"Recycling is one of the simplest ways to protect the environment. It helps reduce waste, save energy, and minimize pollution. Many countries now have strict recycling rules to encourage people to separate their waste properly. Everyone has a role to play in keeping the planet clean.",
+    questions:[ { question:"Recycling helps mainly to —", options:["make money","protect the environment","create more waste","destroy pollution"], answer:"protect the environment" }, { question:"According to the passage, who is responsible for keeping the planet clean?", options:["Governments only","Factories","Everyone","Scientists"], answer:"Everyone" } ]
+  },
+  {
+    passage:"Learning a new language opens the door to new cultures and ideas. It can also improve your memory and problem-solving skills. Many employers value workers who can speak more than one language. Therefore, studying languages can increase career opportunities.",
+    questions:[ { question:"What is one benefit of learning a new language?", options:["It makes you famous.","It improves job opportunities.","It helps you travel less.","It’s only useful in school."], answer:"It improves job opportunities." } ]
+  },
+  {
+    passage:"Tourism brings economic benefits to many countries, especially developing ones. However, it can also damage the environment if not managed properly. For example, too many visitors can harm wildlife and pollute natural areas. Sustainable tourism tries to balance economic growth with environmental protection.",
+    questions:[ { question:"What problem can tourism cause?", options:["Poverty","Environmental damage","Job loss","Economic slowdown"], answer:"Environmental damage" }, { question:"Sustainable tourism means —", options:["only visiting cities","focusing on profit","protecting nature while earning money","stopping tourism completely"], answer:"protecting nature while earning money" } ]
+  },
+  {
+    passage:"The internet has changed the way we communicate. People now send messages instantly through social media, email, and chat apps. While this makes communication faster, it has also reduced face-to-face conversations. Some experts worry that people are becoming less social in real life.",
+    questions:[ { question:"What is one negative effect of internet communication?", options:["It is expensive.","It reduces real-life interaction.","It increases writing skills.","It slows down responses."], answer:"It reduces real-life interaction." } ]
+  },
+  {
+    passage:"Electric cars are becoming more popular as people look for environmentally friendly transport. They produce no emissions and can help reduce air pollution in cities. However, their batteries are expensive, and charging stations are still limited in some areas. Governments are now investing in new infrastructure to support them.",
+    questions:[ { question:"What is a major challenge for electric cars?", options:["Too many drivers","Limited charging stations","Air pollution","Cheap batteries"], answer:"Limited charging stations" } ]
+  },
+  {
+    passage:"Coffee is one of the most popular drinks in the world. It helps people feel more awake and focused. However, too much caffeine can cause anxiety or trouble sleeping. Doctors recommend drinking it in moderation.",
+    questions:[ { question:"What is a possible negative effect of drinking too much coffee?", options:["Weight gain","Trouble sleeping","Better focus","Improved memory"], answer:"Trouble sleeping" } ]
+  },
+  {
+    passage:"Reading books helps people develop imagination and empathy. When you read a story, you experience life from another person’s perspective. This can make you more understanding and open-minded. That’s why reading is important for personal growth.",
+    questions:[ { question:"What can reading help you develop?", options:["Anger","Imagination","Laziness","Fear"], answer:"Imagination" } ]
+  },
+  {
+    passage:"Working from home became common after the pandemic. Many employees enjoy the flexibility it offers. However, others miss the social interaction and teamwork found in offices. Companies are now trying to create hybrid systems that combine both.",
+    questions:[ { question:"What is the main advantage of working from home?", options:["More teamwork","Flexibility","Higher salary","Shorter hours"], answer:"Flexibility" }, { question:"What do hybrid systems try to combine?", options:["Work and family","Office and remote work","Salary and vacation","Employees and students"], answer:"Office and remote work" } ]
+  },
+  {
+    passage:"In recent years, artificial intelligence has transformed industries ranging from healthcare to finance. Machines are now capable of analyzing large amounts of data faster than humans ever could. While this increases efficiency, it also raises ethical questions about privacy and job security. Balancing innovation with responsibility remains a major challenge.",
+    questions:[ { question:"What is one ethical concern related to AI?", options:["Lack of speed","Privacy and job security","High prices","Weak performance"], answer:"Privacy and job security" } ]
+  },
+  {
+    passage:"Climate change is not only an environmental issue but also a social and economic one. Rising temperatures can disrupt agriculture, forcing migration and reducing food security. Governments and organizations must act together to reduce carbon emissions and protect vulnerable communities. The cost of inaction could be far greater than the cost of prevention.",
+    questions:[ { question:"What is a possible consequence of climate change?", options:["Better farming","Population increase","Migration due to poor agriculture","Lower food prices"], answer:"Migration due to poor agriculture" }, { question:"The passage suggests that —", options:["preventing climate change is too expensive","inaction could be more costly","only governments should act","it is not a global problem"], answer:"inaction could be more costly" } ]
+  },
+  {
+    passage:"Globalization has made the world more connected than ever before. Goods, services, and ideas move across borders with ease. However, it has also created inequalities, as some countries benefit more than others. The challenge is to ensure that globalization brings fair opportunities to all.",
+    questions:[ { question:"What is the main disadvantage of globalization mentioned here?", options:["Slower communication","Unequal benefits among countries","Fewer ideas shared","Limited trade"], answer:"Unequal benefits among countries" } ]
+  },
+  {
+    passage:"Scientific discoveries often come from curiosity rather than direct intention. Many important inventions, such as penicillin, were made by accident. This shows that creativity and open-mindedness are essential in research. Limiting scientists’ freedom might prevent future breakthroughs.",
+    questions:[ { question:"What does the passage say about creativity in science?", options:["It is not important.","It can lead to unexpected discoveries.","It slows down progress.","It should be avoided."], answer:"It can lead to unexpected discoveries." } ]
+  },
+  {
+    passage:"Social media has changed how people form opinions. Instead of relying on experts or traditional news, many now get information from influencers and peers. While this makes information more accessible, it also increases the spread of misinformation. Critical thinking has become more important than ever.",
+    questions:[ { question:"What is one risk mentioned about social media?", options:["Boring content","Misinformation","Lack of opinions","Expensive access"], answer:"Misinformation" }, { question:"What skill is necessary to deal with this problem?", options:["Critical thinking","Photography","Writing","Networking"], answer:"Critical thinking" } ]
+  }
+];
+
+const audioQuestions = [
+  {
+    question: "According to Anna, what is the primary reason many parents struggle to help their children with homework?",
+    options: [
+      "They lack interest in their children’s education",
+      "They are too busy with their work schedules",
+      "They are unable to recall or understand the subject content",
+      "Both B and C"
+    ],
+    answer: "Both B and C"
+  },
+  {
+    question: "What advantage does the HomeworX app provide compared to traditional face-to-face tutoring?",
+    options: [
+      "It guarantees higher-quality tutors",
+      "It eliminates the need for geographical proximity",
+      "It is completely free of charge",
+      "It ensures parents’ direct involvement in every session"
+    ],
+    answer: "It eliminates the need for geographical proximity"
+  },
+  {
+    question: "Why are tutors in remote areas particularly attracted to using HomeworX?",
+    options: [
+      "They can increase their hourly rates significantly",
+      "They can access a broader student base without relocation",
+      "They receive government subsidies for online teaching",
+      "They have fewer qualifications but more opportunities"
+    ],
+    answer: "They can access a broader student base without relocation"
+  },
+  {
+    question: "What prompted Anna Oliveira to create HomeworX?",
+    options: [
+      "A market analysis revealed a profitable niche in online tutoring",
+      "She noticed her colleagues also struggled to help their kids",
+      "Personal frustration with helping her son’s homework challenges",
+      "A government request for digital educational innovation"
+    ],
+    answer: "Personal frustration with helping her son’s homework challenges"
+  },
+  {
+    question: "Based on the interview, what can be inferred about the future of HomeworX?",
+    options: [
+      "It aims to remain focused solely on homework assistance",
+      "Expansion of services is planned due to secured funding",
+      "The app will only be available in specific regions",
+      "It will replace traditional schools in rural areas"
+    ],
+    answer: "Expansion of services is planned due to secured funding"
+  },
+  {
+    question: "Anna pointed out that even when parents have time, they may lack the __________ to effectively assist with their children’s homework.",
+    options: ["motivation", "subject knowledge", "financial resources", "experience"],
+    answer: "subject knowledge"
+  },
+  {
+    question: "One of the major drawbacks of traditional tutoring, according to the interview, is the issue of __________ and __________.",
+    options: ["high costs, long waiting lists", "lack of tutors, poor materials", "time constraints, transportation", "unqualified tutors, high fees"],
+    answer: "high costs, long waiting lists"
+  },
+  {
+    question: "HomeworX offers lower tutoring fees because tutors save on __________ time.",
+    options: ["travelling", "teaching", "marketing", "lesson planning"],
+    answer: "travelling"
+  },
+  {
+    question: "Anna’s geographical location limited her access to tutors because they were either __________ or __________.",
+    options: ["expensive, unavailable", "unqualified, far away", "overbooked, inexperienced", "unknown, remote"],
+    answer: "expensive, unavailable"
+  },
+  {
+    question: "The app’s growing __________ indicates that it successfully addresses a real educational need.",
+    options: ["popularity", "revenue", "competition", "complexity"],
+    answer: "popularity"
+  }
+];
+
+/* ===========================
+   Combine questions into single list
+   =========================== */
+let combinedQuestions = [];
+// grammar
+passageQuestions.forEach((q,i) =>
+  combinedQuestions.push({ id:`g_${i}`, type:'grammar', question:q.question, options:q.options.slice(), answer:q.answer })
+);
+// reading
+readingPassages.forEach((p,pi) => {
+  p.questions.forEach((q,qi) =>
+    combinedQuestions.push({ id:`r_${pi}_${qi}`, type:'reading', passage:p.passage, question:q.question, options:q.options.slice(), answer:q.answer })
+  );
+});
+// audio
+audioQuestions.forEach((q,i) =>
+  combinedQuestions.push({ id:`a_${i}`, type:'audio', question:q.question, options:q.options.slice(), answer:q.answer })
+);
+
+
+/* ===========================
+   Pagination & State
+   =========================== */
+const perPage = 1;
+let currentPage = 1;
+const totalQuestions = combinedQuestions.length;
+const totalPages = Math.ceil(totalQuestions / perPage);
+
+const savedAnswers = {};  
+let submitted = false;
+const savedCertainty = {}; 
+
+
+/* ===========================
+   DOM Refs
+   =========================== */
+const questionsArea = document.getElementById('questionsArea');
+const progressText = document.getElementById('progressText');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const submitFinalBtn = document.getElementById('submitFinalBtn');
+
+
+/* ===========================
+   Helper
+   =========================== */
+function escapeHtml(text){
+  if(!text) return "";
+  return text.toString().replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+// Feedback function left as-is but will not be used
+function getFeedbackForItem(item){
+  return { className:'', text:'' };
+}
+
+
+/* ===========================
+   NAVIGATION
+   =========================== */
+prevBtn.addEventListener("click", () => {
+  if (currentPage > 1) {
+    currentPage--;
+    renderPage();
+  }
+});
+
+nextBtn.addEventListener("click", () => {
+  const startIndex = (currentPage - 1) * perPage;
+  const pageItems = combinedQuestions.slice(startIndex, startIndex + perPage);
+
+  let blockNext = false;
+
+  for (const item of pageItems) {
+    const ans = savedAnswers[item.id];
+    const cert = savedCertainty[item.id];
+
+    if (ans && !cert) blockNext = true;
+  }
+
+  if (!blockNext && currentPage < totalPages) {
+    currentPage++;
+    renderPage();
+  }
+});
+
+
+/* ===========================
+   Render Page
+   =========================== */
+function renderPage(){
+  questionsArea.innerHTML = "";
+  const startIndex = (currentPage - 1) * perPage;
+  const pageItems = combinedQuestions.slice(startIndex, startIndex + perPage);
+
+  /* AUDIO HANDLE */
+  const hasAudio = pageItems.some(it => it.type === "audio");
+  if (hasAudio) {
+    const audioDiv = document.createElement("div");
+    audioDiv.className = "question";
+    audioDiv.innerHTML = `
+      <p style="font-weight:800;">Audio (Part 3)</p>
+      <audio controls id="pageAudio">
+        <source src="A business interview - LearnEnglish.mp3" type="audio/mpeg">
+      </audio>`;
+    questionsArea.appendChild(audioDiv);
+  }
+
+  /* QUESTIONS */
+  pageItems.forEach((item, idx) => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "question";
+
+    const qNum = startIndex + idx + 1;
+
+    let html = `<p>${qNum}. ${escapeHtml(item.question)}</p>`;
+
+    if (item.type === "reading") {
+      html += `<div class="passage"><strong>Passage:</strong> ${escapeHtml(item.passage)}</div>`;
+    }
+
+    // Options
+    html += `<div class="options" id="opts-${item.id}">`;
+    item.options.forEach(opt => {
+      const checked = savedAnswers[item.id] === opt ? "checked" : "";
+      html += `
+        <label data-qid="${item.id}">
+            <input type="radio" name="${item.id}" value="${escapeHtml(opt)}" ${checked}>
+            ${escapeHtml(opt)}
+        </label>`;
+    });
+    html += `</div>`;
+
+    // Certainty
+    const disabled = savedAnswers[item.id] ? "" : "disabled";
+    html += `
+      <div class="certainty" id="cert-${item.id}">
+        <strong>B: How sure are you?</strong><br>
+        <label><input type="radio" name="cert_${item.id}" value="certain" 
+          ${savedCertainty[item.id]==='certain'?'checked':''} ${disabled}> Certain</label>
+        <label><input type="radio" name="cert_${item.id}" value="fairly sure" 
+          ${savedCertainty[item.id]==='fairly sure'?'checked':''} ${disabled}> Fairly Sure</label>
+        <label><input type="radio" name="cert_${item.id}" value="not sure" 
+          ${savedCertainty[item.id]==='not sure'?'checked':''} ${disabled}> Not Sure</label>
+      </div>`;
+
+    // Feedback removed from DOM
+    // html += `<div id="feedback-${item.id}" class="feedback" style="display:none"></div>`;
+
+    wrapper.innerHTML = html;
+    questionsArea.appendChild(wrapper);
+
+    const optContainer = document.getElementById(`opts-${item.id}`);
+    const certContainer = document.getElementById(`cert-${item.id}`);
+
+
+    /* OPTION CLICK */
+    optContainer.querySelectorAll("label").forEach(label => {
+      const radio = label.querySelector("input");
+
+      if (radio.checked) label.classList.add("selected");
+
+      label.addEventListener("click", () => {
+        savedAnswers[item.id] = radio.value;
+
+        optContainer.querySelectorAll("label").forEach(l => l.classList.remove("selected"));
+        label.classList.add("selected");
+
+        certContainer.querySelectorAll("input").forEach(r => r.disabled = false);
+
+        // Feedback disabled
+        // if(submitted){ ... }
+
+        updateControls();
+      });
+    });
+
+    /* CERTAINTY CLICK */
+    certContainer.querySelectorAll("label").forEach(label => {
+      const radio = label.querySelector("input");
+
+      if (radio.checked) label.classList.add("selected");
+
+      label.addEventListener("click", () => {
+        if (!savedAnswers[item.id]) return;
+        savedCertainty[item.id] = radio.value;
+
+        certContainer.querySelectorAll("label").forEach(l => l.classList.remove("selected"));
+        label.classList.add("selected");
+
+        updateControls();
+      });
+    });
+
+    /* SUBMIT BUTTON RULE (LAST PAGE ONLY) */
+    if (currentPage === totalPages) {
+      submitFinalBtn.style.display = "inline-block";
+
+      let disableSubmit = false;
+      for (const item of pageItems) {
+        const ans = savedAnswers[item.id];
+        const cert = savedCertainty[item.id];
+        if (ans && !cert) disableSubmit = true;
+      }
+      submitFinalBtn.disabled = disableSubmit;
+
+    } else {
+      submitFinalBtn.style.display = "none";
+    }
+
+  });
+
+  updateControls();
+  updateProgressCounts();
+
+  // UPDATE PAGE NUMBER TEXT
+  document.getElementById("pageInfo").textContent = `Page ${currentPage} of ${totalPages}`;
+
+}
+
+// Progress counter text
+updateProgressCounts();
+
+
+/* ===========================
+   Progress
+   =========================== */
+function updateProgressCounts(){
+  const answered = Object.keys(savedAnswers).length;
+  progressText.textContent = `Answered: ${answered} / ${totalQuestions}`;
+
+  //  PAGE PROGRESS BAR 
+  const progressBar = document.getElementById("progressBar");
+  const progressPercent = (currentPage / totalPages) * 100;
+  progressBar.style.width = progressPercent + "%";
+}
+
+
+
+/* ===========================
+   Button Enable/Disable Logic
+   =========================== */
+function updateControls(){
+  
+  // Previous button
+  prevBtn.disabled = currentPage === 1;
+
+  // Next button
+  if (currentPage === totalPages) {
+    nextBtn.style.display = "none";
+  } else {
+    nextBtn.style.display = "inline-block";
+  }
+
+  const startIndex = (currentPage - 1) * perPage;
+  const items = combinedQuestions.slice(startIndex, startIndex + perPage);
+
+  let allowNext = true;
+
+  for (const item of items) {
+    const ans = savedAnswers[item.id];
+    const cert = savedCertainty[item.id];
+
+    if (ans && !cert) allowNext = false;
+  }
+
+  nextBtn.disabled = !allowNext;
+}
+
+
+/* ===========================
+   Timer logic
+   =========================== */
+let totalTime = 30 * 60; // 50 minutes
+let timerInterval = null;
+
+function formatTime(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}:${s < 10 ? '0' : ''}${s}`;
+}
+
+function startTimer() {
+  if (timerInterval) return;
+  timerDisplay.textContent = `Time Left: ${formatTime(totalTime)}`;
+  timerInterval = setInterval(() => {
+    totalTime--;
+    timerDisplay.textContent = `Time Left: ${formatTime(totalTime)}`;
+    if (totalTime <= 0) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      autoSubmit('timeout'); // Timer sesh hole auto submission trigger hobe
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+}
+
+/* ===========================
+   SUBMISSION LOGIC
+   =========================== */
+function manualSubmit() {
+  if (submitted) return;
+  const confirmed = confirm('Are you sure you want to submit the test now?');
+  if (confirmed) autoSubmit('manual');
+}
+
+function autoSubmitFromTimer() {
+  autoSubmit('timeout');
+}
+
+function autoSubmit(reason = 'manual') {
+  if (submitted) return;
+  submitted = true;
+  stopTimer();
+
+  // Calculate final score
+  recalcFinalScore();
+
+  // ---------------------------
+  // SAVE RESULTS TO LOCAL STORAGE
+  // ---------------------------
+  localStorage.setItem("finalScore", finalScore);
+  localStorage.setItem("finalPercent", finalPercent);
+  localStorage.setItem("totalQuestions", totalQuestions);
+  localStorage.setItem("submitReason", reason);
+  localStorage.setItem("submitTime", new Date().toLocaleString());
+
+  // CEFR level
+  localStorage.setItem("cefrLevel", detectCEFR(finalPercent));
+
+  // Save answers & questions
+  localStorage.setItem("savedAnswers", JSON.stringify(savedAnswers));
+  localStorage.setItem("questions", JSON.stringify(combinedQuestions));
+
+  // ---------------------------
+  // REDIRECT TO RESULT PAGE
+  // ---------------------------
+  // window.open timer-er khetre browser block korte pare, tai window.location use kora best
+  window.location.href = "result.html";
+} // <--- Ekhane bracket missing chilo, thik kora hoyeche
+
+/* ===========================
+   Start modal / fullscreen
+   =========================== */
+function closeStartModal(e) {
+  if (e) e.preventDefault();
+  startModal.style.display = 'none';
+}
+
+async function startTest(e) {
+  if (e) e.preventDefault();
+  startModal.style.display = 'none';
+  try {
+    await requestExplorerFullscreen(document.documentElement);
+  } catch (err) {
+    console.warn('Fullscreen request failed:', err);
+  }
+  startTimer();
+  renderPage();
+}
+
+function requestExplorerFullscreen(el) {
+  if (!el) return Promise.reject('No element');
+  if (el.requestFullscreen) return el.requestFullscreen();
+  if (el.webkitRequestFullscreen) return el.webkitRequestFullscreen();
+  if (el.mozRequestFullScreen) return el.mozRequestFullScreen();
+  if (el.msRequestFullscreen) return el.msRequestFullscreen();
+  return Promise.reject('Fullscreen API not supported');
+}
+
+/* ===========================
+   Visibility detection (minimize)
+   =========================== */
+let visibilityModalShown = false;
+document.addEventListener('visibilitychange', () => {
+  if (!timerInterval) return;
+  if (document.hidden) showVisibilityModal();
+});
+
+document.addEventListener('fullscreenchange', () => {
+  if (!timerInterval) return;
+  const fsElement = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+  if (!fsElement) showVisibilityModal();
+});
+
+function showVisibilityModal() {
+  if (visibilityModalShown) return;
+  visibilityModalShown = true;
+  visibilityModal.style.display = 'flex';
+  stopTimer();
+}
+
+function visibilityNo() {
+  visibilityModal.style.display = 'none';
+  visibilityModalShown = false;
+  requestExplorerFullscreen(document.documentElement).catch(() => {});
+  startTimer();
+}
+
+function visibilityYes() {
+  visibilityModal.style.display = 'none';
+  visibilityModalShown = false;
+  autoSubmit('minimize');
+}
+
+/* ===========================
+   Score Calculation (Only Score)
+   =========================== */
+function recalcFinalScore() {
+  let score = 0;
+  combinedQuestions.forEach(it => {
+    if (savedAnswers[it.id] && savedAnswers[it.id] === it.answer) score++;
+  });
+
+  finalScore = score;
+  finalPercent = ((score / totalQuestions) * 100);
+}
+
+function detectCEFR(p) {
+  if (p < 30) return 'A1';
+  if (p < 45) return 'A2';
+  if (p < 60) return 'B1';
+  if (p < 75) return 'B2';
+  if (p < 90) return 'C1';
+  return 'C2';
+}
+
+/* ===========================
+   Prevent Accidental Unload
+   =========================== */
+window.addEventListener('beforeunload', function (e) {
+  if (!submitted && timerInterval) {
+    e.preventDefault();
+    e.returnValue = '';
+    return '';
+  }
+});
+
+/* ===========================
+   Initialization
+   =========================== */
+(function init() {
+  if (typeof timerDisplay !== 'undefined') {
+    timerDisplay.textContent = `Time Left: ${formatTime(totalTime)}`;
+  }
+  if (typeof pageInfo !== 'undefined') {
+    pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+  }
+  updateProgressCounts();
+})();
+
+</script>
+
+</body>
+</html>

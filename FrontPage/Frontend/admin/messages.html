@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='15' fill='%231A365D' /><path d='M30 25 V55 C30 65 35 75 50 75 C65 75 70 65 70 55 V25 H60 V55 C60 62 58 65 50 65 C42 65 40 62 40 55 V25 H30Z' fill='white' /><rect x='25' y='25' width='15' height='5' fill='white' /><rect x='60' y='25' width='15' height='5' fill='white' /></svg>">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Messages</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      background: #f9fbff;
+      color: #1e293b;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .topbar {
+      background: white;
+      border-radius: 12px;
+      padding: 14px;
+      box-shadow: 0 6px 18px rgba(30, 40, 60, 0.06);
+      margin-bottom: 20px;
+    }
+
+    table td,
+    table th {
+      vertical-align: middle;
+    }
+
+    .card-uka {
+      border-radius: 10px;
+    }
+
+    .delete-btn {
+      background: #dc2626;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .delete-btn:hover {
+      background: #b91c1c;
+    }
+
+    .btn-back {
+      background: #2eb8b8;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 5px 12px;
+      transition: 0.3s;
+    }
+
+    .btn-back:hover {
+      background: #1f8f8f;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center topbar">
+      <div>
+        <div style="font-weight:700; color:#2eb8b8;">UKA Admin - Messages</div>
+        <small class="text-muted">View contact form messages</small>
+      </div>
+      <div>
+        <button class="btn-back" onclick="goBack()">
+          <i class="fas fa-arrow-left"></i> Back
+        </button>
+      </div>
+    </div>
+
+    <div class="card p-3 card-uka">
+      <div class="table-responsive">
+        <table class="table table-hover" id="messagesTable">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Message</th>
+              <th>Received At</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="messagesBody">
+            <!-- messages loaded here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = "https://ukamock.ukatechnical.com"; // server address
+    // const API_BASE = "http://localhost:5001"; // server address
+    const messagesBody = document.getElementById("messagesBody");
+
+    function goBack() {
+      window.location.href = "admin-dashboard.html"; // original admin dashboard
+    }
+
+    async function loadMessages() {
+      try {
+        const res = await fetch(`${API_BASE}/admin/contacts`); // server endpoint
+        const data = await res.json();
+        renderMessages(data);
+      } catch (err) {
+        console.error(err);
+        messagesBody.innerHTML = '<tr><td colspan="6" class="text-danger">Failed to load messages</td></tr>';
+      }
+    }
+
+    function renderMessages(msgs) {
+      messagesBody.innerHTML = "";
+      if (!msgs || msgs.length === 0) {
+        messagesBody.innerHTML = '<tr><td colspan="6" class="text-muted">No messages found</td></tr>';
+        return;
+      }
+
+      msgs.forEach((m, i) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${i + 1}</td>
+          <td>${m.name}</td>
+          <td>${m.email}</td>
+          <td>${m.message}</td>
+          <td>${new Date(m.createdAt).toLocaleString()}</td>
+          <td><button class="delete-btn" onclick="deleteMessage('${m._id}')"><i class="fas fa-trash"></i></button></td>
+        `;
+        messagesBody.appendChild(tr);
+      });
+    }
+
+    async function deleteMessage(id) {
+      if (!confirm("Are you sure you want to delete this message?")) return;
+      try {
+        const res = await fetch(`${API_BASE}/admin/contacts/${id}`, { method: "DELETE" });
+        const data = await res.json();
+        alert(data.message);
+        loadMessages();
+      } catch (err) {
+        console.error(err);
+        alert("Delete failed");
+      }
+    }
+    loadMessages();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='15' fill='%231A365D' /><path d='M30 25 V55 C30 65 35 75 50 75 C65 75 70 65 70 55 V25 H60 V55 C60 62 58 65 50 65 C42 65 40 62 40 55 V25 H30Z' fill='white' /><rect x='25' y='25' width='15' height='5' fill='white' /><rect x='60' y='25' width='15' height='5' fill='white' /></svg>">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>IELTS Mock Test Library | UKA Technical Institute</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Global Shared Layout Styles & Scripts -->
+  <link rel="stylesheet" href="layout.css">
+  <script src="auth.js"></script>
+  <script src="layout.js"></script>
+
+  <style>
+    :root {
+      --uka-teal: #2eb8b8;
+      --uka-teal-dark: #1f8f8f;
+      --uka-teal-light: #e6f7f7;
+      --uka-teal-glow: rgba(46, 184, 184, 0.22);
+      
+      --uka-red: #e51937;
+      --navy: #0f1d36;
+      --navy-dark: #0a1324;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --white: #ffffff;
+      --bg: #f8fbff;
+      --border: rgba(226, 232, 240, 0.9);
+      
+      --shadow-sm: 0 4px 10px rgba(0,0,0,0.03);
+      --shadow-card: 0 10px 24px rgba(15, 29, 54, 0.05);
+      --shadow-hover: 0 18px 38px rgba(46, 184, 184, 0.15);
+      
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-pill: 9999px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    main { flex: 1; padding-bottom: 70px; }
+    .container { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+
+    /* ---------------- NOTICE ALERT BAR ---------------- */
+    .notice-banner {
+      background: #fffbeb;
+      border-bottom: 1px solid #fef3c7;
+      padding: 12px 0;
+      text-align: center;
+      color: #92400e;
+      font-weight: 600;
+      font-size: 0.92rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .notice-banner-inner {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .notice-banner a {
+      color: #0f1d36;
+      font-weight: 800;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fde68a;
+      padding: 3px 12px;
+      border-radius: var(--radius-pill);
+      transition: background 0.2s ease;
+    }
+
+    .notice-banner a:hover {
+      background: #fcd34d;
+    }
+
+    /* ---------------- PAGE INTRO ---------------- */
+    .page-intro {
+      text-align: center;
+      padding: 48px 0 25px;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: white;
+      border: 1px solid rgba(46, 184, 184, 0.35);
+      padding: 6px 16px;
+      border-radius: var(--radius-pill);
+      box-shadow: 0 4px 10px rgba(46, 184, 184, 0.08);
+      margin-bottom: 16px;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--uka-red);
+      border-radius: 50%;
+    }
+
+    .badge-pill span {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .page-intro h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+
+    .page-intro h1 span {
+      color: var(--uka-teal);
+      background: linear-gradient(135deg, #1f8f8f 0%, #2eb8b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .page-intro p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+
+    /* ---------------- CATEGORY TABS NAV ---------------- */
+    .category-nav-wrapper {
+      display: flex;
+      justify-content: center;
+      margin: 30px 0 40px;
+    }
+
+    .category-nav {
+      display: inline-flex;
+      background: white;
+      padding: 6px;
+      border-radius: var(--radius-pill);
+      box-shadow: 0 6px 20px rgba(15, 29, 54, 0.05);
+      border: 1.5px solid var(--border);
+      gap: 6px;
+    }
+
+    .cat-btn {
+      border: none;
+      background: transparent;
+      padding: 10px 28px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.25s ease;
+      letter-spacing: 0.5px;
+    }
+
+    .cat-btn:hover {
+      color: var(--uka-teal-dark);
+      background: var(--uka-teal-light);
+    }
+
+    .cat-btn.active {
+      background: var(--uka-teal);
+      color: white;
+      box-shadow: 0 4px 14px var(--uka-teal-glow);
+    }
+
+    /* ---------------- COMPACT 3-PER-ROW GRID ---------------- */
+    .mock-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      padding-bottom: 60px;
+      min-height: 350px;
+    }
+
+    /* Compact Mock Card */
+    .mock-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 24px 22px 22px;
+      box-shadow: var(--shadow-card);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1.5px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      animation: cardAppear 0.35s ease forwards;
+    }
+
+    @keyframes cardAppear {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .mock-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--uka-teal);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .card-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .card-brand-img {
+      height: 32px;
+      width: auto;
+      max-width: 130px;
+      object-fit: contain;
+    }
+
+    .mode-pill {
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: var(--uka-teal-light);
+      color: var(--uka-teal-dark);
+    }
+
+    .mode-pill.premium {
+      background: #fdedef;
+      color: var(--uka-red);
+    }
+
+    .mode-pill.general {
+      background: #eff6ff;
+      color: #2563eb;
+    }
+
+    .mock-card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 12px;
+      line-height: 1.25;
+    }
+
+    .card-meta-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .card-meta-info span {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .card-meta-info svg {
+      width: 14px;
+      height: 14px;
+      color: var(--uka-teal);
+    }
+
+    .btn-mock {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      background: var(--uka-teal-light);
+      color: var(--uka-teal-dark);
+      text-decoration: none;
+      padding: 11px 18px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+
+    .mock-card:hover .btn-mock {
+      background: var(--uka-teal);
+      color: white;
+      box-shadow: 0 4px 12px var(--uka-teal-glow);
+    }
+
+    .btn-mock.coming-soon {
+      background: #f1f5f9;
+      color: #94a3b8;
+      cursor: not-allowed;
+      border-color: #e2e8f0;
+    }
+
+    .mock-card:hover .btn-mock.coming-soon {
+      background: #f1f5f9;
+      color: #94a3b8;
+      box-shadow: none;
+    }
+
+    /* ---------------- SERVER NOTE BANNER ---------------- */
+    .server-note {
+      background: white;
+      border: 2px dashed rgba(46, 184, 184, 0.4);
+      border-radius: var(--radius-lg);
+      padding: 40px 32px;
+      text-align: center;
+      margin-top: 20px;
+      margin-bottom: 60px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .server-note h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+
+    .server-note p {
+      max-width: 740px;
+      margin: 0 auto 28px;
+      color: var(--text-muted);
+      font-size: 0.98rem;
+      line-height: 1.6;
+    }
+
+    .contact-wrapper {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .contact-btn-hotline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.94rem;
+      padding: 12px 24px;
+      border-radius: 12px;
+      transition: all 0.2s ease;
+      background: var(--navy);
+      color: white;
+      border: 1px solid var(--navy);
+      box-shadow: 0 4px 12px rgba(15, 29, 54, 0.15);
+    }
+
+    .contact-btn-hotline:hover {
+      background: var(--uka-teal);
+      border-color: var(--uka-teal);
+      transform: translateY(-2px);
+    }
+
+    .contact-btn-whatsapp {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.94rem;
+      padding: 12px 24px;
+      border-radius: 12px;
+      transition: all 0.2s ease;
+      background: #25d366;
+      color: white;
+      box-shadow: 0 4px 14px rgba(37, 211, 102, 0.25);
+    }
+
+    .contact-btn-whatsapp:hover {
+      background: #1eb956;
+      transform: translateY(-2px);
+    }
+
+    .contact-btn-whatsapp svg,
+    .contact-btn-hotline svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    /* ---------------- RESPONSIVENESS ---------------- */
+    @media (max-width: 1080px) {
+      .mock-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .mock-grid {
+        grid-template-columns: 1fr;
+      }
+      .page-intro {
+        padding: 35px 0 20px;
+      }
+      .category-nav-wrapper {
+        margin: 22px 0 30px;
+      }
+      .cat-btn {
+        padding: 8px 18px;
+        font-size: 0.85rem;
+      }
+      .server-note {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- UNIFIED NAVBAR -->
+  <div id="uka-header"></div>
+
+  <!-- NOTICE ALERT BAR -->
+  <div class="notice-banner">
+    <div class="container notice-banner-inner">
+      <span>Candidate ID & Passcode required for full official test server.</span>
+      <a href="https://wa.me/8801507063460" target="_blank" rel="noopener noreferrer">
+        WhatsApp Helpline: 01507063460
+      </a>
+    </div>
+  </div>
+
+  <main class="container">
+    <!-- PAGE INTRO -->
+    <section class="page-intro">
+      <div class="badge-pill">
+        <span class="badge-dot"></span>
+        <span>Simulated Exam Library</span>
+      </div>
+      <h1>Official IELTS <span>Mock Library</span></h1>
+      <p>Select your module series and practice in the computer-delivered exam environment.</p>
+      
+      <!-- CATEGORY SELECTOR -->
+      <div class="category-nav-wrapper">
+        <div class="category-nav">
+          <button class="cat-btn" onclick="filterMocks('GENERAL', this)">GENERAL TRAINING</button>
+          <button class="cat-btn active" onclick="filterMocks('ACADEMIC', this)">ACADEMIC</button>
+          <button class="cat-btn" onclick="filterMocks('PREMIUM', this)">PREMIUM SERIES</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3-PER-ROW MOCK CARDS GRID -->
+    <div class="mock-grid" id="mockGrid"></div>
+
+    <!-- SERVER NOTICE & HOTLINES -->
+    <section class="server-note">
+        <h2>Professional Computer-Delivered Server</h2>
+        <p>
+          Our mock test engine mirrors the exact interface, highlighters, question navigation palette, and scoring standards of the official British Council & IDP exam servers. To activate full-length tests with live evaluation, connect with our coordinators.
+        </p>
+        
+        <div class="contact-wrapper">
+          <a href="tel:01507063460" class="contact-btn-hotline">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+            Call: 01507063460
+          </a>
+          <a href="tel:01407063431" class="contact-btn-hotline">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+            Call: 01407063431
+          </a>
+          <a href="https://wa.me/8801507063460" target="_blank" rel="noopener noreferrer" class="contact-btn-whatsapp">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+            </svg>
+            WhatsApp Access
+          </a>
+        </div>
+    </section>
+  </main>
+
+  <!-- UNIFIED FOOTER -->
+  <div id="uka-footer"></div>
+
+  <script>
+    const mockGrid = document.getElementById('mockGrid');
+    
+    // Complete Mock Tests Database
+    const mockData = {
+        GENERAL: [
+            { id: 1, title: "General Mock 01", mode: "General", status: "Coming Soon" },
+            { id: 2, title: "General Mock 02", mode: "General", status: "Coming Soon" }
+        ],
+        ACADEMIC: Array.from({ length: 12 }, (_, i) => ({
+            id: i + 1,
+            title: `Academic Mock ${String(i + 1).padStart(2, '0')}`,
+            mode: "Academic",
+            status: "Start Exam"
+        })),
+        PREMIUM: [
+            { id: 1, title: "Premium Exam 01", mode: "Premium", status: "Start Exam" },
+            { id: 2, title: "Premium Exam 02", mode: "Premium", status: "Start Exam" },
+            { id: 3, title: "Premium Exam 03", mode: "Premium", status: "Start Exam" },
+            { id: 4, title: "Premium Exam 04", mode: "Premium", status: "Start Exam" },
+            { id: 5, title: "Premium Exam 05", mode: "Premium", status: "Start Exam" },
+            { id: 6, title: "Premium Exam 06", mode: "Premium", status: "Start Exam" },
+            { id: 7, title: "Premium Exam 07", mode: "Premium", status: "Start Exam" },
+            { id: 8, title: "Premium Exam 08", mode: "Premium", status: "Start Exam" },
+            { id: 9, title: "Premium Exam 09", mode: "Premium", status: "Start Exam" },
+        ]
+    };
+
+    function renderCards(category) {
+        mockGrid.innerHTML = '';
+        const tests = mockData[category] || [];
+
+        tests.forEach(test => {
+            const card = document.createElement('div');
+            card.className = 'mock-card';
+            
+            const isComingSoon = test.status === "Coming Soon";
+            const btnAction = isComingSoon 
+                ? `href="javascript:void(0)" class="btn-mock coming-soon"` 
+                : `href="javascript:void(0)" onclick="goToMock(${test.id}, '${test.mode}')" class="btn-mock"`;
+
+            const modeClass = test.mode.toLowerCase();
+
+            card.innerHTML = `
+                <div>
+                  <div class="card-top-row">
+                    <img src="2_UKA-&-British-council-Logo.png" alt="UKA Logo" class="card-brand-img">
+                    <span class="mode-pill ${modeClass}">${test.mode}</span>
+                  </div>
+                  <h3>${test.title}</h3>
+                  <div class="card-meta-info">
+                    <span>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
+                      2h 45m
+                    </span>
+                    <span>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                      </svg>
+                      3 Modules
+                    </span>
+                    <span>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                      </svg>
+                      Official CDT
+                    </span>
+                  </div>
+                </div>
+                <a ${btnAction}>
+                  ${test.status}
+                  ${isComingSoon ? '' : `
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  `}
+                </a>
+            `;
+            mockGrid.appendChild(card);
+        });
+    }
+
+    function filterMocks(category, btn) {
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderCards(category);
+    }
+
+    function goToMock(mockID, mode) {
+        window.location.href = `/passcodes?mockID=${mode}-UKA-FINAL-${mockID}`;
+    }
+
+    // Initial Load
+    renderCards('ACADEMIC');
+  </script>
+
+</body>
+</html>

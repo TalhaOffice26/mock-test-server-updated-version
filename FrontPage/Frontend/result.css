@@ -1,0 +1,68 @@
+body {
+  background: #f8fffe;
+  font-family: Arial, sans-serif;
+}
+
+.result-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+  text-align: center;
+}
+
+h2 {
+  color: #0b5753;
+  margin-bottom: 20px;
+}
+
+.circle-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin: 30px 0;
+}
+
+.circle-box {
+  position: relative;
+  text-align: center;
+}
+
+.circle-value {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -55%);
+  font-size: 22px;
+  font-weight: 700;
+  color: #0a2423;
+}
+
+.circle-label {
+  margin-top: -10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #12927c;
+}
+
+.pdf-btn, .review-btn {
+  width: 90%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  margin-top: 18px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.pdf-btn {
+  background: #0bb9a6;
+  color: white;
+}
+
+.review-btn {
+  background: #eee;
+}

@@ -1,0 +1,3241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='15' fill='%231A365D' /><path d='M30 25 V55 C30 65 35 75 50 75 C65 75 70 65 70 55 V25 H60 V55 C60 62 58 65 50 65 C42 65 40 62 40 55 V25 H30Z' fill='white' /><rect x='25' y='25' width='15' height='5' fill='white' /><rect x='60' y='25' width='15' height='5' fill='white' /></svg>">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Admin Tool</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: #f4f4f4;
+}
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+}
+.section {
+    background: #fff;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.section-header {
+    padding: 15px 20px;
+    background: #3B1E54;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+}
+.section-content {
+    display: none;
+    padding: 20px;
+}
+.field {
+    margin-bottom: 10px;
+}
+.field label {
+    display: block;
+    margin-bottom: 5px;
+}
+.field input, .field textarea, .field select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+button {
+    padding: 6px 12px;
+    margin-top: 5px;
+    border: none;
+    border-radius: 4px;
+    background: #9B7EBD;
+    color: #fff;
+    cursor: pointer;
+}
+button:hover {
+    background: #3B1E54;
+}
+.subsection {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    position: relative;
+}
+.subsection h4 {
+    margin-top: 0;
+}
+.delete-group-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #E74C3C;
+}
+.delete-group-btn:hover {
+    background: #C0392B;
+}
+.blank-btn {
+    background: #D4BEE4;
+    margin-left: 5px;
+    color: #3B1E54;
+}
+.delete-btn {
+    background: #E74C3C;
+    margin-left: 5px;
+}
+.delete-btn:hover {
+    background: #C0392B;
+}
+.subfield-wrapper {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+.subfield-wrapper input,
+.subfield-wrapper textarea {
+    flex: 1;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Test Admin Tool</h2>
+    
+    <div class="field">
+        <label>Mock Number</label>
+        <input type="text" id="mockNumber" placeholder="Enter mock number">
+    </div>
+    <div class="field">
+        <label>Plan</label>
+        <input type="text" id="plan" placeholder="Enter plan">
+    </div>
+    <!-- Universal Bold button -->
+<button id="wrapStrongBtn" type="button" title="Wrap selection with <strong>">Bold (strong)</button>
+
+
+    <div class="section">
+        <div class="section-header">Listening</div>
+        <div class="section-content" id="listeningContent">
+            <button id="addQuestionGroup">Add a question group</button>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-header">Reading</div>
+        <div class="section-content" id="readingContent">
+            <button id="addReadingGroupBtn" class="add-group-btn">Add a Question Group</button>
+            <button id="addReadingPassageBtn" type="button">Add Reading Passage</button>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-header">Writing</div>
+        <div class="section-content" id="writingContent">
+            <button id="addWritingTask1Btn" class="add-group-btn">Add task-1</button>
+            <button id="addWritingTask2Btn" type="button">Add task-2</button>
+        </div>
+    </div>
+
+    <button id="exportJSON">Export JSON</button>
+</div>
+
+<script>
+document.querySelectorAll('.section-header').forEach(header => {
+    header.addEventListener('click', () => {
+        const content = header.nextElementSibling;
+        content.style.display = (content.style.display === 'block') ? 'none' : 'block';
+    });
+});
+
+const listeningContent = document.getElementById('listeningContent');
+
+document.getElementById('addQuestionGroup').addEventListener('click', () => {
+    const existingSelector = listeningContent.querySelector('.questionTypeSelector');
+    if(existingSelector) existingSelector.remove();
+
+    const selectDiv = document.createElement('div');
+    selectDiv.className = 'field questionTypeSelector';
+    selectDiv.innerHTML = `
+        <label>Select Question Type</label>
+        <select id="questionTypeSelect">
+            <option value="">-- Choose type --</option>
+            <option value="note-completion">Note Completion</option>
+            <option value="feature-matching">Feature Matching</option>
+            <option value="mcq-updated">MCQ</option>
+            <option value="mcq-two-choice">MCQ(two choice)</option>
+            <option value="table-completion">Table Completion</option>
+            <option value="diagram-labelling">Diagram Labelling</option>
+            <option value="matching-information">Matching Information</option>
+            <option value="flowchart">Flowchart</option>
+        </select>
+    `;
+    listeningContent.appendChild(selectDiv);
+
+    const selectEl = selectDiv.querySelector('#questionTypeSelect');
+    selectEl.addEventListener('change', () => {
+        if(selectEl.value === 'note-completion'){
+            addNoteCompletionForm();
+            selectDiv.remove();
+        } else if(selectEl.value === 'feature-matching'){
+            addFeatureMatchingForm();
+            selectDiv.remove();
+        } else if(selectEl.value === 'mcq-updated'){
+            addMCQForm();
+            selectDiv.remove();
+        } else if(selectEl.value === "mcq-two-choice"){
+          addMcqTwoChoiceUpdatedForm();
+          selectDiv.remove();
+        } else if(selectEl.value === "table-completion"){
+          addTableCompletionForm();
+          selectDiv.remove();
+        } else if(selectEl.value === "diagram-labelling"){
+          addDiagramLabellingForm();
+          selectDiv.remove();
+        } else if(selectEl.value === "matching-information"){
+          addMatchingInformation();
+          selectDiv.remove();
+        } else if(selectEl.value === "flowchart"){
+          addFlowchart();
+          selectDiv.remove();
+        }
+    });
+});
+
+// --- Note Completion Form (existing, unchanged) ---
+function addNoteCompletionForm(){
+    const groupDiv = document.createElement('div');
+    groupDiv.className = 'subsection';
+    groupDiv.innerHTML = `
+        <h4>Note Completion Question Group</h4>
+        <button type="button" class="delete-group-btn">Delete Group</button>
+        <div class="field"><label>Part</label><input type="number" value="1" class="part"></div>
+        <div class="field"><label>Group</label><input type="number" value="11" class="group"></div>
+        <div class="field"><label>Heading</label><input type="text" class="heading" value="Transport Survey"></div>
+        <div class="field">
+            <label>Subheadings</label>
+            <div class="subheadingsContainer"></div>
+            <button type="button" class="addSubheading">Add Subheading</button>
+        </div>
+        <div class="field">
+            <label>Paragraphs</label>
+            <div class="paragraphsContainer"></div>
+            <button type="button" class="addParagraph">Add Paragraph</button>
+        </div>
+        <div class="field">
+            <label>ID Array (comma separated)</label>
+            <input type="text" class="idArray" value="1,2,3,4,5,6,7,8,9,10">
+        </div>
+        <div class="field">
+            <label>Type</label>
+            <input type="text" class="type" value="note-completion" readonly>
+        </div>
+        <div class="field">
+    <label>Instruction</label>
+    <textarea class="instruction" rows="2" placeholder="Write the instruction for this group"></textarea>
+</div>
+<div class="field">
+    <label>Answers</label>
+    <div class="answersContainer"></div>
+    <button type="button" class="addAnswer">Add Answer</button>
+</div>
+    `;
+    listeningContent.appendChild(groupDiv);
+
+    groupDiv.querySelector('.delete-group-btn').addEventListener('click', () => groupDiv.remove());
+
+    const subheadingsContainer = groupDiv.querySelector('.subheadingsContainer');
+    groupDiv.querySelector('.addSubheading').addEventListener('click', () => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'subfield-wrapper';
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.placeholder = 'Subheading text';
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.className = 'delete-btn';
+        delBtn.textContent = 'Delete';
+        delBtn.addEventListener('click', () => wrapper.remove());
+        wrapper.appendChild(input);
+        wrapper.appendChild(delBtn);
+        subheadingsContainer.appendChild(wrapper);
+    });
+
+    const paragraphsContainer = groupDiv.querySelector('.paragraphsContainer');
+    groupDiv.querySelector('.addParagraph').addEventListener('click', () => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'subfield-wrapper';
+        const textarea = document.createElement('textarea');
+        textarea.placeholder = 'Paragraph text';
+        textarea.rows = 2;
+        const blankBtn = document.createElement('button');
+        blankBtn.type = 'button';
+        blankBtn.className = 'blank-btn';
+        blankBtn.textContent = 'Add [blank]';
+        blankBtn.addEventListener('click', () => {
+            const pos = textarea.selectionStart || textarea.value.length;
+            textarea.value = textarea.value.slice(0, pos) + '[blank]' + textarea.value.slice(pos);
+        });
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.className = 'delete-btn';
+        delBtn.textContent = 'Delete';
+        delBtn.addEventListener('click', () => wrapper.remove());
+
+        wrapper.appendChild(textarea);
+        wrapper.appendChild(blankBtn);
+        wrapper.appendChild(delBtn);
+        paragraphsContainer.appendChild(wrapper);
+    });
+
+    // Answers
+const answersContainer = groupDiv.querySelector('.answersContainer');
+const addAnswerBtn = groupDiv.querySelector('.addAnswer');
+addAnswerBtn.addEventListener('click', () => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'subfield-wrapper';
+    const idInput = document.createElement('input');
+    idInput.type = 'number';
+    idInput.placeholder = 'Answer ID';
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Answer text (comma separated if multiple)';
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.className = 'delete-btn';
+    delBtn.addEventListener('click', () => wrapper.remove());
+    wrapper.appendChild(idInput);
+    wrapper.appendChild(ansInput);
+    wrapper.appendChild(delBtn);
+    answersContainer.appendChild(wrapper);
+});
+}
+
+// --- Feature Matching Form ---
+function addFeatureMatchingForm(){
+    const groupDiv = document.createElement('div');
+    groupDiv.className = 'subsection';
+    groupDiv.innerHTML = `
+        <h4>Feature Matching Question Group</h4>
+        <button type="button" class="delete-group-btn">Delete Group</button>
+        <div class="field"><label>Part</label><input type="number" value="2" class="part"></div>
+        <div class="field"><label>Group</label><input type="number" value="22" class="group"></div>
+        <div class="field">
+            <label>ID Array (comma separated)</label>
+            <input type="text" class="idArray" value="1,2,3,4,5,6,7,8,9,10">
+        </div>
+        <div class="field">
+            <label>Options</label>
+            <div class="optionsContainer"></div>
+            <button type="button" class="addOption">Add Option</button>
+        </div>
+        <div class="field">
+            <label>Features</label>
+            <div class="featuresContainer"></div>
+            <button type="button" class="addFeature">Add Feature</button>
+        </div>
+        
+        <div class="field">
+            <label>Type</label>
+            <input type="text" class="type" value="feature-matching" readonly>
+        </div>
+        <div class="field">
+    <label>Instruction</label>
+    <textarea class="instruction" rows="2" placeholder="Write the instruction for this group"></textarea>
+</div>
+<div class="field">
+    <label>Answers</label>
+    <div class="answersContainer"></div>
+    <button type="button" class="addAnswer">Add Answer</button>
+</div>
+    `;
+    listeningContent.appendChild(groupDiv);
+
+    groupDiv.querySelector('.delete-group-btn').addEventListener('click', () => groupDiv.remove());
+
+    const optionsContainer = groupDiv.querySelector('.optionsContainer');
+    groupDiv.querySelector('.addOption').addEventListener('click', () => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'subfield-wrapper';
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.placeholder = 'Option text';
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.className = 'delete-btn';
+        delBtn.textContent = 'Delete';
+        delBtn.addEventListener('click', () => wrapper.remove());
+        wrapper.appendChild(input);
+        wrapper.appendChild(delBtn);
+        optionsContainer.appendChild(wrapper);
+    });
+
+    const featuresContainer = groupDiv.querySelector('.featuresContainer');
+    groupDiv.querySelector('.addFeature').addEventListener('click', () => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'subfield-wrapper';
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.placeholder = 'Feature text';
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.className = 'delete-btn';
+        delBtn.textContent = 'Delete';
+        delBtn.addEventListener('click', () => wrapper.remove());
+        wrapper.appendChild(input);
+        wrapper.appendChild(delBtn);
+        featuresContainer.appendChild(wrapper);
+    });
+
+    // Answers
+const answersContainer = groupDiv.querySelector('.answersContainer');
+const addAnswerBtn = groupDiv.querySelector('.addAnswer');
+addAnswerBtn.addEventListener('click', () => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'subfield-wrapper';
+    const idInput = document.createElement('input');
+    idInput.type = 'number';
+    idInput.placeholder = 'Answer ID';
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Answer text (comma separated if multiple)';
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.className = 'delete-btn';
+    delBtn.addEventListener('click', () => wrapper.remove());
+    wrapper.appendChild(idInput);
+    wrapper.appendChild(ansInput);
+    wrapper.appendChild(delBtn);
+    answersContainer.appendChild(wrapper);
+});
+}
+
+// --- MCQ Form (unchanged previous) ---
+function addMCQForm(){ 
+   const groupDiv = document.createElement('div');
+    groupDiv.className = 'subsection';
+
+    groupDiv.innerHTML = `
+        <h4>MCQ Question Group</h4>
+        <button type="button" class="delete-group-btn">Delete Group</button>
+        <div class="field">
+            <label>Part</label>
+            <input type="number" value="2" class="part">
+        </div>
+        <div class="field">
+            <label>Group</label>
+            <input type="number" value="21" class="group">
+        </div>
+        <div class="field">
+            <label>ID Array (comma separated)</label>
+            <input type="text" class="idArray" value="1,2,3,4,5,6,7,8,9,10">
+        </div>
+        <div class="field">
+            <label>Type</label>
+            <input type="text" class="type" value="mcq-updated" readonly>
+        </div>
+        <div class="field">
+            <label>Questions</label>
+            <div class="questionsContainer"></div>
+            <button type="button" class="addMCQQuestion">Add Question</button>
+        </div>
+        <div class="field">
+    <label>Instruction</label>
+    <textarea class="instruction" rows="2" placeholder="Write the instruction for this group"></textarea>
+</div>
+<div class="field">
+    <label>Answers</label>
+    <div class="answersContainer"></div>
+    <button type="button" class="addAnswer">Add Answer</button>
+</div>
+    `;
+
+    listeningContent.appendChild(groupDiv);
+
+    groupDiv.querySelector('.delete-group-btn').addEventListener('click', () => groupDiv.remove());
+
+    const questionsContainer = groupDiv.querySelector('.questionsContainer');
+
+    groupDiv.querySelector('.addMCQQuestion').addEventListener('click', () => {
+        const qWrapper = document.createElement('div');
+        qWrapper.className = 'subsection mcq-question';
+
+        qWrapper.innerHTML = `
+            <div class="subfield-wrapper">
+                <input type="text" class="questionText" placeholder="Question text">
+                <button type="button" class="delete-btn">Delete Question</button>
+            </div>
+            <div class="field">
+                <label>Options</label>
+                <div class="optionsContainer"></div>
+                <button type="button" class="addOption">Add Option</button>
+            </div>
+        `;
+        questionsContainer.appendChild(qWrapper);
+
+        qWrapper.querySelector('.delete-btn').addEventListener('click', () => qWrapper.remove());
+
+        const optionsContainer = qWrapper.querySelector('.optionsContainer');
+        qWrapper.querySelector('.addOption').addEventListener('click', () => {
+            const optWrapper = document.createElement('div');
+            optWrapper.className = 'subfield-wrapper';
+            const optInput = document.createElement('input');
+            optInput.type = 'text';
+            optInput.placeholder = 'Option text';
+            const delBtn = document.createElement('button');
+            delBtn.type = 'button';
+            delBtn.className = 'delete-btn';
+            delBtn.textContent = 'Delete';
+            delBtn.addEventListener('click', () => optWrapper.remove());
+            optWrapper.appendChild(optInput);
+            optWrapper.appendChild(delBtn);
+            optionsContainer.appendChild(optWrapper);
+        });
+    });
+    // Answers
+const answersContainer = groupDiv.querySelector('.answersContainer');
+const addAnswerBtn = groupDiv.querySelector('.addAnswer');
+addAnswerBtn.addEventListener('click', () => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'subfield-wrapper';
+    const idInput = document.createElement('input');
+    idInput.type = 'number';
+    idInput.placeholder = 'Answer ID';
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Answer text (comma separated if multiple)';
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.className = 'delete-btn';
+    delBtn.addEventListener('click', () => wrapper.remove());
+    wrapper.appendChild(idInput);
+    wrapper.appendChild(ansInput);
+    wrapper.appendChild(delBtn);
+    answersContainer.appendChild(wrapper);
+});
+ }
+
+
+ function addMcqTwoChoiceUpdatedForm() {
+    const groupDiv = document.createElement('div');
+    groupDiv.className = 'subsection';
+
+    groupDiv.innerHTML = `
+        <h4>MCQ Two Choice (Updated)</h4>
+        <button type="button" class="delete-group-btn">Delete Group</button>
+        <div class="field">
+            <label>Part</label>
+            <input type="number" value="3" class="part">
+        </div>
+        <div class="field">
+            <label>Group</label>
+            <input type="number" value="31" class="group">
+        </div>
+        <div class="field">
+            <label>Type</label>
+            <input type="text" class="type" value="mcq-two-choice-updated" readonly>
+        </div>
+        <div class="field">
+            <label>ID Array (nested, comma-separated pairs — e.g. [21,22],[23,24])</label>
+            <input type="text" class="idArray" value="[21,22],[23,24]">
+        </div>
+
+        <div class="field">
+            <label>Questions</label>
+            <div class="mcqTwoChoiceQuestionsContainer"></div>
+            <button type="button" class="addMcqTwoChoiceQuestion">Add Question</button>
+        </div>
+        <div class="field">
+    <label>Instruction</label>
+    <textarea class="instruction" rows="2" placeholder="Write the instruction for this group"></textarea>
+</div>
+<div class="field">
+    <label>Answers</label>
+    <div class="answersContainer"></div>
+    <button type="button" class="addAnswer">Add Answer</button>
+</div>
+    `;
+
+    const listeningContent = document.getElementById('listeningContent');
+    listeningContent.appendChild(groupDiv);
+
+    // delete entire group
+    groupDiv.querySelector('.delete-group-btn').addEventListener('click', () => {
+        groupDiv.remove();
+    });
+
+    // Add question handler
+    const container = groupDiv.querySelector('.mcqTwoChoiceQuestionsContainer');
+    const addBtn = groupDiv.querySelector('.addMcqTwoChoiceQuestion');
+
+    addBtn.addEventListener('click', () => {
+        const qWrapper = document.createElement('div');
+        qWrapper.className = 'subfield-wrapper';
+        qWrapper.style.flexDirection = 'column';
+        qWrapper.style.alignItems = 'stretch';
+        qWrapper.style.marginBottom = '10px';
+
+        qWrapper.innerHTML = `
+            <textarea rows="2" placeholder="Question text"></textarea>
+            <div class="optionsContainer"></div>
+            <button type="button" class="addOption">Add Option</button>
+            <button type="button" class="delete-btn">Delete Question</button>
+        `;
+
+        container.appendChild(qWrapper);
+
+        const optionsContainer = qWrapper.querySelector('.optionsContainer');
+        const addOptionBtn = qWrapper.querySelector('.addOption');
+        const deleteQBtn = qWrapper.querySelector('.delete-btn');
+
+        addOptionBtn.addEventListener('click', () => {
+            const optWrapper = document.createElement('div');
+            optWrapper.className = 'subfield-wrapper';
+            const optInput = document.createElement('input');
+            optInput.type = 'text';
+            optInput.placeholder = 'Option text';
+            const delOptBtn = document.createElement('button');
+            delOptBtn.type = 'button';
+            delOptBtn.className = 'delete-btn';
+            delOptBtn.textContent = 'Delete';
+            delOptBtn.addEventListener('click', () => optWrapper.remove());
+            optWrapper.appendChild(optInput);
+            optWrapper.appendChild(delOptBtn);
+            optionsContainer.appendChild(optWrapper);
+        });
+
+        deleteQBtn.addEventListener('click', () => qWrapper.remove());
+    });
+    // Answers
+const answersContainer = groupDiv.querySelector('.answersContainer');
+const addAnswerBtn = groupDiv.querySelector('.addAnswer');
+addAnswerBtn.addEventListener('click', () => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'subfield-wrapper';
+    const idInput = document.createElement('input');
+    idInput.type = 'number';
+    idInput.placeholder = 'Answer ID';
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Answer text (comma separated if multiple)';
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.className = 'delete-btn';
+    delBtn.addEventListener('click', () => wrapper.remove());
+    wrapper.appendChild(idInput);
+    wrapper.appendChild(ansInput);
+    wrapper.appendChild(delBtn);
+    answersContainer.appendChild(wrapper);
+});
+}
+
+function addTableCompletionForm() {
+    const groupDiv = document.createElement('div');
+    groupDiv.className = 'subsection';
+    groupDiv.innerHTML = `
+        <h4>Table Completion Question Group</h4>
+        <button type="button" class="delete-group-btn">Delete Group</button>
+        <div class="field"><label>Part</label><input type="number" value="1" class="part"></div>
+        <div class="field"><label>Group</label><input type="number" value="11" class="group"></div>
+        <div class="field">
+            <label>ID Array (comma separated)</label>
+            <input type="text" class="idArray" value="1,2,3,4,5,6,7,8,9,10">
+        </div>
+        <div class="field">
+            <label>Rows</label>
+            <div class="tableRowsContainer"></div>
+            <button type="button" class="addTableRow">Add Row</button>
+        </div>
+        <div class="field">
+            <label>Type</label>
+            <input type="text" class="type" value="table-completion" readonly>
+        </div>
+        <div class="field">
+        <label>Instruction</label>
+    <textarea class="instruction" rows="2" placeholder="Write the instruction for this group"></textarea>
+    </div>
+<div class="field">
+    <label>Answers</label>
+    <div class="answersContainer"></div>
+    <button type="button" class="addAnswer">Add Answer</button>
+</div>
+    `;
+    listeningContent.appendChild(groupDiv);
+
+    // Delete group button
+    groupDiv.querySelector('.delete-group-btn').addEventListener('click', () => groupDiv.remove());
+
+    const rowsContainer = groupDiv.querySelector('.tableRowsContainer');
+
+    // Add Row button
+    groupDiv.querySelector('.addTableRow').addEventListener('click', () => {
+        const rowWrapper = document.createElement('div');
+        rowWrapper.className = 'table-row subfield-wrapper';
+        
+        // Ask user how many cells for this row
+        const numCells = prompt('Enter number of cells for this row:', '4');
+        const cellCount = parseInt(numCells) || 1;
+
+        for (let i = 0; i < cellCount; i++) {
+            const textarea = document.createElement("textarea");
+            textarea.rows = 2;
+            textarea.placeholder = `Cell ${i+1}`;
+            textarea.className = 'table-cell';
+            rowWrapper.appendChild(textarea);
+        }
+
+        // Delete row button
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.className = 'delete-btn';
+        delBtn.textContent = 'Delete Row';
+        delBtn.addEventListener('click', () => rowWrapper.remove());
+
+        rowWrapper.appendChild(delBtn);
+        rowsContainer.appendChild(rowWrapper);
+    });
+    // Answers
+const answersContainer = groupDiv.querySelector('.answersContainer');
+const addAnswerBtn = groupDiv.querySelector('.addAnswer');
+addAnswerBtn.addEventListener('click', () => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'subfield-wrapper';
+    const idInput = document.createElement('input');
+    idInput.type = 'number';
+    idInput.placeholder = 'Answer ID';
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Answer text (comma separated if multiple)';
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.className = 'delete-btn';
+    delBtn.addEventListener('click', () => wrapper.remove());
+    wrapper.appendChild(idInput);
+    wrapper.appendChild(ansInput);
+    wrapper.appendChild(delBtn);
+    answersContainer.appendChild(wrapper);
+});
+}
+
+
+
+function addDiagramLabellingForm() {
+    const groupDiv = document.createElement('div');
+    groupDiv.className = 'subsection';
+    groupDiv.innerHTML = `
+        <h4>Diagram Labelling Question Group</h4>
+        <button type="button" class="delete-group-btn">Delete Group</button>
+        <div class="field">
+            <label>Part</label>
+            <input type="number" class="part" value="1">
+        </div>
+        <div class="field">
+            <label>Group</label>
+            <input type="number" class="group" value="11">
+        </div>
+        <div class="field">
+            <label>Image URL</label>
+            <input type="text" class="image" placeholder="Paste image URL here">
+            <div class="image-preview" style="margin-top:10px;"></div>
+        </div>
+        <div class="field">
+            <label>Options</label>
+            <div class="optionsContainer"></div>
+            <button type="button" class="addOption">Add Option</button>
+        </div>
+        <div class="field">
+            <label>ID Array (comma separated)</label>
+            <input type="text" class="idArray" value="1,2,3,4,5,6,7,8,9,10">
+        </div>
+        <div class="field">
+            <label>Labels</label>
+            <div class="labelsContainer"></div>
+            <button type="button" class="addLabel">Add Label</button>
+        </div>
+        <div class="field">
+            <label>Type</label>
+            <input type="text" class="type" value="diagram-labelling" readonly>
+        </div>
+        <div class="field">
+            <label>Instruction</label>
+            <textarea class="instruction" rows="2" placeholder="Write the instruction for this group"></textarea>
+        </div>
+    <div class="field">
+        <label>Answers</label>
+        <div class="answersContainer"></div>
+        <button type="button" class="addAnswer">Add Answer</button>
+    </div>
+    `;
+
+    listeningContent.appendChild(groupDiv);
+
+    // Delete group
+    groupDiv.querySelector('.delete-group-btn').addEventListener('click', () => groupDiv.remove());
+
+    // Image preview
+    const imageInput = groupDiv.querySelector('.image');
+    const previewDiv = groupDiv.querySelector('.image-preview');
+    imageInput.addEventListener('input', () => {
+        previewDiv.innerHTML = imageInput.value
+            ? `<img src="${imageInput.value}" alt="Preview" style="max-width:100%; border:1px solid #ccc; border-radius:6px;">`
+            : '';
+    });
+
+    // Add option
+    const optionsContainer = groupDiv.querySelector('.optionsContainer');
+    groupDiv.querySelector('.addOption').addEventListener('click', () => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'subfield-wrapper';
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.placeholder = 'Option (e.g., A)';
+        const delBtn = document.createElement('button');
+        delBtn.textContent = 'Delete';
+        delBtn.className = 'delete-btn';
+        delBtn.addEventListener('click', () => wrapper.remove());
+        wrapper.appendChild(input);
+        wrapper.appendChild(delBtn);
+        optionsContainer.appendChild(wrapper);
+    });
+
+    // Add ID
+
+
+    // Add Label
+    const labelsContainer = groupDiv.querySelector('.labelsContainer');
+    groupDiv.querySelector('.addLabel').addEventListener('click', () => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'subfield-wrapper';
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.placeholder = 'Label text';
+        const delBtn = document.createElement('button');
+        delBtn.textContent = 'Delete';
+        delBtn.className = 'delete-btn';
+        delBtn.addEventListener('click', () => wrapper.remove());
+        wrapper.appendChild(input);
+        wrapper.appendChild(delBtn);
+        labelsContainer.appendChild(wrapper);
+    });
+    // Answers
+const answersContainer = groupDiv.querySelector('.answersContainer');
+const addAnswerBtn = groupDiv.querySelector('.addAnswer');
+addAnswerBtn.addEventListener('click', () => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'subfield-wrapper';
+    const idInput = document.createElement('input');
+    idInput.type = 'number';
+    idInput.placeholder = 'Answer ID';
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Answer text (comma separated if multiple)';
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.className = 'delete-btn';
+    delBtn.addEventListener('click', () => wrapper.remove());
+    wrapper.appendChild(idInput);
+    wrapper.appendChild(ansInput);
+    wrapper.appendChild(delBtn);
+    answersContainer.appendChild(wrapper);
+});
+
+
+}
+
+
+function addMatchingInformation(){
+  const groupDiv = document.createElement("div");
+  groupDiv.className = "subsection";
+
+  groupDiv.innerHTML = `
+    <h4>Matching Information Question Group</h4>
+    <button type="button" class="delete-group-btn">Delete Group</button>
+
+    <div class="field">
+      <label>Part</label>
+      <input type="number" class="part" value="2">
+    </div>
+
+    <div class="field">
+      <label>Group</label>
+      <input type="number" class="group" value="21">
+    </div>
+
+    <div class="field">
+      <label>Options (comma separated)</label>
+      <input type="text" class="paragraphsArray" placeholder="e.g. A, B, C, D, E, F, G">
+    </div>
+
+    <div class="field">
+      <label>ID Array (comma separated)</label>
+      <input type="text" class="idArray" placeholder="e.g. 14, 15, 16, 17, 18">
+    </div>
+
+    <div class="field">
+      <label>Information Statements</label>
+      <div class="informationContainer"></div>
+      <button type="button" class="addInformation">Add Information</button>
+    </div>
+
+    <div class="field">
+      <label>Option Statements</label>
+      <div class="optionContainer"></div>
+      <button type="button" class="addOpt">Add option</button>
+    </div>
+
+    <div class="field">
+      <label>Type</label>
+      <input type="text" class="type" value="matching-information" readonly>
+    </div>
+
+    <div class="field">
+      <label>Instruction</label>
+      <textarea class="instruction" rows="2" placeholder="Write the instruction for this group"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Answers</label>
+      <div class="answersContainer"></div>
+      <button type="button" class="addAnswer">Add Answer</button>
+    </div>
+  `;
+
+  // Delete group button
+  groupDiv.querySelector(".delete-group-btn").addEventListener("click", () => groupDiv.remove());
+
+  // Add information items
+  const infoContainer = groupDiv.querySelector(".informationContainer");
+  const addInfoBtn = groupDiv.querySelector(".addInformation");
+  addInfoBtn.addEventListener("click", () => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "subfield-wrapper";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.placeholder = "Information text";
+    const delBtn = document.createElement("button");
+    delBtn.type = "button";
+    delBtn.className = "delete-btn";
+    delBtn.textContent = "Delete";
+    delBtn.addEventListener("click", () => wrapper.remove());
+    wrapper.appendChild(input);
+    wrapper.appendChild(delBtn);
+    infoContainer.appendChild(wrapper);
+  });
+
+  // Add option items
+
+  const optContainer = groupDiv.querySelector(".optionContainer");
+  const addOptBtn = groupDiv.querySelector(".addOpt");
+  addOptBtn.addEventListener("click", () => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "subfield-wrapper";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.placeholder = "Option text";
+    const delBtn = document.createElement("button");
+    delBtn.type = "button";
+    delBtn.className = "delete-btn";
+    delBtn.textContent = "Delete";
+    delBtn.addEventListener("click", () => wrapper.remove());
+    wrapper.appendChild(input);
+    wrapper.appendChild(delBtn);
+    optContainer.appendChild(wrapper);
+  });
+
+  // Answers
+const answersContainer = groupDiv.querySelector('.answersContainer');
+const addAnswerBtn = groupDiv.querySelector('.addAnswer');
+addAnswerBtn.addEventListener('click', () => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'subfield-wrapper';
+    const idInput = document.createElement('input');
+    idInput.type = 'number';
+    idInput.placeholder = 'Answer ID';
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Answer text (comma separated if multiple)';
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.className = 'delete-btn';
+    delBtn.addEventListener('click', () => wrapper.remove());
+    wrapper.appendChild(idInput);
+    wrapper.appendChild(ansInput);
+    wrapper.appendChild(delBtn);
+    answersContainer.appendChild(wrapper);})
+
+    listeningContent.appendChild(groupDiv);
+  
+}
+
+
+function addFlowchart() {
+  const groupDiv = document.createElement("div");
+  groupDiv.className = "subsection";
+
+  groupDiv.innerHTML = `
+    <h4>Flowchart Question Group</h4>
+    <button type="button" class="delete-group-btn">Delete Group</button>
+
+    <div class="field">
+      <label>Part</label>
+      <input type="number" class="part" value="3">
+    </div>
+
+    <div class="field">
+      <label>Group</label>
+      <input type="number" class="group" value="32">
+    </div>
+
+    <div class="field">
+      <label>ID Array (comma separated)</label>
+      <input type="text" class="idArray" placeholder="e.g. 26, 27, 28, 29, 30">
+    </div>
+
+    <div class="field">
+      <label>Option Header</label>
+      <input type="text" class="optionHeader" placeholder="e.g. Steps">
+    </div>
+
+    <div class="field">
+      <label>Question Header</label>
+      <input type="text" class="questionHeader" placeholder="(optional)">
+    </div>
+
+    <div class="field">
+      <label>Options</label>
+      <div class="optionContainer"></div>
+      <button type="button" class="addOption">Add Option</button>
+    </div>
+
+    <div class="field">
+      <label>Questions</label>
+      <div class="questionContainer"></div>
+      <button type="button" class="addQuestion">Add Question</button>
+    </div>
+
+    <div class="field">
+      <label>Type</label>
+      <input type="text" class="type" value="flowchart" readonly>
+    </div>
+
+    <div class="field">
+      <label>Instruction</label>
+      <textarea class="instruction" rows="2" placeholder="Write the instruction for this group"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Answers</label>
+      <div class="answersContainer"></div>
+      <button type="button" class="addAnswer">Add Answer</button>
+    </div>
+  `;
+
+  // --- Delete group button ---
+  groupDiv.querySelector(".delete-group-btn").addEventListener("click", () => groupDiv.remove());
+
+  // --- Add Option items ---
+  const optContainer = groupDiv.querySelector(".optionContainer");
+  const addOptBtn = groupDiv.querySelector(".addOption");
+  addOptBtn.addEventListener("click", () => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "subfield-wrapper";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.placeholder = "Option text";
+    const delBtn = document.createElement("button");
+    delBtn.type = "button";
+    delBtn.className = "delete-btn";
+    delBtn.textContent = "Delete";
+    delBtn.addEventListener("click", () => wrapper.remove());
+    wrapper.appendChild(input);
+    wrapper.appendChild(delBtn);
+    optContainer.appendChild(wrapper);
+  });
+
+  // --- Add Question items ---
+  const questionContainer = groupDiv.querySelector(".questionContainer");
+  const addQuestionBtn = groupDiv.querySelector(".addQuestion");
+  addQuestionBtn.addEventListener("click", () => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "subfield-wrapper";
+    const textarea = document.createElement("textarea");
+    textarea.placeholder = "Question text (supports line breaks)";
+    textarea.rows = 3;
+    const delBtn = document.createElement("button");
+    delBtn.type = "button";
+    delBtn.className = "delete-btn";
+    delBtn.textContent = "Delete";
+    delBtn.addEventListener("click", () => wrapper.remove());
+    wrapper.appendChild(textarea);
+    wrapper.appendChild(delBtn);
+    questionContainer.appendChild(wrapper);
+  });
+
+    // Answers
+const answersContainer = groupDiv.querySelector('.answersContainer');
+const addAnswerBtn = groupDiv.querySelector('.addAnswer');
+addAnswerBtn.addEventListener('click', () => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'subfield-wrapper';
+    const idInput = document.createElement('input');
+    idInput.type = 'number';
+    idInput.placeholder = 'Answer ID';
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Answer text (comma separated if multiple)';
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.className = 'delete-btn';
+    delBtn.addEventListener('click', () => wrapper.remove());
+    wrapper.appendChild(idInput);
+    wrapper.appendChild(ansInput);
+    wrapper.appendChild(delBtn);
+    answersContainer.appendChild(wrapper);})
+
+  // --- Append to listening content container ---
+  listeningContent.appendChild(groupDiv);
+}
+
+
+// ==================== READING MODULE ====================
+
+// Create a question group for Reading
+const readingContainer = document.getElementById("readingContent");
+document.getElementById("addReadingGroupBtn").addEventListener("click", () => {
+  const existingSelector = readingContainer.querySelector(".questionTypeSelector");
+
+  if(existingSelector) existingSelector.remove();
+
+  const selectDiv = document.createElement("div");
+  selectDiv.className = 'field questionTypeSelector';
+  selectDiv.innerHTML = `
+        <label>Select Question Type</label>
+        <select id="questionTypeSelect">
+            <option value="">-- Choose type --</option>
+            <option value="note-completion">Note Completion</option>
+            <option value="matching-information">Matching Information</option>
+            <option value="summary-completion">Summary Completion</option>
+            <option value="mcq-one-choice">MCQ(one choice)</option>
+            <option value="mcq-two-choice-updated">MCQ(two choice)</option>
+            <option value="feature-matching-drag-drop">Feature matching(drag and drop)</option>
+            <option value="Y/N/NG">Yes/No/Not Given</option>
+            <option value="T/F/NG">True/False/Not Given</option>
+            <option value="list-of-headings">List of headings</option>
+            <option value="sentence-completion">Sentence Completion</option>
+            <option value="summary-with-list-of-words">Summary Completion (With list of words)</option>
+            <option value="table-completion">Table Completion</option>
+        </select>
+  `;
+  readingContainer.appendChild(selectDiv);
+
+  const selectEl = selectDiv.querySelector("#questionTypeSelect");
+  selectEl.addEventListener('change', ()=>{
+    if(selectEl.value === 'note-completion'){
+    renderReadingNoteCompletionForm(readingContainer);  
+  }else if (selectEl.value === 'matching-information') {
+    renderReadingMatchingInformationForm(readingContainer);
+  } else if(selectEl.value === "summary-completion"){
+    renderReadingSummaryCompletionForm(readingContainer);
+  } else if(selectEl.value === "mcq-one-choice"){
+    renderReadingMCQOneChoiceForm(readingContainer);
+  } else if(selectEl.value === "mcq-two-choice-updated"){
+    renderReadingMCQTwoChoiceForm(readingContainer);
+  } else if(selectEl.value === "feature-matching-drag-drop"){
+    renderReadingFeatureMatchingForm(readingContainer);
+  } else if(selectEl.value === "Y/N/NG"){
+    renderReadingYN_NGForm(readingContainer);
+  } else if(selectEl.value === "T/F/NG"){
+    renderReadingTF_NGForm(readingContainer);
+  } else if(selectEl.value === "list-of-headings"){
+    renderReadingListOfHeadingsForm(readingContainer);
+  } else if(selectEl.value === "sentence-completion"){
+    renderReadingSentenceCompletionForm(readingContainer);
+  } else if(selectEl.value === "summary-with-list-of-words"){
+    renderReadingSummaryWithListOfWordsForm(readingContainer);
+  } else if(selectEl.value === "table-completion"){
+    renderReadingTableCompletion(readingContainer);
+  }
+  selectDiv.remove();
+  })
+});
+
+const addReadingPassageBtn = document.getElementById("addReadingPassageBtn");
+
+addReadingPassageBtn.addEventListener("click", () => {
+  renderReadingPassageForm(readingContainer);
+});
+
+
+// RENDER READING NOTE COMPLETION FORM (same structure as listening)
+function renderReadingNoteCompletionForm(container) {
+  const groupDiv = document.createElement("div");
+  groupDiv.className = "subsection";
+
+  groupDiv.innerHTML = `
+    <h4>Note Completion Question Group</h4>
+    <button type="button" class="delete-group-btn">Delete Group</button>
+    <div class="field">
+        <label>Part</label>
+        <input type="number" value="1" class="part">
+    </div>
+    <div class="field">
+        <label>Group</label>
+        <input type="number" value="11" class="group">
+    </div>
+    <div class="field">
+        <label>Heading</label>
+        <input type="text" class="heading" value="">
+    </div>
+    <div class="field">
+        <label>Subheadings</label>
+        <div class="subheadingsContainer"></div>
+        <button type="button" class="addSubheading">Add Subheading</button>
+    </div>
+    <div class="field">
+        <label>Paragraphs</label>
+        <div class="paragraphsContainer"></div>
+        <button type="button" class="addParagraph">Add Paragraph</button>
+    </div>
+    <div class="field">
+        <label>ID Array (comma separated)</label>
+        <input type="text" class="idArray" value="">
+    </div>
+    <div class="field">
+        <label>Type</label>
+        <input type="text" class="type" value="note-completion" readonly>
+    </div>
+    <div class="field">
+    <label>Instruction</label>
+    <textarea class="instruction" rows="2" placeholder="Write the instruction for this group"></textarea>
+</div>
+<div class="field">
+    <label>Answers</label>
+    <div class="answersContainer"></div>
+    <button type="button" class="addAnswer">Add Answer</button>
+</div>
+  `;
+
+  // Delete group
+  groupDiv.querySelector(".delete-group-btn").addEventListener("click", () => {
+    groupDiv.remove();
+  });
+
+  // Subheadings
+  const subheadingsContainer = groupDiv.querySelector(".subheadingsContainer");
+  const addSubheadingBtn = groupDiv.querySelector(".addSubheading");
+  addSubheadingBtn.addEventListener("click", () => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "subfield-wrapper";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.placeholder = "Subheading text";
+    const delBtn = document.createElement("button");
+    delBtn.type = "button";
+    delBtn.className = "delete-btn";
+    delBtn.textContent = "Delete";
+    delBtn.addEventListener("click", () => wrapper.remove());
+    wrapper.appendChild(input);
+    wrapper.appendChild(delBtn);
+    subheadingsContainer.appendChild(wrapper);
+  });
+
+  // Paragraphs
+  const paragraphsContainer = groupDiv.querySelector(".paragraphsContainer");
+  const addParagraphBtn = groupDiv.querySelector(".addParagraph");
+  addParagraphBtn.addEventListener("click", () => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "subfield-wrapper";
+    const textarea = document.createElement("textarea");
+    textarea.placeholder = "Paragraph text";
+    textarea.rows = 2;
+    const blankBtn = document.createElement("button");
+    blankBtn.type = "button";
+    blankBtn.className = "blank-btn";
+    blankBtn.textContent = "Add [blank]";
+    blankBtn.addEventListener("click", () => {
+      const pos = textarea.selectionStart || textarea.value.length;
+      textarea.value = textarea.value.slice(0, pos) + "[blank]" + textarea.value.slice(pos);
+    });
+    const delBtn = document.createElement("button");
+    delBtn.type = "button";
+    delBtn.className = "delete-btn";
+    delBtn.textContent = "Delete";
+    delBtn.addEventListener("click", () => wrapper.remove());
+
+    wrapper.appendChild(textarea);
+    wrapper.appendChild(blankBtn);
+    wrapper.appendChild(delBtn);
+    paragraphsContainer.appendChild(wrapper);
+  });
+   // Answers
+const answersContainer = groupDiv.querySelector('.answersContainer');
+const addAnswerBtn = groupDiv.querySelector('.addAnswer');
+addAnswerBtn.addEventListener('click', () => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'subfield-wrapper';
+    const idInput = document.createElement('input');
+    idInput.type = 'number';
+    idInput.placeholder = 'Answer ID';
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Answer text (comma separated if multiple)';
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.className = 'delete-btn';
+    delBtn.addEventListener('click', () => wrapper.remove());
+    wrapper.appendChild(idInput);
+    wrapper.appendChild(ansInput);
+    wrapper.appendChild(delBtn);
+    answersContainer.appendChild(wrapper);})
+
+  container.appendChild(groupDiv);
+}
+
+// RENDER READING MATCHING INFORMATION FORM
+function renderReadingMatchingInformationForm(container) {
+  const groupDiv = document.createElement("div");
+  groupDiv.className = "subsection";
+
+  groupDiv.innerHTML = `
+    <h4>Matching Information Question Group</h4>
+    <button type="button" class="delete-group-btn">Delete Group</button>
+
+    <div class="field">
+      <label>Part</label>
+      <input type="number" class="part" value="2">
+    </div>
+
+    <div class="field">
+      <label>Group</label>
+      <input type="number" class="group" value="21">
+    </div>
+
+    <div class="field">
+      <label>Paragraphs (comma separated)</label>
+      <input type="text" class="paragraphsArray" placeholder="e.g. A, B, C, D, E, F, G">
+    </div>
+
+    <div class="field">
+      <label>ID Array (comma separated)</label>
+      <input type="text" class="idArray" placeholder="e.g. 14, 15, 16, 17, 18">
+    </div>
+
+    <div class="field">
+      <label>Information Statements</label>
+      <div class="informationContainer"></div>
+      <button type="button" class="addInformation">Add Information</button>
+    </div>
+
+    <div class="field">
+      <label>Type</label>
+      <input type="text" class="type" value="matching-information" readonly>
+    </div>
+
+    <div class="field">
+      <label>Instruction</label>
+      <textarea class="instruction" rows="2" placeholder="Write the instruction for this group"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Answers</label>
+      <div class="answersContainer"></div>
+      <button type="button" class="addAnswer">Add Answer</button>
+    </div>
+  `;
+
+  // Delete group button
+  groupDiv.querySelector(".delete-group-btn").addEventListener("click", () => groupDiv.remove());
+
+  // Add information items
+  const infoContainer = groupDiv.querySelector(".informationContainer");
+  const addInfoBtn = groupDiv.querySelector(".addInformation");
+  addInfoBtn.addEventListener("click", () => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "subfield-wrapper";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.placeholder = "Information text";
+    const delBtn = document.createElement("button");
+    delBtn.type = "button";
+    delBtn.className = "delete-btn";
+    delBtn.textContent = "Delete";
+    delBtn.addEventListener("click", () => wrapper.remove());
+    wrapper.appendChild(input);
+    wrapper.appendChild(delBtn);
+    infoContainer.appendChild(wrapper);
+  });
+
+  // Answers
+const answersContainer = groupDiv.querySelector('.answersContainer');
+const addAnswerBtn = groupDiv.querySelector('.addAnswer');
+addAnswerBtn.addEventListener('click', () => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'subfield-wrapper';
+    const idInput = document.createElement('input');
+    idInput.type = 'number';
+    idInput.placeholder = 'Answer ID';
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Answer text (comma separated if multiple)';
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.className = 'delete-btn';
+    delBtn.addEventListener('click', () => wrapper.remove());
+    wrapper.appendChild(idInput);
+    wrapper.appendChild(ansInput);
+    wrapper.appendChild(delBtn);
+    answersContainer.appendChild(wrapper);})
+  container.appendChild(groupDiv);
+}
+
+
+// RENDER READING SUMMARY COMPLETION FORM
+function renderReadingSummaryCompletionForm(container) {
+  const groupDiv = document.createElement("div");
+  groupDiv.className = "subsection";
+
+  groupDiv.innerHTML = `
+    <h4>Summary Completion Question Group</h4>
+    <button type="button" class="delete-group-btn">Delete Group</button>
+
+    <div class="field">
+      <label>Part</label>
+      <input type="number" class="part" value="2">
+    </div>
+
+    <div class="field">
+      <label>Group</label>
+      <input type="number" class="group" value="23">
+    </div>
+
+    <div class="field">
+      <label>Title</label>
+      <input type="text" class="title" placeholder="e.g. Uses of a Popular Tree">
+    </div>
+
+    <div class="field">
+      <label>ID Array (comma separated)</label>
+      <input type="text" class="idArray" placeholder="e.g. 24, 25, 26">
+    </div>
+
+    <div class="field">
+      <label>Summary</label>
+      <textarea class="summaryText" rows="5" placeholder="Enter the summary text. Use new lines for breaks."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Type</label>
+      <input type="text" class="type" value="summary-completion" readonly>
+    </div>
+
+    <div class="field">
+      <label>Instruction</label>
+      <textarea class="instruction" rows="2" placeholder="Write the instruction for this group"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Answers</label>
+      <div class="answersContainer"></div>
+      <button type="button" class="addAnswer">Add Answer</button>
+    </div>
+  `;
+
+  // Delete group button
+  groupDiv.querySelector(".delete-group-btn").addEventListener("click", () => groupDiv.remove());
+    // Answers
+const answersContainer = groupDiv.querySelector('.answersContainer');
+const addAnswerBtn = groupDiv.querySelector('.addAnswer');
+addAnswerBtn.addEventListener('click', () => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'subfield-wrapper';
+    const idInput = document.createElement('input');
+    idInput.type = 'number';
+    idInput.placeholder = 'Answer ID';
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Answer text (comma separated if multiple)';
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.className = 'delete-btn';
+    delBtn.addEventListener('click', () => wrapper.remove());
+    wrapper.appendChild(idInput);
+    wrapper.appendChild(ansInput);
+    wrapper.appendChild(delBtn);
+    answersContainer.appendChild(wrapper);})
+
+  container.appendChild(groupDiv);
+}
+
+// RENDER READING MCQ (ONE CHOICE)
+function renderReadingMCQOneChoiceForm(container){
+    const groupDiv = document.createElement("div");
+  groupDiv.className = "subsection";
+
+  groupDiv.innerHTML = `
+    <h4>MCQ (One Choice) Question Group</h4>
+    <button type="button" class="delete-group-btn">Delete Group</button>
+
+    <div class="field">
+      <label>Part</label>
+      <input type="number" class="part" value="3">
+    </div>
+
+    <div class="field">
+      <label>Group</label>
+      <input type="number" class="group" value="31">
+    </div>
+
+    <div class="field">
+      <label>ID Array (comma separated)</label>
+      <input type="text" class="idArray" placeholder="e.g. 27, 28, 29, 30">
+    </div>
+
+    <div class="field">
+      <label>Questions</label>
+      <div class="questionsContainer"></div>
+      <button type="button" class="addQuestion">Add Question</button>
+    </div>
+
+    <div class="field">
+      <label>Type</label>
+      <input type="text" class="type" value="mcq-one-choice" readonly>
+    </div>
+    <div class="field">
+      <label>Instruction</label>
+      <textarea class="instruction" rows="2" placeholder="Write the instruction for this group"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Answers</label>
+      <div class="answersContainer"></div>
+      <button type="button" class="addAnswer">Add Answer</button>
+    </div>
+    `
+
+
+    // === Delete group ===
+  groupDiv.querySelector(".delete-group-btn").addEventListener("click", () => groupDiv.remove());
+
+  // === Add Questions + Options ===
+  const questionsContainer = groupDiv.querySelector(".questionsContainer");
+  const addQuestionBtn = groupDiv.querySelector(".addQuestion");
+
+  addQuestionBtn.addEventListener("click", () => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "mcq-question subfield-wrapper";
+
+    const qTextarea = document.createElement("textarea");
+    qTextarea.className = "questionText";
+    qTextarea.rows = 2;
+    qTextarea.placeholder = "Enter question text";
+
+    const optionsDiv = document.createElement("div");
+    optionsDiv.className = "optionsContainer";
+
+    const addOptionBtn = document.createElement("button");
+    addOptionBtn.type = "button";
+    addOptionBtn.className = "addOption";
+    addOptionBtn.textContent = "Add Option";
+
+    addOptionBtn.addEventListener("click", () => {
+      const optWrapper = document.createElement("div");
+      optWrapper.className = "subfield-wrapper";
+
+      const optInput = document.createElement("input");
+      optInput.type = "text";
+      optInput.placeholder = "Option text";
+
+      const delOptBtn = document.createElement("button");
+      delOptBtn.type = "button";
+      delOptBtn.className = "delete-btn";
+      delOptBtn.textContent = "Delete";
+      delOptBtn.addEventListener("click", () => optWrapper.remove());
+
+      optWrapper.appendChild(optInput);
+      optWrapper.appendChild(delOptBtn);
+      optionsDiv.appendChild(optWrapper);
+    });
+
+    const delQBtn = document.createElement("button");
+    delQBtn.type = "button";
+    delQBtn.className = "delete-btn";
+    delQBtn.textContent = "Delete Question";
+    delQBtn.addEventListener("click", () => wrapper.remove());
+
+    wrapper.appendChild(qTextarea);
+    wrapper.appendChild(optionsDiv);
+    wrapper.appendChild(addOptionBtn);
+    wrapper.appendChild(delQBtn);
+
+    questionsContainer.appendChild(wrapper);
+  });
+
+      // Answers
+const answersContainer = groupDiv.querySelector('.answersContainer');
+const addAnswerBtn = groupDiv.querySelector('.addAnswer');
+addAnswerBtn.addEventListener('click', () => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'subfield-wrapper';
+    const idInput = document.createElement('input');
+    idInput.type = 'number';
+    idInput.placeholder = 'Answer ID';
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Answer text (comma separated if multiple)';
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.className = 'delete-btn';
+    delBtn.addEventListener('click', () => wrapper.remove());
+    wrapper.appendChild(idInput);
+    wrapper.appendChild(ansInput);
+    wrapper.appendChild(delBtn);
+    answersContainer.appendChild(wrapper);})
+
+  container.appendChild(groupDiv);
+}
+
+// RENDER READING MCQ (TWO CHOICES)
+function renderReadingMCQTwoChoiceForm(container) {
+  const groupDiv = document.createElement("div");
+  groupDiv.className = "subsection";
+
+  groupDiv.innerHTML = `
+    <h4>MCQ (Two Choices) Question Group</h4>
+    <button type="button" class="delete-group-btn">Delete Group</button>
+
+    <div class="field">
+      <label>Part</label>
+      <input type="number" class="part" value="2">
+    </div>
+
+    <div class="field">
+      <label>Group</label>
+      <input type="number" class="group" value="23">
+    </div>
+
+    <div class="field">
+      <label>ID Array (nested, e.g. [[23,24],[25,26]])</label>
+      <input type="text" class="idArray" placeholder="[[23,24],[25,26]]">
+    </div>
+
+    <div class="field">
+      <label>Questions</label>
+      <div class="mcqTwoChoiceQuestionsContainer"></div>
+      <button type="button" class="addTwoChoiceQuestion">Add Question</button>
+    </div>
+
+    <div class="field">
+      <label>Type</label>
+      <input type="text" class="type" value="mcq-two-choice-updated" readonly>
+    </div>
+
+    <div class="field">
+      <label>Instruction</label>
+      <textarea class="instruction" rows="2" placeholder="Write the instruction for this group"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Answers</label>
+      <div class="answersContainer"></div>
+      <button type="button" class="addAnswer">Add Answer</button>
+    </div>
+  `;
+
+  // === Delete group ===
+  groupDiv.querySelector(".delete-group-btn").addEventListener("click", () => groupDiv.remove());
+
+  // === Add Questions (each with its own options) ===
+  const questionsContainer = groupDiv.querySelector(".mcqTwoChoiceQuestionsContainer");
+  const addQuestionBtn = groupDiv.querySelector(".addTwoChoiceQuestion");
+
+  addQuestionBtn.addEventListener("click", () => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "subfield-wrapper";
+
+    const questionArea = document.createElement("textarea");
+    questionArea.placeholder = "Enter question text";
+    questionArea.rows = 2;
+    questionArea.className = "questionText";
+
+    const optionsDiv = document.createElement("div");
+    optionsDiv.className = "optionsContainer";
+
+    const addOptionBtn = document.createElement("button");
+    addOptionBtn.type = "button";
+    addOptionBtn.className = "addOption";
+    addOptionBtn.textContent = "Add Option";
+
+    addOptionBtn.addEventListener("click", () => {
+      const optWrapper = document.createElement("div");
+      optWrapper.className = "subfield-wrapper";
+
+      const optInput = document.createElement("input");
+      optInput.type = "text";
+      optInput.placeholder = "Option text";
+
+      const delOptBtn = document.createElement("button");
+      delOptBtn.type = "button";
+      delOptBtn.className = "delete-btn";
+      delOptBtn.textContent = "Delete";
+      delOptBtn.addEventListener("click", () => optWrapper.remove());
+
+      optWrapper.appendChild(optInput);
+      optWrapper.appendChild(delOptBtn);
+      optionsDiv.appendChild(optWrapper);
+    });
+
+    const delQBtn = document.createElement("button");
+    delQBtn.type = "button";
+    delQBtn.className = "delete-btn";
+    delQBtn.textContent = "Delete Question";
+    delQBtn.addEventListener("click", () => wrapper.remove());
+
+    wrapper.appendChild(questionArea);
+    wrapper.appendChild(optionsDiv);
+    wrapper.appendChild(addOptionBtn);
+    wrapper.appendChild(delQBtn);
+
+    questionsContainer.appendChild(wrapper);
+  });
+
+
+        // Answers
+const answersContainer = groupDiv.querySelector('.answersContainer');
+const addAnswerBtn = groupDiv.querySelector('.addAnswer');
+addAnswerBtn.addEventListener('click', () => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'subfield-wrapper';
+    const idInput = document.createElement('input');
+    idInput.type = 'number';
+    idInput.placeholder = 'Answer ID';
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Answer text (comma separated if multiple)';
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.className = 'delete-btn';
+    delBtn.addEventListener('click', () => wrapper.remove());
+    wrapper.appendChild(idInput);
+    wrapper.appendChild(ansInput);
+    wrapper.appendChild(delBtn);
+    answersContainer.appendChild(wrapper);})
+
+  container.appendChild(groupDiv);
+}
+// RENDER READING FEATURE MATCHING (DRAG-DROP)
+function renderReadingFeatureMatchingForm(container) {
+  const groupDiv = document.createElement("div");
+  groupDiv.className = "subsection";
+
+  groupDiv.innerHTML = `
+    <h4>Feature Matching (Drag & Drop)</h4>
+    <button type="button" class="delete-group-btn">Delete Group</button>
+
+    <div class="field">
+      <label>Part</label>
+      <input type="number" class="part" value="1">
+    </div>
+
+    <div class="field">
+      <label>Group</label>
+      <input type="number" class="group" value="11">
+    </div>
+
+    <div class="field">
+      <label>ID Array (comma separated)</label>
+      <input type="text" class="idArray" placeholder="e.g., 31, 32, 33">
+    </div>
+
+    <div class="field">
+      <label>Features</label>
+      <div class="featuresContainer"></div>
+      <button type="button" class="addFeature">Add Feature</button>
+    </div>
+
+    <div class="field">
+      <label>Options</label>
+      <div class="optionsContainer"></div>
+      <button type="button" class="addOption">Add Option</button>
+    </div>
+
+    <div class="field">
+      <label>Type</label>
+      <input type="text" class="type" value="feature-matching-drag-drop" readonly>
+    </div>
+
+    <div class="field">
+      <label>Instruction</label>
+      <textarea class="instruction" rows="2" placeholder="Write the instruction for this group"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Answers</label>
+      <div class="answersContainer"></div>
+      <button type="button" class="addAnswer">Add Answer</button>
+    </div>
+  `;
+
+  // Delete group
+  groupDiv.querySelector(".delete-group-btn").addEventListener("click", () => groupDiv.remove());
+
+  // Add feature
+  const featuresContainer = groupDiv.querySelector(".featuresContainer");
+  const addFeatureBtn = groupDiv.querySelector(".addFeature");
+  addFeatureBtn.addEventListener("click", () => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "subfield-wrapper";
+    const textarea = document.createElement("textarea");
+    textarea.rows = 2;
+    textarea.placeholder = "Feature text";
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "Delete";
+    delBtn.className = "delete-btn";
+    delBtn.type = "button";
+    delBtn.addEventListener("click", () => wrapper.remove());
+    wrapper.appendChild(textarea);
+    wrapper.appendChild(delBtn);
+    featuresContainer.appendChild(wrapper);
+  });
+
+  // Add option
+  const optionsContainer = groupDiv.querySelector(".optionsContainer");
+  const addOptionBtn = groupDiv.querySelector(".addOption");
+  addOptionBtn.addEventListener("click", () => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "subfield-wrapper";
+    const textarea = document.createElement("textarea");
+    textarea.rows = 2;
+    textarea.placeholder = "Option text";
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "Delete";
+    delBtn.className = "delete-btn";
+    delBtn.type = "button";
+    delBtn.addEventListener("click", () => wrapper.remove());
+    wrapper.appendChild(textarea);
+    wrapper.appendChild(delBtn);
+    optionsContainer.appendChild(wrapper);
+  });
+
+  // Add answer rows
+const answersContainer = groupDiv.querySelector('.answersContainer');
+const addAnswerBtn = groupDiv.querySelector('.addAnswer');
+addAnswerBtn.addEventListener('click', () => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'subfield-wrapper';
+    const idInput = document.createElement('input');
+    idInput.type = 'number';
+    idInput.placeholder = 'Answer ID';
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Answer text (comma separated if multiple)';
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.className = 'delete-btn';
+    delBtn.addEventListener('click', () => wrapper.remove());
+    wrapper.appendChild(idInput);
+    wrapper.appendChild(ansInput);
+    wrapper.appendChild(delBtn);
+    answersContainer.appendChild(wrapper);})
+
+  container.appendChild(groupDiv);
+}
+
+
+
+function renderReadingYN_NGForm(container) {
+  const groupDiv = document.createElement("div");
+  groupDiv.className = "subsection";
+
+  groupDiv.innerHTML = `
+    <h4>Y/N/NG</h4>
+    <button type="button" class="delete-group-btn">Delete Group</button>
+
+    <div class="field">
+      <label>Part</label>
+      <input type="number" class="part" value="3">
+    </div>
+
+    <div class="field">
+      <label>Group</label>
+      <input type="number" class="group" value="33">
+    </div>
+
+    <div class="field">
+      <label>ID Array (comma separated)</label>
+      <input type="text" class="idArray" placeholder="e.g., 36, 37, 38, 39, 40">
+    </div>
+
+    <div class="field">
+      <label>Questions</label>
+      <div class="questionsContainer"></div>
+      <button type="button" class="addQuestion">Add Question</button>
+    </div>
+
+    <div class="field">
+      <label>Type</label>
+      <input type="text" class="type" value="Y/N/NG" readonly>
+    </div>
+
+    <div class="field">
+      <label>Instruction</label>
+      <textarea class="instruction" rows="2" placeholder="Write the instruction for this group"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Answers</label>
+      <div class="answersContainer"></div>
+      <button type="button" class="addAnswer">Add Answer</button>
+    </div>
+  `;
+
+  // Delete group
+  groupDiv.querySelector(".delete-group-btn").addEventListener("click", () => groupDiv.remove());
+
+  // Add Question
+  const questionsContainer = groupDiv.querySelector(".questionsContainer");
+  const addQuestionBtn = groupDiv.querySelector(".addQuestion");
+  addQuestionBtn.addEventListener("click", () => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "subfield-wrapper";
+    const textarea = document.createElement("textarea");
+    textarea.rows = 2;
+    textarea.placeholder = "Write the question text";
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "Delete";
+    delBtn.className = "delete-btn";
+    delBtn.type = "button";
+    delBtn.addEventListener("click", () => wrapper.remove());
+    wrapper.appendChild(textarea);
+    wrapper.appendChild(delBtn);
+    questionsContainer.appendChild(wrapper);
+  });
+
+    // Add answer rows
+const answersContainer = groupDiv.querySelector('.answersContainer');
+const addAnswerBtn = groupDiv.querySelector('.addAnswer');
+addAnswerBtn.addEventListener('click', () => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'subfield-wrapper';
+    const idInput = document.createElement('input');
+    idInput.type = 'number';
+    idInput.placeholder = 'Answer ID';
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Answer text (comma separated if multiple)';
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.className = 'delete-btn';
+    delBtn.addEventListener('click', () => wrapper.remove());
+    wrapper.appendChild(idInput);
+    wrapper.appendChild(ansInput);
+    wrapper.appendChild(delBtn);
+    answersContainer.appendChild(wrapper);})
+
+
+  container.appendChild(groupDiv);
+}
+
+function renderReadingTF_NGForm(container) {
+  const groupDiv = document.createElement("div");
+  groupDiv.className = "subsection";
+
+  groupDiv.innerHTML = `
+    <h4>T/F/NG</h4>
+    <button type="button" class="delete-group-btn">Delete Group</button>
+
+    <div class="field">
+      <label>Part</label>
+      <input type="number" class="part" value="1">
+    </div>
+
+    <div class="field">
+      <label>Group</label>
+      <input type="number" class="group" value="11">
+    </div>
+
+    <div class="field">
+      <label>ID Array (comma separated)</label>
+      <input type="text" class="idArray" placeholder="e.g., 1, 2, 3, 4">
+    </div>
+
+    <div class="field">
+      <label>Questions</label>
+      <div class="questionsContainer"></div>
+      <button type="button" class="addQuestion">Add Question</button>
+    </div>
+
+    <div class="field">
+      <label>Type</label>
+      <input type="text" class="type" value="T/F/NG" readonly>
+    </div>
+
+    <div class="field">
+      <label>Instruction</label>
+      <textarea class="instruction" rows="2" placeholder="Write the instruction for this group"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Answers</label>
+      <div class="answersContainer"></div>
+      <button type="button" class="addAnswer">Add Answer</button>
+    </div>
+  `;
+
+  // Delete group
+  groupDiv.querySelector(".delete-group-btn").addEventListener("click", () => groupDiv.remove());
+
+  // Add Question
+  const questionsContainer = groupDiv.querySelector(".questionsContainer");
+  const addQuestionBtn = groupDiv.querySelector(".addQuestion");
+  addQuestionBtn.addEventListener("click", () => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "subfield-wrapper";
+    const textarea = document.createElement("textarea");
+    textarea.rows = 2;
+    textarea.placeholder = "Write the question text";
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "Delete";
+    delBtn.className = "delete-btn";
+    delBtn.type = "button";
+    delBtn.addEventListener("click", () => wrapper.remove());
+    wrapper.appendChild(textarea);
+    wrapper.appendChild(delBtn);
+    questionsContainer.appendChild(wrapper);
+  });
+
+
+  // Add answer rows
+const answersContainer = groupDiv.querySelector('.answersContainer');
+const addAnswerBtn = groupDiv.querySelector('.addAnswer');
+addAnswerBtn.addEventListener('click', () => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'subfield-wrapper';
+    const idInput = document.createElement('input');
+    idInput.type = 'number';
+    idInput.placeholder = 'Answer ID';
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Answer text (comma separated if multiple)';
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.className = 'delete-btn';
+    delBtn.addEventListener('click', () => wrapper.remove());
+    wrapper.appendChild(idInput);
+    wrapper.appendChild(ansInput);
+    wrapper.appendChild(delBtn);
+    answersContainer.appendChild(wrapper);})
+  
+
+  container.appendChild(groupDiv);
+}
+
+function renderReadingListOfHeadingsForm(container) {
+  const groupDiv = document.createElement("div");
+  groupDiv.className = "subsection";
+
+  groupDiv.innerHTML = `
+    <h4>List of Headings</h4>
+    <button type="button" class="delete-group-btn">Delete Group</button>
+
+    <div class="field">
+      <label>Part</label>
+      <input type="number" class="part" value="1">
+    </div>
+
+    <div class="field">
+      <label>Group</label>
+      <input type="number" class="group" value="11">
+    </div>
+
+    <div class="field">
+      <label>ID Array (comma separated)</label>
+      <input type="text" class="idArray" placeholder="e.g., 14, 15, 16, 17, 18, 19">
+    </div>
+
+    <div class="field">
+      <label>Paragraphs</label>
+      <div class="paragraphsContainer"></div>
+      <button type="button" class="addParagraph">Add Paragraph</button>
+    </div>
+
+    <div class="field">
+      <label>Headings</label>
+      <div class="headingsContainer"></div>
+      <button type="button" class="addHeading">Add Heading</button>
+    </div>
+
+    <div class="field">
+      <label>Type</label>
+      <input type="text" class="type" value="list-of-headings" readonly>
+    </div>
+
+    <div class="field">
+      <label>Instruction</label>
+      <textarea class="instruction" rows="2" placeholder="Write the instruction for this group"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Answers</label>
+      <div class="answersContainer"></div>
+      <button type="button" class="addAnswer">Add Answer</button>
+    </div>
+    
+  `;
+
+  // Delete group
+  groupDiv.querySelector(".delete-group-btn").addEventListener("click", () => groupDiv.remove());
+
+  // Add Paragraphs
+  const paragraphsContainer = groupDiv.querySelector(".paragraphsContainer");
+  const addParagraphBtn = groupDiv.querySelector(".addParagraph");
+  addParagraphBtn.addEventListener("click", () => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "subfield-wrapper";
+    const input = document.createElement("input");
+    input.type = "text";
+    input.placeholder = "Paragraph label (e.g., A, B, C)";
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "Delete";
+    delBtn.className = "delete-btn";
+    delBtn.type = "button";
+    delBtn.addEventListener("click", () => wrapper.remove());
+    wrapper.appendChild(input);
+    wrapper.appendChild(delBtn);
+    paragraphsContainer.appendChild(wrapper);
+  });
+
+  // Add Headings
+  const headingsContainer = groupDiv.querySelector(".headingsContainer");
+  const addHeadingBtn = groupDiv.querySelector(".addHeading");
+  addHeadingBtn.addEventListener("click", () => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "subfield-wrapper";
+    const textarea = document.createElement("textarea");
+    textarea.rows = 2;
+    textarea.placeholder = "Heading text";
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "Delete";
+    delBtn.className = "delete-btn";
+    delBtn.type = "button";
+    delBtn.addEventListener("click", () => wrapper.remove());
+    wrapper.appendChild(textarea);
+    wrapper.appendChild(delBtn);
+    headingsContainer.appendChild(wrapper);
+  });
+
+    // Add answer rows
+const answersContainer = groupDiv.querySelector('.answersContainer');
+const addAnswerBtn = groupDiv.querySelector('.addAnswer');
+addAnswerBtn.addEventListener('click', () => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'subfield-wrapper';
+    const idInput = document.createElement('input');
+    idInput.type = 'number';
+    idInput.placeholder = 'Answer ID';
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Answer text (comma separated if multiple)';
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.className = 'delete-btn';
+    delBtn.addEventListener('click', () => wrapper.remove());
+    wrapper.appendChild(idInput);
+    wrapper.appendChild(ansInput);
+    wrapper.appendChild(delBtn);
+    answersContainer.appendChild(wrapper);})
+
+  container.appendChild(groupDiv);
+}
+
+function renderReadingSentenceCompletionForm(container) {
+  const groupDiv = document.createElement("div");
+  groupDiv.className = "subsection";
+
+  groupDiv.innerHTML = `
+    <h4>Sentence Completion</h4>
+    <button type="button" class="delete-group-btn">Delete Group</button>
+
+    <div class="field">
+      <label>Part</label>
+      <input type="number" class="part" value="1">
+    </div>
+
+    <div class="field">
+      <label>Group</label>
+      <input type="number" class="group" value="11">
+    </div>
+
+    <div class="field">
+      <label>ID Array (comma separated)</label>
+      <input type="text" class="idArray" placeholder="e.g., 11, 12, 13">
+    </div>
+
+    <div class="field">
+      <label>Sentences</label>
+      <div class="sentencesContainer"></div>
+      <button type="button" class="addSentence">Add Sentence</button>
+    </div>
+
+    <div class="field">
+      <label>Type</label>
+      <input type="text" class="type" value="sentence-completion" readonly>
+    </div>
+    <div class="field">
+      <label>Instruction</label>
+      <textarea class="instruction" rows="2" placeholder="Write the instruction for this group"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Answers</label>
+      <div class="answersContainer"></div>
+      <button type="button" class="addAnswer">Add Answer</button>
+    </div>
+    
+  `;
+
+  // Delete entire group
+  groupDiv.querySelector(".delete-group-btn").addEventListener("click", () => groupDiv.remove());
+
+  // --- Sentences ---
+  const sentencesContainer = groupDiv.querySelector(".sentencesContainer");
+  const addSentenceBtn = groupDiv.querySelector(".addSentence");
+  addSentenceBtn.addEventListener("click", () => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "subfield-wrapper";
+
+    const textarea = document.createElement("textarea");
+    textarea.placeholder = "Sentence text (you can insert [blank] where needed)";
+    textarea.rows = 2;
+
+    // Automatically insert [blank] at cursor
+    const blankBtn = document.createElement("button");
+    blankBtn.type = "button";
+    blankBtn.textContent = "Add [blank]";
+    blankBtn.className = "blank-btn";
+    blankBtn.addEventListener("click", () => {
+      const pos = textarea.selectionStart || textarea.value.length;
+      textarea.value = textarea.value.slice(0, pos) + "[blank]" + textarea.value.slice(pos);
+    });
+
+    // Delete sentence
+    const delBtn = document.createElement("button");
+    delBtn.type = "button";
+    delBtn.className = "delete-btn";
+    delBtn.textContent = "Delete";
+    delBtn.addEventListener("click", () => wrapper.remove());
+
+    wrapper.appendChild(textarea);
+    wrapper.appendChild(blankBtn);
+    wrapper.appendChild(delBtn);
+    sentencesContainer.appendChild(wrapper);
+  });
+
+  // --- Answers ---
+   // Add answer rows
+const answersContainer = groupDiv.querySelector('.answersContainer');
+const addAnswerBtn = groupDiv.querySelector('.addAnswer');
+addAnswerBtn.addEventListener('click', () => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'subfield-wrapper';
+    const idInput = document.createElement('input');
+    idInput.type = 'number';
+    idInput.placeholder = 'Answer ID';
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Answer text (comma separated if multiple)';
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.className = 'delete-btn';
+    delBtn.addEventListener('click', () => wrapper.remove());
+    wrapper.appendChild(idInput);
+    wrapper.appendChild(ansInput);
+    wrapper.appendChild(delBtn);
+    answersContainer.appendChild(wrapper);})
+
+  container.appendChild(groupDiv);
+}
+
+function renderReadingSummaryWithListOfWordsForm(container) {
+  const groupDiv = document.createElement("div");
+  groupDiv.className = "subsection";
+
+  groupDiv.innerHTML = `
+    <h4>Summary with List of Words</h4>
+    <button type="button" class="delete-group-btn">Delete Group</button>
+
+    <div class="field">
+      <label>Part</label>
+      <input type="number" class="part" value="1">
+    </div>
+
+    <div class="field">
+      <label>Group</label>
+      <input type="number" class="group" value="1">
+    </div>
+
+    <div class="field">
+      <label>ID Array (comma separated)</label>
+      <input type="text" class="idArray" placeholder="e.g. 33, 34, 35, 36, 37">
+    </div>
+
+    <div class="field">
+      <label>Title</label>
+      <input type="text" class="summaryTitle" placeholder="Title of the summary">
+    </div>
+
+    <div class="field">
+      <label>Word List</label>
+      <div class="wordListContainer"></div>
+      <button type="button" class="addWord">Add Word</button>
+    </div>
+
+    <div class="field">
+      <label>Summary Texts</label>
+      <div class="summaryContainer"></div>
+      <button type="button" class="addSummary">Add Summary Block</button>
+    </div>
+
+    <div class="field">
+      <label>Type</label>
+      <input type="text" class="type" value="summary-with-list-of-words" readonly>
+    </div>
+    <div class="field">
+      <label>Instruction</label>
+      <textarea class="instruction" rows="2" placeholder="Write the instruction for this group"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Answers</label>
+      <div class="answersContainer"></div>
+      <button type="button" class="addAnswer">Add Answer</button>
+    </div>
+
+  `;
+
+  // --- Delete group ---
+  groupDiv.querySelector(".delete-group-btn").addEventListener("click", () => groupDiv.remove());
+
+  // --- Word List ---
+  const wordListContainer = groupDiv.querySelector(".wordListContainer");
+  const addWordBtn = groupDiv.querySelector(".addWord");
+  addWordBtn.addEventListener("click", () => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "subfield-wrapper";
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.placeholder = "Word or phrase";
+
+    const delBtn = document.createElement("button");
+    delBtn.type = "button";
+    delBtn.textContent = "Delete";
+    delBtn.className = "delete-btn";
+    delBtn.addEventListener("click", () => wrapper.remove());
+
+    wrapper.appendChild(input);
+    wrapper.appendChild(delBtn);
+    wordListContainer.appendChild(wrapper);
+  });
+
+  // --- Summary Blocks ---
+  const summaryContainer = groupDiv.querySelector(".summaryContainer");
+  const addSummaryBtn = groupDiv.querySelector(".addSummary");
+  addSummaryBtn.addEventListener("click", () => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "subfield-wrapper";
+
+    const textarea = document.createElement("textarea");
+    textarea.placeholder = "Summary paragraph text (you can insert [blank])";
+    textarea.rows = 4;
+
+    const blankBtn = document.createElement("button");
+    blankBtn.type = "button";
+    blankBtn.textContent = "Add [blank]";
+    blankBtn.className = "blank-btn";
+    blankBtn.addEventListener("click", () => {
+      const pos = textarea.selectionStart || textarea.value.length;
+      textarea.value = textarea.value.slice(0, pos) + "[blank]" + textarea.value.slice(pos);
+    });
+
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "Delete";
+    delBtn.className = "delete-btn";
+    delBtn.type = "button";
+    delBtn.addEventListener("click", () => wrapper.remove());
+
+    wrapper.appendChild(textarea);
+    wrapper.appendChild(blankBtn);
+    wrapper.appendChild(delBtn);
+    summaryContainer.appendChild(wrapper);
+  });
+
+
+  // --- Answers ---
+   // Add answer rows
+const answersContainer = groupDiv.querySelector('.answersContainer');
+const addAnswerBtn = groupDiv.querySelector('.addAnswer');
+addAnswerBtn.addEventListener('click', () => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'subfield-wrapper';
+    const idInput = document.createElement('input');
+    idInput.type = 'number';
+    idInput.placeholder = 'Answer ID';
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Answer text (comma separated if multiple)';
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.className = 'delete-btn';
+    delBtn.addEventListener('click', () => wrapper.remove());
+    wrapper.appendChild(idInput);
+    wrapper.appendChild(ansInput);
+    wrapper.appendChild(delBtn);
+    answersContainer.appendChild(wrapper);})
+
+  container.appendChild(groupDiv);
+}
+
+function renderReadingTableCompletion(container) {
+    const groupDiv = document.createElement('div');
+    groupDiv.className = 'subsection';
+    groupDiv.innerHTML = `
+        <h4>Table Completion Question Group</h4>
+        <button type="button" class="delete-group-btn">Delete Group</button>
+        <div class="field"><label>Part</label><input type="number" value="1" class="part"></div>
+        <div class="field"><label>Group</label><input type="number" value="11" class="group"></div>
+        <div class="field">
+            <label>ID Array (comma separated)</label>
+            <input type="text" class="idArray" value="1,2,3,4,5,6,7,8,9,10">
+        </div>
+        <div class="field">
+            <label>Rows</label>
+            <div class="tableRowsContainer"></div>
+            <button type="button" class="addTableRow">Add Row</button>
+        </div>
+        <div class="field">
+            <label>Type</label>
+            <input type="text" class="type" value="table-completion" readonly>
+        </div>
+        <div class="field">
+        <label>Instruction</label>
+    <textarea class="instruction" rows="2" placeholder="Write the instruction for this group"></textarea>
+    </div>
+<div class="field">
+    <label>Answers</label>
+    <div class="answersContainer"></div>
+    <button type="button" class="addAnswer">Add Answer</button>
+</div>
+    `;
+    
+
+    // Delete group button
+    groupDiv.querySelector('.delete-group-btn').addEventListener('click', () => groupDiv.remove());
+
+    const rowsContainer = groupDiv.querySelector('.tableRowsContainer');
+
+    // Add Row button
+    groupDiv.querySelector('.addTableRow').addEventListener('click', () => {
+        const rowWrapper = document.createElement('div');
+        rowWrapper.className = 'table-row subfield-wrapper';
+        
+        // Ask user how many cells for this row
+        const numCells = prompt('Enter number of cells for this row:', '4');
+        const cellCount = parseInt(numCells) || 1;
+
+        for (let i = 0; i < cellCount; i++) {
+            const textarea = document.createElement("textarea");
+            textarea.rows = 2;
+            textarea.placeholder = `Cell ${i+1}`;
+            textarea.className = 'table-cell';
+            rowWrapper.appendChild(textarea);
+        }
+
+        // Delete row button
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.className = 'delete-btn';
+        delBtn.textContent = 'Delete Row';
+        delBtn.addEventListener('click', () => rowWrapper.remove());
+
+        rowWrapper.appendChild(delBtn);
+        rowsContainer.appendChild(rowWrapper);
+    });
+    // Answers
+const answersContainer = groupDiv.querySelector('.answersContainer');
+const addAnswerBtn = groupDiv.querySelector('.addAnswer');
+addAnswerBtn.addEventListener('click', () => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'subfield-wrapper';
+    const idInput = document.createElement('input');
+    idInput.type = 'number';
+    idInput.placeholder = 'Answer ID';
+    const ansInput = document.createElement('input');
+    ansInput.type = 'text';
+    ansInput.placeholder = 'Answer text (comma separated if multiple)';
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.className = 'delete-btn';
+    delBtn.addEventListener('click', () => wrapper.remove());
+    wrapper.appendChild(idInput);
+    wrapper.appendChild(ansInput);
+    wrapper.appendChild(delBtn);
+    answersContainer.appendChild(wrapper);
+});
+
+  container.appendChild(groupDiv);
+}
+
+function renderReadingPassageForm(container) {
+  const passageDiv = document.createElement("div");
+  passageDiv.className = "subsection";
+
+  passageDiv.innerHTML = `
+    <h4>Reading Passage</h4>
+    <button type="button" class="delete-group-btn">Delete Passage</button>
+
+    <div class="field">
+      <label>Part</label>
+      <input type="number" class="part" value="1">
+    </div>
+
+    <div class="field">
+      <label>Title</label>
+      <input type="text" class="passageTitle" placeholder="Passage title">
+    </div>
+
+    <div class="field">
+      <label>Paragraph Labels (comma separated)</label>
+      <input type="text" class="paragraphLabels" placeholder="e.g. A, B, C, D">
+    </div>
+
+    <div class="field">
+      <label>Paragraph Contents</label>
+      <div class="paragraphContainer"></div>
+      <button type="button" class="addParagraph">Add Paragraph Content</button>
+    </div>
+  `;
+
+  // Delete passage
+  passageDiv.querySelector(".delete-group-btn").addEventListener("click", () => passageDiv.remove());
+
+  // Add paragraphs dynamically
+  const paragraphContainer = passageDiv.querySelector(".paragraphContainer");
+  const addParagraphBtn = passageDiv.querySelector(".addParagraph");
+
+  addParagraphBtn.addEventListener("click", () => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "subfield-wrapper";
+
+    const textarea = document.createElement("textarea");
+    textarea.placeholder = "Write paragraph content here...";
+    textarea.rows = 8;
+
+    const brNotice = document.createElement("small");
+    brNotice.textContent = "Line breaks will be converted to <br>";
+
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "Delete";
+    delBtn.type = "button";
+    delBtn.className = "delete-btn";
+    delBtn.addEventListener("click", () => wrapper.remove());
+
+    wrapper.appendChild(textarea);
+    wrapper.appendChild(brNotice);
+    wrapper.appendChild(delBtn);
+    paragraphContainer.appendChild(wrapper);
+  });
+
+  container.appendChild(passageDiv);
+}
+
+
+function exportReadingJSON() {
+    const readingQuestions = [];
+    const readingInstructions = [];
+    const readingAnswers = {};
+
+    // Loop through all subsections in reading
+    readingContainer.querySelectorAll('.subsection').forEach(sub => {
+        const type = sub.querySelector('.type')?.value || '';
+        const part = parseInt(sub.querySelector('.part')?.value || 0);
+        const group = parseInt(sub.querySelector('.group')?.value || 0);
+
+        // NOTE COMPLETION
+        if (type === 'note-completion') {
+            const heading = sub.querySelector('.heading')?.value || '';
+            const subheadings = Array.from(sub.querySelectorAll('.subheadingsContainer input')).map(i => i.value);
+            const paragraphs = Array.from(sub.querySelectorAll('.paragraphsContainer textarea')).map(t =>
+                t.value.split('\n').filter(s => s.trim() !== '')
+            );
+            const id = sub.querySelector('.idArray')
+                ? sub.querySelector('.idArray').value.split(',').map(n => parseInt(n.trim()))
+                : [];
+            readingQuestions.push({ part, group, heading, subheadings, paragraphs, id, type });
+        } else if (type === 'matching-information') {
+    const paragraphs = sub.querySelector('.paragraphsArray')?.value
+        .split(',')
+        .map(p => p.trim())
+        .filter(p => p !== '') || [];
+    const id = sub.querySelector('.idArray')?.value
+        .split(',')
+        .map(n => parseInt(n.trim()))
+        .filter(n => !isNaN(n)) || [];
+    const information = Array.from(sub.querySelectorAll('.informationContainer input'))
+        .map(i => i.value.trim())
+        .filter(v => v !== '');
+    readingQuestions.push({ part, group, type, paragraphs, id, information });
+     } else if (type === "summary-completion") {
+    const id = sub.querySelector(".idArray")?.value
+        .split(',')
+        .map(n => parseInt(n.trim()))
+        .filter(n => !isNaN(n)) || [];
+    const title = sub.querySelector(".title")?.value.trim() || "";
+    const summaryRaw = sub.querySelector(".summaryText")?.value.trim() || "";
+    const summary = [summaryRaw.replace(/\n/g, "<br>")];
+
+    readingQuestions.push({ part, group, type, id, title, summary });
+} else if (type === "mcq-one-choice") {
+  const id = sub.querySelector(".idArray")?.value
+    .split(',')
+    .map(n => parseInt(n.trim()))
+    .filter(n => !isNaN(n)) || [];
+
+  const part = parseInt(sub.querySelector(".part")?.value) || 1;
+  const group = parseInt(sub.querySelector(".group")?.value) || 0;
+  const instruction = (sub.querySelector(".instruction")?.value.trim().replace(/\n/g, "<br>")) || "";
+  
+  const questions = [];
+  const options = [];
+
+  sub.querySelectorAll(".mcq-question").forEach(qDiv => {
+    const qText = qDiv.querySelector(".questionText")?.value.trim() || "";
+    if (!qText) return;
+    questions.push(qText);
+
+    const opts = Array.from(qDiv.querySelectorAll(".optionsContainer input"))
+      .map(i => i.value.trim())
+      .filter(v => v !== "");
+    options.push(opts);
+  });
+  // Push to questions
+  readingQuestions.push({ part, group, type, id, questions, options });
+} else if (type === "mcq-two-choice-updated") {
+  const part = parseInt(sub.querySelector(".part")?.value) || 1;
+  const group = parseInt(sub.querySelector(".group")?.value) || 0;
+
+  // Parse ID structure
+  const idText = sub.querySelector(".idArray")?.value || "";
+  const id = idText.match(/\[(.*?)\]/g)?.map(arr =>
+    arr.replace(/[\[\]\s]/g, "").split(",").map(Number)
+  ) || [];
+
+  // Collect questions + options
+  const questionGroups = [];
+  const optionGroups = [];
+
+  sub.querySelectorAll(".mcqTwoChoiceQuestionsContainer > .subfield-wrapper").forEach(qWrap => {
+    const questionText = qWrap.querySelector("textarea")?.value.trim() || "";
+    if (!questionText) return;
+
+    const options = Array.from(qWrap.querySelectorAll(".optionsContainer input"))
+      .map(i => i.value.trim())
+      .filter(v => v !== "");
+
+    questionGroups.push([questionText]);
+    optionGroups.push(options);
+  });
+
+
+
+  readingQuestions.push({
+    part,
+    group,
+    type,
+    id,
+    questions: questionGroups,
+    options: optionGroups,
+  });
+
+
+  Object.assign(readingAnswers);
+} else if (type === "feature-matching-drag-drop") {
+  const part = parseInt(sub.querySelector(".part")?.value) || 1;
+  const group = parseInt(sub.querySelector(".group")?.value) || 0;
+
+  const id = (sub.querySelector(".idArray")?.value || "")
+    .split(",")
+    .map(v => parseInt(v.trim()))
+    .filter(v => !isNaN(v));
+
+  const features = Array.from(
+    sub.querySelectorAll(".featuresContainer textarea, .featuresContainer input")
+  )
+    .map(el => el.value.trim())
+    .filter(v => v !== "");
+
+  const options = Array.from(
+    sub.querySelectorAll(".optionsContainer textarea, .optionsContainer input")
+  )
+    .map(el => el.value.trim())
+    .filter(v => v !== "");
+
+
+  readingQuestions.push({
+    part,
+    group,
+    type,
+    id,
+    options,
+    features
+  });
+
+  
+  Object.assign(readingAnswers);
+} else if (type === "Y/N/NG") {
+  const part = parseInt(sub.querySelector(".part")?.value) || 1;
+  const group = parseInt(sub.querySelector(".group")?.value) || 0;
+
+  const id = (sub.querySelector(".idArray")?.value || "")
+    .split(",")
+    .map(v => parseInt(v.trim()))
+    .filter(v => !isNaN(v));
+
+  const questions = Array.from(sub.querySelectorAll(".questionsContainer textarea"))
+    .map(el => el.value.trim())
+    .filter(v => v !== "");
+
+  
+
+  
+
+  readingQuestions.push({
+    part,
+    group,
+    type,
+    id,
+    questions
+  });
+
+  
+  Object.assign(readingAnswers);
+} else if (type === "T/F/NG") {
+  const part = parseInt(sub.querySelector(".part")?.value) || 1;
+  const group = parseInt(sub.querySelector(".group")?.value) || 0;
+
+  const id = (sub.querySelector(".idArray")?.value || "")
+    .split(",")
+    .map(v => parseInt(v.trim()))
+    .filter(v => !isNaN(v));
+
+  const questions = Array.from(sub.querySelectorAll(".questionsContainer textarea"))
+    .map(el => el.value.trim())
+    .filter(v => v !== "");
+
+  
+
+  readingQuestions.push({
+    part,
+    group,
+    type,
+    id,
+    questions
+  });
+
+  
+  Object.assign(readingAnswers);
+} else if (type === "list-of-headings") {
+  const part = parseInt(sub.querySelector(".part")?.value) || 1;
+  const group = parseInt(sub.querySelector(".group")?.value) || 0;
+
+  const id = (sub.querySelector(".idArray")?.value || "")
+    .split(",")
+    .map(v => parseInt(v.trim()))
+    .filter(v => !isNaN(v));
+
+  const paragraphs = Array.from(sub.querySelectorAll(".paragraphsContainer input"))
+    .map(el => el.value.trim())
+    .filter(v => v !== "");
+
+  const headings = Array.from(sub.querySelectorAll(".headingsContainer textarea"))
+    .map(el => el.value.trim())
+    .filter(v => v !== "");
+
+  
+
+  readingQuestions.push({
+    part,
+    group,
+    type,
+    id,
+    paragraphs,
+    headings
+  });
+
+  
+  Object.assign(readingAnswers);
+} else if (type === "sentence-completion") {
+  const part = parseInt(sub.querySelector(".part")?.value) || 1;
+  const group = parseInt(sub.querySelector(".group")?.value) || 0;
+
+  const id = (sub.querySelector(".idArray")?.value || "")
+    .split(",")
+    .map(v => parseInt(v.trim()))
+    .filter(v => !isNaN(v));
+
+  // Replace newlines with <br> for sentence formatting
+  const sentences = Array.from(sub.querySelectorAll(".sentencesContainer textarea"))
+    .map(el => el.value.trim().replace(/\n/g, "<br>"))
+    .filter(v => v !== "");
+
+
+  readingQuestions.push({ part, group, type, id, sentences });
+
+  
+  Object.assign(readingAnswers);
+} else if (type === "summary-with-list-of-words") {
+  const part = parseInt(sub.querySelector(".part")?.value) || 1;
+  const group = parseInt(sub.querySelector(".group")?.value) || 0;
+  const id = (sub.querySelector(".idArray")?.value || "")
+    .split(",")
+    .map(v => parseInt(v.trim()))
+    .filter(v => !isNaN(v));
+
+  const title = sub.querySelector(".summaryTitle")?.value.trim() || "";
+
+  const wordList = Array.from(sub.querySelectorAll(".wordListContainer input"))
+    .map(el => el.value.trim())
+    .filter(v => v !== "");
+
+  const summary = Array.from(sub.querySelectorAll(".summaryContainer textarea"))
+    .map(el => el.value.trim().replace(/\n/g, "<br>"))
+    .filter(v => v !== "");
+
+
+
+
+
+  readingQuestions.push({ part, group, type, id, "word-list": wordList, title, summary });
+
+  
+  Object.assign(readingAnswers);
+} else if (type === 'table-completion') {
+            const rows = Array.from(sub.querySelectorAll('.table-row')).map(row =>
+  Array.from(row.querySelectorAll('.table-cell')).map(cell =>
+    cell.value.trim().replace(/\n/g, "<br>")
+  )
+);
+            const tableStructure = rows.map(row => row.length);
+            const id = sub.querySelector('.idArray')
+                ? sub.querySelector('.idArray').value.split(',').map(n => parseInt(n.trim()))
+                : [];
+            readingQuestions.push({
+                part,
+                group,
+                type,
+                id,
+                'table-structure': tableStructure,
+                cells: rows
+            });} 
+
+        // --- INSTRUCTIONS ---
+        const instruction = (sub.querySelector(".instruction")?.value.trim().replace(/\n/g, "<br>")) || "";
+        readingInstructions.push({ group, instruction });
+
+        // --- ANSWERS ---
+        const answerRows = sub.querySelectorAll('.answersContainer .subfield-wrapper');
+        answerRows.forEach(row => {
+            const id = parseInt(row.querySelector('input[type="number"]')?.value);
+            const answerValues = row.querySelector('input[type="text"]')?.value
+                .split(',')
+                .map(v => v.trim())
+                .filter(v => v !== '');
+            if (!isNaN(id) && answerValues.length) {
+                readingAnswers[id] = answerValues;
+            }
+        });
+    });
+
+const readingPassages = [];
+
+document.querySelectorAll("#readingContent .subsection").forEach(sub => {
+  const titleField = sub.querySelector(".passageTitle");
+  if (titleField) {
+    const part = parseInt(sub.querySelector(".part")?.value) || 1;
+    const title = titleField.value.trim();
+
+    // Paragraph labels
+    const paragraphs = (sub.querySelector(".paragraphLabels")?.value || "")
+      .split(",")
+      .map(v => v.trim())
+      .filter(v => v !== "");
+
+    // Paragraph content
+    const paragraphContent = Array.from(sub.querySelectorAll(".paragraphContainer .subfield-wrapper textarea"))
+      .map(t => [t.value.trim().replace(/\n/g, "<br>")])
+      .filter(arr => arr[0] !== "");
+
+    // Only push if title and content exist
+    if (title && paragraphContent.length) {
+      readingPassages.push({ part, title, paragraphs, "paragraph-content": paragraphContent });
+    }
+  }
+});
+
+console.log(readingPassages);
+
+    return {
+        passages: readingPassages,
+        questions: readingQuestions,
+        instructions: readingInstructions,
+        answers: readingAnswers
+    };
+}
+
+// ==================== WRITING MODULE ====================
+
+const writingContainer = document.getElementById("writingContent");
+
+// Render a Writing Task form
+function renderWritingTaskForm(container, taskPart) {
+  const taskDiv = document.createElement("div");
+  taskDiv.className = "subsection";
+
+  taskDiv.innerHTML = `
+    <h4>Writing Task ${taskPart}</h4>
+    <button type="button" class="delete-group-btn">Delete Task</button>
+
+    <div class="field">
+      <label>Part</label>
+      <input type="number" class="part" value="${taskPart}">
+    </div>
+
+    <div class="field">
+      <label>Question</label>
+      <textarea class="question" rows="4" placeholder="Enter the question here..."></textarea>
+    </div>
+
+    ${taskPart === 1 ? `
+    <div class="field">
+      <label>Images (comma separated URLs)</label>
+      <input type="text" class="images" placeholder="Enter image URLs if any">
+    </div>` : ''}
+
+  `;
+
+  // Delete task
+  taskDiv.querySelector(".delete-group-btn").addEventListener("click", () => taskDiv.remove());
+
+  container.appendChild(taskDiv);
+}
+
+// Add buttons to add Task 1 and Task 2
+document.getElementById("addWritingTask1Btn").addEventListener("click", () => renderWritingTaskForm(writingContainer, 1));
+document.getElementById("addWritingTask2Btn").addEventListener("click", () => renderWritingTaskForm(writingContainer, 2));
+
+// Collect writing questions for export
+function collectWritingQuestions() {
+  const writingQuestions = [];
+
+  writingContainer.querySelectorAll(".subsection").forEach(taskDiv => {
+    const part = parseInt(taskDiv.querySelector(".part").value);
+    const question = taskDiv.querySelector(".question").value.trim();
+    const questionObj = { part, question };
+
+    if (part === 1) {
+      const imagesInput = taskDiv.querySelector(".images")?.value || '';
+      const images = imagesInput.split(",").map(url => url.trim()).filter(url => url !== "");
+      if (images.length) questionObj.image = images;
+    }
+
+    writingQuestions.push(questionObj);
+  });
+
+  return writingQuestions;
+}
+
+
+// --- Export JSON ---
+document.getElementById('exportJSON').addEventListener('click', () => {
+    const mockNumber = document.getElementById('mockNumber').value;
+    const plan = document.getElementById('plan').value;
+
+    // --- LISTENING EXPORT LOGIC ---
+    const listeningQuestions = [];
+    const listeningInstructions = [];
+    const listeningAnswers = {};
+
+    const listeningSections = listeningContent.querySelectorAll('.subsection');
+
+    listeningSections.forEach(sub => {
+        const type = sub.querySelector('.type')?.value || '';
+        const part = parseInt(sub.querySelector('.part')?.value || 0);
+        const group = parseInt(sub.querySelector('.group')?.value || 0);
+
+        // NOTE COMPLETION
+        if (type === 'note-completion') {
+            const heading = sub.querySelector('.heading')?.value || '';
+            const subheadings = Array.from(sub.querySelectorAll('.subheadingsContainer input')).map(i => i.value);
+            const paragraphs = Array.from(sub.querySelectorAll('.paragraphsContainer textarea')).map(t =>
+                t.value.split('\n').filter(s => s.trim() !== '')
+            );
+            const id = sub.querySelector('.idArray')
+                ? sub.querySelector('.idArray').value.split(',').map(n => parseInt(n.trim()))
+                : [];
+            listeningQuestions.push({ part, group, heading, subheadings, paragraphs, id, type });
+
+        // FEATURE MATCHING
+        } else if (type === 'feature-matching') {
+            const options = Array.from(sub.querySelectorAll('.optionsContainer input')).map(i => i.value);
+            const features = Array.from(sub.querySelectorAll('.featuresContainer input')).map(i => i.value);
+            const id = sub.querySelector('.idArray')
+                ? sub.querySelector('.idArray').value.split(',').map(n => parseInt(n.trim()))
+                : [];
+            listeningQuestions.push({ part, group, type, id, options, features });
+
+        // MCQ UPDATED
+        } else if (type === 'mcq-updated') {
+            const questionsArr = [];
+            sub.querySelectorAll('.questionsContainer > .mcq-question').forEach(qDiv => {
+                const qTextInput = qDiv.querySelector('.questionText');
+                if (!qTextInput) return;
+                const qText = qTextInput.value;
+                const options = Array.from(qDiv.querySelectorAll('.optionsContainer input')).map(o => o.value);
+                questionsArr.push({ question: qText, options });
+            });
+            const id = sub.querySelector('.idArray')
+                ? sub.querySelector('.idArray').value.split(',').map(n => parseInt(n.trim()))
+                : [];
+            listeningQuestions.push({
+                part,
+                group,
+                id,
+                questions: questionsArr.map(q => q.question),
+                options: questionsArr.map(q => q.options),
+                type
+            });
+
+        // MCQ TWO CHOICE UPDATED
+        } else if (type === 'mcq-two-choice-updated') {
+            const questionGroups = [];
+            const optionGroups = [];
+
+            sub.querySelectorAll('.mcqTwoChoiceQuestionsContainer > .subfield-wrapper').forEach(qWrap => {
+                const questionText = qWrap.querySelector('textarea').value.trim();
+                const options = Array.from(qWrap.querySelectorAll('.optionsContainer input'))
+                    .map(o => o.value.trim())
+                    .filter(v => v !== '');
+                questionGroups.push([questionText]);
+                optionGroups.push(options);
+            });
+
+            const idText = sub.querySelector('.idArray')?.value || '';
+            const id =
+                idText.match(/\[(.*?)\]/g)?.map(arr =>
+                    arr.replace(/[\[\]\s]/g, '').split(',').map(Number)
+                ) || [];
+
+            listeningQuestions.push({ part, group, type, id, questions: questionGroups, options: optionGroups });
+
+        // TABLE COMPLETION
+        } else if (type === 'table-completion') {
+            const rows = Array.from(sub.querySelectorAll('.table-row')).map(row =>
+                    Array.from(row.querySelectorAll('.table-cell')).map(cell =>
+                    cell.value.trim().replace(/\n/g, "<br>")
+  )
+);
+            const tableStructure = rows.map(row => row.length);
+            const id = sub.querySelector('.idArray')
+                ? sub.querySelector('.idArray').value.split(',').map(n => parseInt(n.trim()))
+                : [];
+            listeningQuestions.push({
+                part,
+                group,
+                type,
+                id,
+                'table-structure': tableStructure,
+                cells: rows
+            });
+
+        // DIAGRAM LABELLING
+        } else if (type === 'diagram-labelling') {
+            const image = sub.querySelector('.image')?.value || '';
+            const options = Array.from(sub.querySelectorAll('.optionsContainer input')).map(i => i.value);
+            const id = sub.querySelector('.idArray')
+                ? sub.querySelector('.idArray').value.split(',').map(n => parseInt(n.trim()))
+                : [];
+            const labels = Array.from(sub.querySelectorAll('.labelsContainer input')).map(i => i.value);
+            listeningQuestions.push({ part, group, type, image, options, id, labels });
+        } else if (type === 'matching-information') {
+    const paragraphs = sub.querySelector('.paragraphsArray')?.value
+        .split(',')
+        .map(p => p.trim())
+        .filter(p => p !== '') || [];
+    const id = sub.querySelector('.idArray')?.value
+        .split(',')
+        .map(n => parseInt(n.trim()))
+        .filter(n => !isNaN(n)) || [];
+    const information = Array.from(sub.querySelectorAll('.informationContainer input'))
+        .map(i => i.value.trim())
+        .filter(v => v !== '');
+
+    const option = Array.from(sub.querySelectorAll('.optionContainer input'))
+        .map(i => i.value.trim())
+        .filter(v => v !== '');
+    listeningQuestions.push({ part, group, type, paragraphs, id, information, option });
+     } else if (type === 'flowchart') {
+    const questionsArr = [];
+    sub.querySelectorAll('.questionContainer > .subfield-wrapper textarea').forEach(qDiv => {
+        const qText = qDiv.value.trim().replace(/\n/g, "<br>");
+        if (qText) questionsArr.push(qText);
+    });
+
+    const optionsArr = [];
+    sub.querySelectorAll('.optionContainer > .subfield-wrapper input').forEach(optDiv => {
+        const optText = optDiv.value.trim();
+        if (optText) optionsArr.push(optText);
+    });
+
+    const id = sub.querySelector('.idArray')
+        ? sub.querySelector('.idArray').value.split(',').map(n => parseInt(n.trim()))
+        : [];
+
+    const optionHeader = sub.querySelector('.optionHeader')?.value.trim() || "";
+    const questionHeader = sub.querySelector('.questionHeader')?.value.trim() || "";
+
+    listeningQuestions.push({
+        part,
+        group,
+        id,
+        "option-header": optionHeader,
+        "question-header": questionHeader,
+        options: optionsArr,
+        questions: questionsArr,
+        type
+    });
+}
+
+        // --- INSTRUCTIONS & ANSWERS ---
+        const instruction = (sub.querySelector(".instruction")?.value.trim().replace(/\n/g, "<br>")) || "";
+        listeningInstructions.push({ group, instruction });
+
+        const answerRows = sub.querySelectorAll('.answersContainer .subfield-wrapper');
+        answerRows.forEach(row => {
+            const id = parseInt(row.querySelector('input[type="number"]')?.value);
+            const answerValues = row.querySelector('input[type="text"]')?.value
+                .split(',')
+                .map(v => v.trim())
+                .filter(v => v !== '');
+            if (!isNaN(id) && answerValues.length) {
+                listeningAnswers[id] = answerValues;
+            }
+        });
+    });
+
+
+    const readingData = exportReadingJSON();
+    const writingData = collectWritingQuestions();
+
+    // --- FINAL JSON STRUCTURE ---
+    const result = {
+        mockNumber,
+        plan,
+        listening: {
+            questions: listeningQuestions,
+            instructions: listeningInstructions,
+            answers: listeningAnswers
+        },
+        reading: readingData,
+        writing: {questions: writingData}
+        // You can later append: reading: { questions, instructions, answers }
+    };
+
+    console.log(JSON.stringify(result, null, 2));
+
+    const jsonString = JSON.stringify(result, null, 2);
+
+    // Create a Blob from JSON string
+  const blob = new Blob([jsonString], { type: "application/json" });
+  
+  // Create a temporary download link
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `exam_data_${mockNumber}.json`; // filename with date
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  alert('JSON file has been downloaded!');
+  
+});
+
+// === Universal function to wrap selected text with <strong> ===
+function wrapSelectionWithStrong() {
+  const el = document.activeElement;
+
+  const escapeHtml = (str) => str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  // Case 1: textarea or text input
+  if (el && (el.tagName === 'TEXTAREA' || (el.tagName === 'INPUT' && el.type === 'text'))) {
+    const start = el.selectionStart ?? el.value.length;
+    const end = el.selectionEnd ?? el.value.length;
+    const before = el.value.slice(0, start);
+    const selected = el.value.slice(start, end);
+    const after = el.value.slice(end);
+
+    const wrapped = `<strong>${selected}</strong>`;
+    el.value = before + wrapped + after;
+
+    // Position caret
+    const caretPos = start + (selected ? wrapped.length : '<strong>'.length);
+    el.setSelectionRange(caretPos, caretPos);
+    el.focus();
+    return true;
+  }
+
+  // Case 2: contenteditable element
+  if (el && el.isContentEditable) {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) {
+      document.execCommand('insertHTML', false, '<strong></strong>');
+      return true;
+    }
+
+    const selectedText = sel.toString();
+    if (selectedText.length === 0) {
+      document.execCommand('insertHTML', false, '<strong></strong>');
+      return true;
+    }
+
+    const htmlToInsert = `<strong>${escapeHtml(selectedText)}</strong>`;
+    document.execCommand('insertHTML', false, htmlToInsert);
+    return true;
+  }
+
+  return false;
+}
+
+// === Button click ===
+document.getElementById('wrapStrongBtn')?.addEventListener('click', wrapSelectionWithStrong);
+
+// === Keyboard shortcut: Ctrl+B or Cmd+B ===
+document.addEventListener('keydown', (e) => {
+  const isMac = navigator.platform.toUpperCase().includes('MAC');
+  if ((isMac ? e.metaKey : e.ctrlKey) && e.key.toLowerCase() === 'b') {
+    // Prevent browser’s built-in bold behavior
+    e.preventDefault();
+    wrapSelectionWithStrong();
+  }
+});
+</script>
+</body>
+</html>

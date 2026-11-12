@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='15' fill='%231A365D' /><path d='M30 25 V55 C30 65 35 75 50 75 C65 75 70 65 70 55 V25 H60 V55 C60 62 58 65 50 65 C42 65 40 62 40 55 V25 H30Z' fill='white' /><rect x='25' y='25' width='15' height='5' fill='white' /><rect x='60' y='25' width='15' height='5' fill='white' /></svg>">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>UKA Admin Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root{
+  --uka-accent:#2eb8b8;
+  --uka-accent-2:#1f8f8f;
+  --uka-bg:#f9fbff;
+  --uka-text:#1e293b;
+}
+body{ background:var(--uka-bg); color:var(--uka-text); margin:0; padding:0; }
+.sidebar{
+  position:fixed; top:0; left:0; height:100%; width:60px; background:white; box-shadow:2px 0 12px rgba(30,40,60,0.08);
+  display:flex; flex-direction:column; align-items:center; padding-top:20px; z-index:1000;
+}
+.sidebar .icon-btn{ width:44px; height:44px; border-radius:12px; margin:10px 0; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:0.3s; color:white; }
+.sidebar .icon-btn:hover{ opacity:0.85; }
+.btn-messages{ background:var(--uka-accent); }
+.btn-promo{ background:#16a34a; }
+.btn-logout{ background:#dc2626; }
+.main-content{ margin-left:70px; padding:20px; }
+.card-uka{ border-radius:10px; }
+table td,table th{ vertical-align:middle; }
+.topbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+.topbar .user-info{ font-weight:700; color:var(--uka-accent-2); font-size:0.9rem; }
+.topbar input{ max-width:240px; }
+
+/* Logout modal styles */
+.logout-box {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.55);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 9999;
+}
+.logout-content {
+  background: #fff; padding: 25px 35px; border-radius: 12px;
+  width: 320px; text-align: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+.logout-content h3 { margin-bottom:10px; font-size:20px; color:#333; }
+.logout-content p { margin-bottom:15px; color:#555; }
+.logout-buttons { display:flex; justify-content:center; gap:15px; }
+.yes-btn { background:#e63946; color:#fff; padding:8px 20px; border:none; border-radius:8px; cursor:pointer; }
+.no-btn { background:#2a9d8f; color:#fff; padding:8px 20px; border:none; border-radius:8px; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="icon-btn btn-messages" title="Messages" onclick="window.location.href='messages.html'"><i class="fas fa-envelope"></i></div>
+  <div class="icon-btn btn-promo" title="Promo Email" onclick="openPromoModal()"><i class="fas fa-bullhorn"></i></div>
+  <div class="icon-btn btn-logout" title="Logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i></div>
+</div>
+
+<div class="main-content">
+  <div class="topbar">
+    <div class="user-info">
+      UKA Admin <br>
+      <small class="text-muted">Manage Users</small>
+    </div>
+    <input id="search" class="form-control form-control-sm" placeholder="Search name / email / phone">
+  </div>
+
+  <div class="row g-3 mb-3">
+    <div class="col-md-3">
+      <div class="card p-3 card-uka">
+        <div class="small text-muted">Total Users</div>
+        <div id="totalUsers" style="font-size:1.5rem;font-weight:700;">—</div>
+      </div>
+    </div>
+    <div class="col-md-9">
+      <div class="card p-3 card-uka">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <div style="font-weight:700">User List</div>
+          <div class="text-muted small" id="lastUpdated"></div>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover" id="usersTable">
+            <thead class="table-light">
+              <tr>
+                <th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Registered</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="usersBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Promo Email Modal -->
+<div class="modal fade" id="promoModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Send Promotional Email</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-2">
+          <label>Subject</label>
+          <input id="promoSubject" class="form-control" placeholder="Enter email subject">
+        </div>
+        <div class="mb-2">
+          <label>Message</label>
+          <textarea id="promoMessage" class="form-control" rows="4" placeholder="Enter your message"></textarea>
+        </div>
+        <div id="promoAlert"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-success" onclick="sendPromoEmail()">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+if(sessionStorage.getItem("isAdmin")!=="true") window.location.href="admin-login.html";
+
+const API_BASE="https://ukamock.ukatechnical.com";
+// const API_BASE="http://localhost:5001";
+const usersBody=document.getElementById("usersBody");
+const totalUsersEl=document.getElementById("totalUsers");
+const lastUpdated=document.getElementById("lastUpdated");
+const searchInput=document.getElementById("search");
+
+async function fetchUsers(q=""){
+  try{
+    const url=q?`${API_BASE}/users?q=${encodeURIComponent(q)}`:`${API_BASE}/users`;
+    const res=await fetch(url);
+    const data=await res.json();
+    renderUsers(data);
+  }catch(err){ console.error(err); usersBody.innerHTML=`<tr><td colspan="6" class="text-danger">Error loading users</td></tr>`; }
+}
+
+async function fetchCount(){
+  try{
+    const res=await fetch(`${API_BASE}/users/count`);
+    const d=await res.json();
+    totalUsersEl.textContent=d.count??0;
+  }catch(err){ totalUsersEl.textContent="—"; }
+}
+
+function renderUsers(users){
+  usersBody.innerHTML="";
+  if(!users || users.length===0){
+    usersBody.innerHTML=`<tr><td colspan="6" class="text-muted">No users found</td></tr>`;
+  }else{
+    users.forEach((u,i)=>{
+      const tr=document.createElement("tr");
+      tr.innerHTML=`
+      <td>${i+1}</td>
+      <td>${u.name}</td>
+      <td>${u.email}</td>
+      <td>${u.phone}</td>
+      <td>${new Date(u.createdAt).toLocaleString()}</td>
+      <td>
+        <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${u._id}')">Delete</button>
+      </td>`;
+      usersBody.appendChild(tr);
+    });
+  }
+  lastUpdated.textContent=new Date().toLocaleTimeString();
+}
+
+searchInput.addEventListener("input",()=>{ fetchUsers(searchInput.value.trim()); });
+
+fetchUsers(); fetchCount();
+
+function openPromoModal(){
+  const modal=new bootstrap.Modal(document.getElementById("promoModal"));
+  document.getElementById("promoSubject").value="";
+  document.getElementById("promoMessage").value="";
+  document.getElementById("promoAlert").innerHTML="";
+  modal.show();
+}
+
+async function sendPromoEmail(){
+  const subject=document.getElementById("promoSubject").value.trim();
+  const message=document.getElementById("promoMessage").value.trim();
+  if(!subject||!message){ document.getElementById("promoAlert").innerHTML=`<div class="alert alert-danger py-1">Subject & Message required</div>`; return; }
+  try{
+    const res=await fetch(`${API_BASE}/admin/send-promotional-email`,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({subject,message})
+    });
+    const data=await res.json();
+    document.getElementById("promoAlert").innerHTML=`<div class="alert alert-success py-1">${data.message}</div>`;
+  }catch(err){ console.error(err); document.getElementById("promoAlert").innerHTML=`<div class="alert alert-danger py-1">Failed to send emails</div>`; }
+}
+
+async function deleteUser(id){
+  if(!confirm("Are you sure you want to delete this user?")) return;
+  try{
+    const res=await fetch(`${API_BASE}/users/${id}`,{ method:"DELETE" });
+    const data=await res.json();
+    alert(data.message);
+    fetchUsers();
+    fetchCount();
+  }catch(err){ console.error(err); alert("Failed to delete user."); }
+}
+
+// LOGOUT CONFIRMATION
+function logout(){
+  const box = document.createElement("div");
+  box.className = "logout-box";
+  box.innerHTML = `
+    <div class="logout-content">
+      <h3>Logout Confirmation</h3>
+      <p>Are you sure you want to logout?</p>
+      <div class="logout-buttons">
+        <button id="yesLogout" class="yes-btn">Yes</button>
+        <button id="noLogout" class="no-btn">No</button>
+      </div>
+    </div>`;
+  document.body.appendChild(box);
+
+  document.getElementById("yesLogout").onclick = () => {
+    sessionStorage.removeItem("isAdmin");
+    window.location.href="admin-login.html";
+  };
+  document.getElementById("noLogout").onclick = () => box.remove();
+}
+</script>
+</body>
+</html>

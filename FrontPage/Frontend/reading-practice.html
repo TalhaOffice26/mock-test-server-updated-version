@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='15' fill='%231A365D' /><path d='M30 25 V55 C30 65 35 75 50 75 C65 75 70 65 70 55 V25 H60 V55 C60 62 58 65 50 65 C42 65 40 62 40 55 V25 H30Z' fill='white' /><rect x='25' y='25' width='15' height='5' fill='white' /><rect x='60' y='25' width='15' height='5' fill='white' /></svg>">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Reading Practice Lab | UKA Technical Institute</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/a2e0f1f6a2.js" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      --uka-teal: #2eb8b8;
+      --uka-teal-dark: #1f8f8f;
+      --uka-teal-light: #f0fdfa;
+      --navy: #0B1F6D;
+      --bg: #f8fbff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --white: #ffffff;
+      --shadow: 0 20px 40px rgba(0,0,0,0.06);
+      --border: rgba(0,0,0,0.08);
+      --accent-light: #e0f2f2;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      display: flex; flex-direction: column; min-height: 100vh;
+    }
+
+    .container { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+
+    /* HEADER & NAVIGATION */
+    header {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      position: sticky; top: 0; z-index: 1000;
+      padding: 12px 0; border-bottom: 1px solid var(--border);
+    }
+    .nav { display: flex; justify-content: space-between; align-items: center; }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--navy); }
+    .logo img { height: 55px; }
+    .brand-name { font-size: 1.3rem; font-weight: 800; line-height: 1; }
+    .brand-name small { display: block; font-size: 0.65rem; color: var(--uka-teal); letter-spacing: 1px; }
+
+    .nav-links { display: flex; align-items: center; gap: 10px; }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 10px 18px;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+    }
+    /* Hover Effects */
+    .nav-links a:hover {
+      background: var(--accent-light);
+      color: var(--uka-teal);
+    }
+    .nav-links a.active {
+      color: var(--uka-teal);
+    }
+
+    /* MAIN LAYOUT */
+    .main-layout { display: flex; gap: 30px; padding: 40px 0 80px; flex: 1; }
+
+    .sidebar {
+      flex: 0 0 300px; background: white; padding: 25px; border-radius: 20px;
+      box-shadow: var(--shadow); border: 1px solid var(--border);
+      position: sticky; top: 110px; height: fit-content;
+    }
+    .sidebar h2 { font-size: 1.3rem; margin-bottom: 20px; color: var(--navy); font-weight: 800; }
+    
+    .filter-group { margin-bottom: 20px; }
+    .filter-group label { display: block; font-weight: 700; font-size: 0.85rem; margin-bottom: 8px; color: var(--text-muted); }
+    .filter-group select {
+      width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-family: inherit; font-weight: 600; cursor: pointer;
+    }
+
+    .content-area { flex: 1; }
+    .test-grid { display: flex; flex-wrap: wrap; gap: 20px; }
+
+    .test-card {
+      background: white; border-radius: 20px; padding: 25px;
+      border: 1px solid var(--border); box-shadow: var(--shadow);
+      display: flex; flex-direction: column;
+      flex: 1 1 calc(33.333% - 20px); 
+      min-width: 280px; transition: 0.3s ease;
+    }
+    .test-card.hidden { display: none; }
+    .test-card:hover { transform: translateY(-8px); border-color: var(--uka-teal); }
+
+    .type-badge {
+      align-self: flex-start; background: var(--uka-teal-light); color: var(--uka-teal-dark);
+      padding: 5px 14px; border-radius: 8px; font-size: 0.75rem; font-weight: 800; margin-bottom: 15px;
+    }
+
+    .test-card h3 { font-size: 1.1rem; color: var(--navy); margin-bottom: 12px; flex-grow: 1; font-weight: 800; }
+    .test-card p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; font-weight: 600; }
+
+    .btn-take {
+      text-decoration: none; background: var(--uka-teal-light); color: var(--uka-teal-dark);
+      text-align: center; padding: 12px; border-radius: 12px; font-weight: 700; transition: 0.3s;
+    }
+    .test-card:hover .btn-take { background: var(--uka-teal); color: white; }
+
+    /* FOOTER STYLES (AS PROVIDED) */
+    footer { 
+      background: linear-gradient(135deg, #2eb8b8 0%, #33cccc 100%); 
+      color: white; padding: 60px 20px 30px; text-align: center; width: 100%; 
+    }
+    .footer-container { max-width: 1100px; margin: auto; }
+    .footer-left h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 10px; }
+    .footer-left h2 span { font-weight: 400; opacity: 0.9; font-size: 1.2rem; }
+
+    .footer-links { 
+      margin: 30px 0; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; 
+      font-weight: 600; font-size: 0.9rem; 
+    }
+    .footer-links a { color: white; text-decoration: none; transition: 0.2s; opacity: 0.85; }
+    .footer-links a:hover { opacity: 1; text-decoration: underline; }
+
+    .footer-social { display: flex; justify-content: center; gap: 20px; margin: 25px 0; }
+    .social-icon { width: 28px; height: 28px; transition: 0.3s; }
+    .social-icon:hover { transform: scale(1.2) rotate(8deg); filter: brightness(1.2); }
+
+    .footer-bottom { 
+      border-top: 1px solid rgba(255,255,255,0.15); margin-top: 30px; 
+      padding-top: 20px; font-size: 0.8rem; opacity: 0.7; letter-spacing: 0.5px;
+    }
+
+    @media (max-width: 1024px) { .test-card { flex: 1 1 calc(50% - 20px); } }
+    @media (max-width: 850px) {
+        .main-layout { flex-direction: column; }
+        .sidebar { width: 100%; position: static; flex: none; }
+        .test-card { flex: 1 1 100%; }
+        .nav-links { display: none; } /* Mobile toggle should be added for a real site */
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container nav">
+      <a href="home.html" class="logo">
+        <img src="2_UKA-&-British-council-Logo.png" alt="UKA Logo">
+        <div class="brand-name">UKA <small>TECHNICAL INSTITUTE</small></div>
+      </a>
+      
+      <nav class="nav-links">
+        <a href="home.html"><i class="fas fa-home"></i> Home</a>
+        <a href="/practice-hub" class="active"><i class="fas fa-th-large"></i> Practice Hub</a>
+        <a href="mocks.html"><i class="fas fa-file-alt"></i> Full Mock Exam</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container main-layout">
+    <aside class="sidebar">
+      <h2>Question Filter</h2>
+      <div class="filter-group">
+        <label>Search Question Type</label>
+        <select id="typeFilter" onchange="filterTests()">
+          <option value="all">All Practice Sets</option>
+          <option value="Note-Completion">Note-Completion</option>
+          <option value="True-False-NotGiven">True/False/Not Given</option>
+          <option value="Matching-Headings">Matching Headings</option>
+          <option value="Multiple-Choice">Multiple Choice</option>
+          <option value="Summary Completion">Summary Completion</option>
+          <option value="Matching Information">Matching Information</option>
+          <option value="Sentence Completion">Sentence Completion</option>
+          <option value="Sentence Endings">Sentence Endings</option>
+          <option value="List of People">List of People</option>
+
+        </select>
+      </div>
+    </aside>
+
+    <section class="content-area">
+      <div class="test-grid" id="testGrid"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-left">
+        <h2>UKA <span>TECHNICAL INSTITUTE</span></h2>
+        <p>Empowering learners with technology and language skills.</p>
+      </div>
+      <div class="footer-links">
+        <a href="contact.html">Contact</a>
+        <span>|</span>
+        <a href="#">Our Courses</a>
+        <span>|</span>
+        <a href="mocks.html">Mock Test</a>
+        <span>|</span>
+        <a href="#">IELTS Practice</a>
+        <span>|</span>
+        <a href="#">Book Online Speaking</a>
+        <span>|</span>
+        <a href="#">Join Language Club</a>
+        <span>|</span>
+        <a href="#">IT Support</a>
+      </div>
+      <div class="footer-social">
+        <a href="https://www.facebook.com/ukatechnicalinstitute/" target="_blank"><img src="facebook.png" alt="FB" class="social-icon"></a>
+        <a href="#" target="_blank"><img src="instagram.png" alt="IG" class="social-icon"></a>
+        <a href="#" target="_blank"><img src="youtube.png" alt="YT" class="social-icon"></a>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 UKA Technical Institute · All Rights Reserved</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const types = [
+      "Note-Completion", 
+      "True-False-NotGiven", 
+      "Matching-Headings", 
+      "Multiple-Choice", 
+      "Summary Completion", 
+      "Matching Information", 
+      "Sentence Completion",
+      "Sentence Endings",
+      "List of People"
+    ];
+
+    const testGrid = document.getElementById('testGrid');
+
+    function redirectToPractice(pracNumber, type){
+      window.location.href = `/reading-practice?pracNumber=Practice-${pracNumber}&type=${type}`
+    }
+
+    types.forEach(type => {
+      for (let i = 1; i <= 5; i++) {
+        const card = document.createElement('div');
+        card.className = 'test-card';
+        card.setAttribute('data-type', type);
+        
+        const practiceNumber = i < 5 ? '0' + i : i;
+        
+        card.innerHTML = `
+          <span class="type-badge">${type}</span>
+          <h3>${type}: Practice ${practiceNumber}</h3>
+          <p>Sharpen your ${type.toLowerCase()} skills with targeted exercises.</p>
+          <a onclick="redirectToPractice(${i}, '${type}')" style="cursor: pointer" class="btn-take">Start Practice</a>
+        `;
+        testGrid.appendChild(card);
+      }
+    });
+
+    function filterTests() {
+      const selectedType = document.getElementById('typeFilter').value;
+      const cards = document.getElementsByClassName('test-card');
+
+      for (let i = 0; i < cards.length; i++) {
+        const cardType = cards[i].getAttribute('data-type');
+        if (selectedType === 'all' || cardType == selectedType) {
+          cards[i].classList.remove('hidden');
+        } else {
+          cards[i].classList.add('hidden');
+        }
+      }
+    }
+  </script>
+</body>
+</html>
