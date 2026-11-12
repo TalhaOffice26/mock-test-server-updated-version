@@ -122,10 +122,12 @@ router.get("/view_passcodes", async (req, res) => {
   const organization = req.query.organization;
 
   try {
-    const passcodes = await passCodes.find({
-      organization: organization,
-      status: undefined,
-    });
+    const passcodes = await passCodes
+      .find({
+        organization: organization,
+        status: undefined,
+      })
+      .sort({ _id: -1 });
     return res.json(passcodes);
   } catch (err) {
     return res.status(500).send("Error: " + err.message);
@@ -136,7 +138,9 @@ router.get("/view_all_passcodes", async (req, res) => {
   const organization = req.query.organization;
 
   try {
-    const passcodes = await passCodes.find({ organization: organization });
+    const passcodes = await passCodes
+      .find({ organization: organization })
+      .sort({ _id: -1 });
     return res.json(passcodes);
   } catch (err) {
     return res.status(500).send("Error: " + err.message);
@@ -147,7 +151,9 @@ router.get("/view_assigned_passcodes", async (req, res) => {
   const organization = req.query.organization;
 
   try {
-    const users = await User.find({ organization: organization });
+    const users = await User.find({ organization: organization })
+      .sort({ time: -1, createdAt: -1, _id: -1 })
+      .lean();
     return res.json(users);
   } catch (err) {
     return res.status(500).send("Error: " + err.message);
@@ -197,12 +203,18 @@ router.post("/assign_candidate", async (req, res) => {
 
 router.get("/view_candidates", async (req, res) => {
   const organization = req.query.organization;
-  const candidates = await User.find({ organization: organization });
-  if (candidates) {
-    res.json(candidates);
-    res.status(200);
-  } else {
-    res.status(500).send("ISSUE IN VIEWING USERS");
+  try {
+    const candidates = await User.find({ organization: organization })
+      .sort({ updatedAt: -1, time: -1, _id: -1 })
+      .lean();
+
+    if (candidates) {
+      return res.status(200).json(candidates);
+    } else {
+      return res.status(500).send("ISSUE IN VIEWING USERS");
+    }
+  } catch (err) {
+    return res.status(500).send("ISSUE IN VIEWING USERS: " + err.message);
   }
 });
 

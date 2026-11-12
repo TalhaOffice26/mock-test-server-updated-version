@@ -982,7 +982,16 @@ function toggleAssignedList(type) {
       return;
     }
 
-    passCodes.reverse().forEach((passcode) => {
+    // Ensure most recently assigned passcodes are always at the top
+    if (Array.isArray(passCodes)) {
+      passCodes.sort((a, b) => {
+        const timeA = new Date(a.time || a.createdAt || 0).getTime();
+        const timeB = new Date(b.time || b.createdAt || 0).getTime();
+        return timeB - timeA;
+      });
+    }
+
+    passCodes.forEach((passcode) => {
       const time = formatReadableTime(passcode.time);
       const itemHTML = `
         <div class="assigned-item">
@@ -1057,8 +1066,24 @@ function escapeSingleQuotes(str) {
       userList.innerHTML = '';
       const users = await postReqForViewingCandidates(data.username);
 
+      if (!Array.isArray(users)) return;
 
-      users.reverse().forEach((user)=>{
+      // Sort: Completed/attempted results first, ordered by recent exam submission (updatedAt)
+      users.sort((a, b) => {
+        const hasA = (a.mockInformation && a.mockInformation.length > 0) || a.status === "USED";
+        const hasB = (b.mockInformation && b.mockInformation.length > 0) || b.status === "USED";
+
+        // Completed results always before unattempted
+        if (hasA && !hasB) return -1;
+        if (!hasA && hasB) return 1;
+
+        // If both have results, newest exam completion (updatedAt) first
+        const timeA = new Date(a.updatedAt || a.time || a.createdAt || 0).getTime();
+        const timeB = new Date(b.updatedAt || b.time || b.createdAt || 0).getTime();
+        return timeB - timeA;
+      });
+
+      users.forEach((user)=>{
         const userCard = document.createElement('div');
         userCard.className = 'user-card';
         const userPassCode = escapeSingleQuotes(user.passcode);
@@ -1067,17 +1092,16 @@ function escapeSingleQuotes(str) {
             <span class="user-name">${user.username}</span>
             <span class="user-email">${user.passcode}</span>
           </div>
-          
         `;
-        if(user.mockInformation){
+        if(user.mockInformation && user.mockInformation.length > 0){
+          userCard.innerHTML += `<button class="view-btn" data-id="${user.passcode}" onclick="redirectToResult('${userPassCode}')">View Result</button>`
+        } else if (user.mockInformation) {
           userCard.innerHTML += `<button class="view-btn" data-id="${user.passcode}" onclick="redirectToResult('${userPassCode}')">View Result</button>`
         } else{
           userCard.innerHTML += `<button class="view-btn-grey" data-id="${user.passcode}" onclick="redirectToResult('${userPassCode}')" disabled>NOT ATTEMPTED</button>`
         }
         userList.appendChild(userCard);
-      })
-
-
+      });
     }
 
     async function assignCandidate(passcodeID){
